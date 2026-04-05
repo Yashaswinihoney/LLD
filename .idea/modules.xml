@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/LLD.iml" filepath="$PROJECT_DIR$/LLD.iml" />
+      <module fileurl="file://$PROJECT_DIR$/atm/atm.iml" filepath="$PROJECT_DIR$/atm/atm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bookMyShow/bookMyShow.iml" filepath="$PROJECT_DIR$/bookMyShow/bookMyShow.iml" />
+      <module fileurl="file://$PROJECT_DIR$/car rental/car rental.iml" filepath="$PROJECT_DIR$/car rental/car rental.iml" />
+      <module fileurl="file://$PROJECT_DIR$/elevator/elevator.iml" filepath="$PROJECT_DIR$/elevator/elevator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/high Resilience application/high Resilience application.iml" filepath="$PROJECT_DIR$/high Resilience application/high Resilience application.iml" />
+      <module fileurl="file://$PROJECT_DIR$/notify me or observer pattern/notify me or observer pattern.iml" filepath="$PROJECT_DIR$/notify me or observer pattern/notify me or observer pattern.iml" />
+      <module fileurl="file://$PROJECT_DIR$/parking lot/parking lot.iml" filepath="$PROJECT_DIR$/parking lot/parking lot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/uber/uber.iml" filepath="$PROJECT_DIR$/uber/uber.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vending machine/vending machine.iml" filepath="$PROJECT_DIR$/vending machine/vending machine.iml" />
+    </modules>
+  </component>
+</project>
