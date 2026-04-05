@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 820px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 760 2080" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: POST TWEET (WRITE PATH) ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— post tweet flow (write path) —</text>
+
+<rect x="260" y="32" width="240" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="52" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">User (Alice)</text>
+<text x="380" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">POST /tweet {content, media?, type}</text>
+
+<line x1="380" y1="84" x2="380" y2="116" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="240" y="116" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="138" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway</text>
+<text x="380" y="154" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth, rate limit (300 tweets/3hr), routing</text>
+
+<line x1="380" y1="168" x2="380" y2="204" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- TWEET SERVICE -->
+<rect x="190" y="204" width="380" height="76" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="226" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Tweet Service</text>
+<text x="380" y="244" text-anchor="middle" font-size="11" fill="#0f6e56">Validate content, extract hashtags + mentions</text>
+<text x="380" y="260" text-anchor="middle" font-size="11" fill="#0f6e56">Assign Snowflake tweetId (time-ordered)</text>
+<text x="380" y="276" text-anchor="middle" font-size="11" fill="#0f6e56">ACK immediately — async fan-out via Kafka</text>
+
+<line x1="380" y1="280" x2="380" y2="328" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PARALLEL: DB write + Kafka -->
+<line x1="300" y1="348" x2="150" y2="396" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="348" x2="380" y2="396" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="348" x2="610" y2="396" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="328" width="380" height="28" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="347" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Parallel: store + index + fan-out</text>
+
+<!-- CASSANDRA -->
+<rect x="20" y="396" width="220" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="130" y="418" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Cassandra</text>
+<text x="130" y="436" text-anchor="middle" font-size="11" fill="#854f0b">Write tweet row</text>
+<text x="130" y="452" text-anchor="middle" font-size="11" fill="#854f0b">Partition: userId, sort: tweetId</text>
+
+<!-- ELASTICSEARCH -->
+<rect x="270" y="396" width="220" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="418" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Elasticsearch</text>
+<text x="380" y="436" text-anchor="middle" font-size="11" fill="#3b6d11">Index for full-text search</text>
+<text x="380" y="452" text-anchor="middle" font-size="11" fill="#3b6d11">Hashtag + keyword indexing</text>
+
+<!-- KAFKA -->
+<rect x="520" y="396" width="220" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="630" y="418" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Kafka — tweet-events</text>
+<text x="630" y="436" text-anchor="middle" font-size="11" fill="#534ab7">Fan-out trigger event</text>
+<text x="630" y="452" text-anchor="middle" font-size="11" fill="#534ab7">Partitioned by userId</text>
+
+<!-- ====== SECTION 2: FAN-OUT ====== -->
+<line x1="40" y1="520" x2="720" y2="520" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="512" text-anchor="middle" font-size="11" fill="#888">— fan-out flow (the hardest part of news feed) —</text>
+
+<line x1="630" y1="460" x2="480" y2="528" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- FAN-OUT SERVICE -->
+<rect x="190" y="528" width="380" height="76" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="550" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Fan-out Service (Kafka Consumer)</text>
+<text x="380" y="568" text-anchor="middle" font-size="11" fill="#534ab7">Fetch author's followers from Graph DB</text>
+<text x="380" y="584" text-anchor="middle" font-size="11" fill="#534ab7">Decide: PUSH model or PULL model?</text>
+<text x="380" y="600" text-anchor="middle" font-size="11" fill="#534ab7">Based on follower count threshold</text>
+
+<!-- Two paths -->
+<line x1="290" y1="604" x2="140" y2="660" stroke="#0f6e56" stroke-width="1" marker-end="url(#arrow-g)"/>
+<line x1="470" y1="604" x2="620" y2="660" stroke="#d85a30" stroke-width="1" marker-end="url(#arrow-r)"/>
+<text x="128" y="644" font-size="10" text-anchor="end" fill="#0f6e56">regular user (&lt;1M followers)</text>
+<text x="628" y="644" font-size="10" fill="#d85a30">celebrity (&gt;1M followers)</text>
+
+<!-- PUSH MODEL -->
+<rect x="20" y="660" width="230" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="135" y="682" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Push (Fan-out on Write)</text>
+<text x="135" y="700" text-anchor="middle" font-size="11" fill="#3b6d11">Write tweetId to each follower's</text>
+<text x="135" y="716" text-anchor="middle" font-size="11" fill="#3b6d11">feed inbox in Redis (list/sorted set)</text>
+<text x="135" y="732" text-anchor="middle" font-size="11" fill="#3b6d11">Cap inbox at 800 tweets</text>
+
+<!-- PULL MODEL -->
+<rect x="510" y="660" width="230" height="76" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="625" y="682" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Pull (Fan-out on Read)</text>
+<text x="625" y="700" text-anchor="middle" font-size="11" fill="#993c1d">Store tweet in Celebrity Store</text>
+<text x="625" y="716" text-anchor="middle" font-size="11" fill="#993c1d">Followers fetch on feed open</text>
+<text x="625" y="732" text-anchor="middle" font-size="11" fill="#993c1d">Merge with push inbox at read time</text>
+
+<!-- ====== SECTION 3: READ FEED FLOW ====== -->
+<line x1="40" y1="800" x2="720" y2="800" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="792" text-anchor="middle" font-size="11" fill="#888">— read feed flow (GET /feed — the hot path) —</text>
+
+<rect x="260" y="808" width="240" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="828" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">User opens feed</text>
+<text x="380" y="844" text-anchor="middle" font-size="11" fill="#5f5e5a">GET /feed?page=0&amp;size=20</text>
+
+<line x1="380" y1="860" x2="380" y2="892" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- FEED SERVICE -->
+<rect x="190" y="892" width="380" height="88" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="914" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Feed Service</text>
+<text x="380" y="932" text-anchor="middle" font-size="11" fill="#0f6e56">1. Read user's inbox from Redis (push tweets)</text>
+<text x="380" y="948" text-anchor="middle" font-size="11" fill="#0f6e56">2. Fetch celebrity tweets user follows (pull)</text>
+<text x="380" y="964" text-anchor="middle" font-size="11" fill="#0f6e56">3. Merge + apply ranking strategy</text>
+<text x="380" y="980" text-anchor="middle" font-size="11" fill="#0f6e56">4. Filter: blocked, muted users removed</text>
+
+<!-- parallel reads -->
+<line x1="290" y1="980" x2="140" y2="1028" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="470" y1="980" x2="620" y2="1028" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- REDIS INBOX -->
+<rect x="20" y="1028" width="220" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="130" y="1050" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis Feed Inbox</text>
+<text x="130" y="1068" text-anchor="middle" font-size="11" fill="#3b6d11">Sorted set: tweetId → score</text>
+<text x="130" y="1084" text-anchor="middle" font-size="11" fill="#3b6d11">ZREVRANGE → top N tweets</text>
+
+<!-- CELEBRITY TWEETS -->
+<rect x="520" y="1028" width="220" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="630" y="1050" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Celebrity Tweet Store</text>
+<text x="630" y="1068" text-anchor="middle" font-size="11" fill="#854f0b">Redis / Cassandra per celebrity</text>
+<text x="630" y="1084" text-anchor="middle" font-size="11" fill="#854f0b">Fetch followed celebrities' recent tweets</text>
+
+<!-- merge + rank -->
+<line x1="130" y1="1092" x2="280" y2="1136" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="630" y1="1092" x2="480" y2="1136" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- RANKING SERVICE -->
+<rect x="190" y="1136" width="380" height="76" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1158" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Ranking Service (Strategy Pattern)</text>
+<text x="380" y="1176" text-anchor="middle" font-size="11" fill="#534ab7">Chronological: sort by createdAt desc</text>
+<text x="380" y="1192" text-anchor="middle" font-size="11" fill="#534ab7">Ranked: ML model score (engagement + recency)</text>
+<text x="380" y="1208" text-anchor="middle" font-size="11" fill="#534ab7">Paginate: return page N of size 20</text>
+
+<line x1="380" y1="1212" x2="380" y2="1248" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="220" y="1248" width="320" height="44" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="1270" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Return ranked feed to user</text>
+
+<!-- ====== SECTION 4: TRENDING + SEARCH ====== -->
+<line x1="40" y1="1348" x2="720" y2="1348" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1340" text-anchor="middle" font-size="11" fill="#888">— trending topics + search flow —</text>
+
+<line x1="300" y1="1368" x2="150" y2="1412" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="1368" x2="610" y2="1412" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="1356" width="380" height="20" rx="6" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="1370" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Kafka stream → Trending + Search consumers</text>
+
+<!-- TRENDING -->
+<rect x="20" y="1412" width="240" height="76" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="140" y="1434" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Trending Service</text>
+<text x="140" y="1452" text-anchor="middle" font-size="11" fill="#185fa5">Count hashtags in sliding 1hr window</text>
+<text x="140" y="1468" text-anchor="middle" font-size="11" fill="#185fa5">Redis sorted set: #tag → count</text>
+<text x="140" y="1484" text-anchor="middle" font-size="11" fill="#185fa5">Refresh "Trending" panel every 5min</text>
+
+<!-- SEARCH -->
+<rect x="500" y="1412" width="240" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="620" y="1434" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Search Service</text>
+<text x="620" y="1452" text-anchor="middle" font-size="11" fill="#3b6d11">Elasticsearch full-text + hashtag</text>
+<text x="620" y="1468" text-anchor="middle" font-size="11" fill="#3b6d11">Ranked by recency + engagement</text>
+<text x="620" y="1484" text-anchor="middle" font-size="11" fill="#3b6d11">Typeahead: Redis prefix cache</text>
+
+<!-- ====== SECTION 5: NOTIFICATION FLOW ====== -->
+<line x1="40" y1="1552" x2="720" y2="1552" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1544" text-anchor="middle" font-size="11" fill="#888">— notification flow (likes, retweets, mentions) —</text>
+
+<rect x="190" y="1560" width="380" height="76" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="1582" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Notification Service</text>
+<text x="380" y="1600" text-anchor="middle" font-size="11" fill="#854f0b">Kafka consumer: like / retweet / mention events</text>
+<text x="380" y="1616" text-anchor="middle" font-size="11" fill="#854f0b">Deduplicate: 3 likes from same person = 1 notif</text>
+<text x="380" y="1632" text-anchor="middle" font-size="11" fill="#854f0b">Group: "X and 5 others liked your tweet"</text>
+
+<line x1="300" y1="1636" x2="150" y2="1680" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="1636" x2="610" y2="1680" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1680" width="220" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="130" y="1702" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">In-app notification bell</text>
+<text x="130" y="1718" text-anchor="middle" font-size="10" fill="#534ab7">WebSocket push to active users</text>
+
+<rect x="520" y="1680" width="220" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="630" y="1702" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Push notification (offline)</text>
+<text x="630" y="1718" text-anchor="middle" font-size="10" fill="#3b6d11">FCM / APNs via Notification Service</text>
+
+<!-- ====== DATA STORES ====== -->
+<line x1="40" y1="1788" x2="720" y2="1788" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1780" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1796" width="148" height="112" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="94"  y="1818" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="94"  y="1836" text-anchor="middle" font-size="10" fill="#3b6d11">Feed inbox per user</text>
+<text x="94"  y="1852" text-anchor="middle" font-size="10" fill="#3b6d11">Trending hashtags</text>
+<text x="94"  y="1868" text-anchor="middle" font-size="10" fill="#3b6d11">Celebrity tweet store</text>
+<text x="94"  y="1884" text-anchor="middle" font-size="10" fill="#3b6d11">Search typeahead</text>
+<text x="94"  y="1900" text-anchor="middle" font-size="10" fill="#3b6d11">Engagement counters</text>
+
+<rect x="186" y="1796" width="148" height="112" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="260" y="1818" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="260" y="1836" text-anchor="middle" font-size="10" fill="#854f0b">Tweets by userId</text>
+<text x="260" y="1852" text-anchor="middle" font-size="10" fill="#854f0b">Timeline by chatId</text>
+<text x="260" y="1868" text-anchor="middle" font-size="10" fill="#854f0b">Sorted by tweetId</text>
+<text x="260" y="1884" text-anchor="middle" font-size="10" fill="#854f0b">Write-heavy, fast</text>
+<text x="260" y="1900" text-anchor="middle" font-size="10" fill="#854f0b">Partition by userId</text>
+
+<rect x="352" y="1796" width="148" height="112" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="426" y="1818" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="426" y="1836" text-anchor="middle" font-size="10" fill="#534ab7">tweet-events topic</text>
+<text x="426" y="1852" text-anchor="middle" font-size="10" fill="#534ab7">Fan-out events</text>
+<text x="426" y="1868" text-anchor="middle" font-size="10" fill="#534ab7">Like/RT events</text>
+<text x="426" y="1884" text-anchor="middle" font-size="10" fill="#534ab7">Trending stream</text>
+<text x="426" y="1900" text-anchor="middle" font-size="10" fill="#534ab7">Notification events</text>
+
+<rect x="518" y="1796" width="148" height="112" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="592" y="1818" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Elasticsearch</text>
+<text x="592" y="1836" text-anchor="middle" font-size="10" fill="#3b6d11">Tweet full-text</text>
+<text x="592" y="1852" text-anchor="middle" font-size="10" fill="#3b6d11">Hashtag index</text>
+<text x="592" y="1868" text-anchor="middle" font-size="10" fill="#3b6d11">User search</text>
+<text x="592" y="1884" text-anchor="middle" font-size="10" fill="#3b6d11">Ranked results</text>
+<text x="592" y="1900" text-anchor="middle" font-size="10" fill="#3b6d11">Near real-time</text>
+
+<rect x="674" y="1796" width="76" height="112" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="712" y="1818" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">Graph DB</text>
+<text x="712" y="1836" text-anchor="middle" font-size="10" fill="#185fa5">Follow</text>
+<text x="712" y="1852" text-anchor="middle" font-size="10" fill="#185fa5">graph</text>
+<text x="712" y="1868" text-anchor="middle" font-size="10" fill="#185fa5">User→</text>
+<text x="712" y="1884" text-anchor="middle" font-size="10" fill="#185fa5">followers</text>
+<text x="712" y="1900" text-anchor="middle" font-size="10" fill="#185fa5">Neo4j</text>
+
+<!-- KEY INSIGHT BOX -->
+<line x1="40" y1="1968" x2="720" y2="1968" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1960" text-anchor="middle" font-size="11" fill="#888">— the core fan-out insight —</text>
+
+<rect x="20" y="1976" width="720" height="88" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="1998" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Push vs Pull Fan-out Trade-off</text>
+<text x="380" y="2018" text-anchor="middle" font-size="11" fill="#5f5e5a">PUSH (regular users): write tweet to all follower inboxes on post — fast reads, slow writes, high storage</text>
+<text x="380" y="2036" text-anchor="middle" font-size="11" fill="#5f5e5a">PULL (celebrities 1M+): store centrally, followers fetch at read time — slow reads, fast writes, low storage</text>
+<text x="380" y="2054" text-anchor="middle" font-size="11" fill="#5f5e5a">HYBRID (Twitter's actual approach): push for regular, pull for celebrities, merge at feed read time</text>
+
+</svg>
+</body></html>

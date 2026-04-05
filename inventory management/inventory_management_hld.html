@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 2640" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#2c2c2a"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">INVENTORY MANAGEMENT SYSTEM — HLD APPLICATION FLOW</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">Stock reservation → inbound → outbound → reorder → warehouse transfer</text>
+
+<!-- ====== SECTION 1: ORDER FLOW — RESERVE STOCK ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— customer order placement → stock reservation flow —</text>
+
+<!-- CLIENTS -->
+<rect x="40"  y="80" width="220" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="150" y="100" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Customer (Web / App)</text>
+<text x="150" y="116" text-anchor="middle" font-size="11" fill="#5f5e5a">Places order with items + qty</text>
+
+<rect x="540" y="80" width="220" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="650" y="100" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Seller / Merchant</text>
+<text x="650" y="116" text-anchor="middle" font-size="11" fill="#5f5e5a">Lists products, updates stock</text>
+
+<line x1="150" y1="132" x2="280" y2="180" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="650" y1="132" x2="520" y2="180" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- API GATEWAY -->
+<rect x="220" y="180" width="360" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="202" text-anchor="middle" font-size="13" font-weight="700" fill="#2c2c2a">API Gateway</text>
+<text x="400" y="218" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth, rate limiting, route to Order / Inventory Service</text>
+
+<line x1="400" y1="232" x2="400" y2="268" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ORDER SERVICE -->
+<rect x="160" y="268" width="480" height="88" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="290" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Order Service</text>
+<text x="400" y="308" text-anchor="middle" font-size="11" fill="#0f6e56">1. Validate order (items, quantities, prices)</text>
+<text x="400" y="324" text-anchor="middle" font-size="11" fill="#0f6e56">2. Find best warehouse for each item (nearest with stock)</text>
+<text x="400" y="340" text-anchor="middle" font-size="11" fill="#0f6e56">3. Call Inventory Service: reserve stock (atomic per SKU)</text>
+<text x="400" y="356" text-anchor="middle" font-size="11" fill="#0f6e56">4. Confirm order → publish to Kafka → payment flow</text>
+
+<!-- reservation fail -->
+<line x1="160" y1="324" x2="80" y2="388" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="68" y="372" font-size="10" text-anchor="end" fill="#d85a30">out of stock</text>
+<rect x="16" y="388" width="148" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="90" y="406" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Out of Stock</text>
+<text x="90" y="420" text-anchor="middle" font-size="10" fill="#993c1d">notify + suggest alt</text>
+
+<line x1="400" y1="356" x2="400" y2="416" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- INVENTORY SERVICE — RESERVE -->
+<rect x="160" y="416" width="480" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="438" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Inventory Service — Reserve</text>
+<text x="400" y="456" text-anchor="middle" font-size="11" fill="#534ab7">Per-SKU distributed lock (Redis SET NX TTL=30min)</text>
+<text x="400" y="472" text-anchor="middle" font-size="11" fill="#534ab7">Validate: qty ≤ available → atomically move qty to reserved</text>
+<text x="400" y="488" text-anchor="middle" font-size="11" fill="#534ab7">Write reservation to PostgreSQL (durable)</text>
+<text x="400" y="504" text-anchor="middle" font-size="11" fill="#534ab7">Update Redis stock level cache (TTL 60s)</text>
+<text x="400" y="516" text-anchor="middle" font-size="11" fill="#534ab7">Kafka: stock-events → analytics, low-stock checker</text>
+
+<!-- ====== SECTION 2: OUTBOUND FULFILLMENT ====== -->
+<line x1="30" y1="584" x2="770" y2="584" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="576" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— outbound fulfillment flow (order picked → packed → shipped) —</text>
+
+<line x1="400" y1="516" x2="400" y2="592" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="160" y="592" width="480" height="88" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="614" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Warehouse Management System (WMS)</text>
+<text x="400" y="632" text-anchor="middle" font-size="11" fill="#0f6e56">Pick list generated → warehouse worker scans barcode</text>
+<text x="400" y="648" text-anchor="middle" font-size="11" fill="#0f6e56">Pack + label (weight, dimensions → shipping cost calc)</text>
+<text x="400" y="664" text-anchor="middle" font-size="11" fill="#0f6e56">Handover to logistics (Delhivery / Bluedart / India Post)</text>
+<text x="400" y="680" text-anchor="middle" font-size="11" fill="#0f6e56">AWB generated → tracking number to customer</text>
+
+<line x1="400" y1="680" x2="400" y2="728" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- STOCK DEDUCTION -->
+<rect x="220" y="728" width="360" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="750" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Stock Deducted (shipment scan event)</text>
+<text x="400" y="766" text-anchor="middle" font-size="11" fill="#854f0b">Reserved qty → 0 | Available qty unchanged | Kafka event</text>
+
+<!-- ====== SECTION 3: INBOUND FLOW ====== -->
+<line x1="30" y1="840" x2="770" y2="840" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="832" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— inbound flow (supplier delivery → goods receipt) —</text>
+
+<!-- SUPPLIER -->
+<rect x="30"  y="848" width="180" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="120" y="868" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Supplier</text>
+<text x="120" y="884" text-anchor="middle" font-size="11" fill="#5f5e5a">Ships against PO</text>
+
+<line x1="210" y1="874" x2="290" y2="916" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- GOODS RECEIPT -->
+<rect x="220" y="916" width="360" height="100" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="938" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">Goods Receipt Note (GRN)</text>
+<text x="400" y="956" text-anchor="middle" font-size="11" fill="#185fa5">Scan barcode / RFID tag → verify against PO line items</text>
+<text x="400" y="972" text-anchor="middle" font-size="11" fill="#185fa5">Quantity check: received vs ordered</text>
+<text x="400" y="988" text-anchor="middle" font-size="11" fill="#185fa5">Quality check: accept / reject / partial accept</text>
+<text x="400" y="1004" text-anchor="middle" font-size="11" fill="#185fa5">Assign bin / shelf location in warehouse</text>
+<text x="400" y="1016" text-anchor="middle" font-size="11" fill="#185fa5">Update Inventory Service: add to available stock</text>
+
+<line x1="400" y1="1016" x2="400" y2="1064" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- KAFKA + DOWNSTREAM -->
+<rect x="220" y="1064" width="360" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1082" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Kafka — stock-inbound-events</text>
+<text x="400" y="1098" text-anchor="middle" font-size="11" fill="#534ab7">Update PO status | alert procurement | trigger billing to supplier</text>
+
+<!-- ====== SECTION 4: REORDER FLOW ====== -->
+<line x1="30" y1="1168" x2="770" y2="1168" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1160" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— automatic reorder flow —</text>
+
+<rect x="160" y="1176" width="480" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="1198" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Reorder Engine (Scheduled Job + Event-Driven)</text>
+<text x="400" y="1216" text-anchor="middle" font-size="11" fill="#0f6e56">Kafka consumer: listens to stock-events topic</text>
+<text x="400" y="1232" text-anchor="middle" font-size="11" fill="#0f6e56">Checks: availableQty ≤ reorderPoint for the SKU</text>
+<text x="400" y="1248" text-anchor="middle" font-size="11" fill="#0f6e56">Reorder strategy: EOQ / Fixed Qty / JIT → compute order qty</text>
+<text x="400" y="1264" text-anchor="middle" font-size="11" fill="#0f6e56">Check: no PO already in flight for this SKU</text>
+<text x="400" y="1276" text-anchor="middle" font-size="11" fill="#0f6e56">Auto-generate PO → send to supplier via EDI / email / API</text>
+
+<line x1="280" y1="1276" x2="160" y2="1336" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="520" y1="1276" x2="640" y2="1336" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1336" width="240" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="140" y="1358" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Purchase Order Created</text>
+<text x="140" y="1376" text-anchor="middle" font-size="11" fill="#854f0b">Sent to supplier (EDI / email)</text>
+<text x="140" y="1392" text-anchor="middle" font-size="11" fill="#854f0b">Tracked in PO management</text>
+
+<rect x="540" y="1336" width="240" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="660" y="1358" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Alert to Procurement</text>
+<text x="660" y="1376" text-anchor="middle" font-size="11" fill="#534ab7">Push + email to buyer team</text>
+<text x="660" y="1392" text-anchor="middle" font-size="11" fill="#534ab7">Dashboard low-stock panel</text>
+
+<!-- ====== SECTION 5: WAREHOUSE TRANSFER ====== -->
+<line x1="30" y1="1460" x2="770" y2="1460" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1452" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— inter-warehouse transfer flow —</text>
+
+<rect x="160" y="1468" width="480" height="100" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="1490" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">Transfer Management</text>
+<text x="400" y="1508" text-anchor="middle" font-size="11" fill="#185fa5">Trigger: high demand in city A, surplus in city B</text>
+<text x="400" y="1524" text-anchor="middle" font-size="11" fill="#185fa5">Lock source warehouse stock (Redis NX) — prevent double-transfer</text>
+<text x="400" y="1540" text-anchor="middle" font-size="11" fill="#185fa5">Deduct from source → mark IN_TRANSIT → add to destination on receipt</text>
+<text x="400" y="1556" text-anchor="middle" font-size="11" fill="#185fa5">Consistent locking order (alphabetical) → no deadlock</text>
+<text x="400" y="1568" text-anchor="middle" font-size="11" fill="#185fa5">Full audit trail: movement log with timestamps + quantities</text>
+
+<!-- ====== SECTION 6: REAL-TIME STOCK API ====== -->
+<line x1="30" y1="1636" x2="770" y2="1636" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1628" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— real-time stock level API (read path) —</text>
+
+<rect x="160" y="1644" width="480" height="88" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="1666" text-anchor="middle" font-size="13" font-weight="700" fill="#27500a">Stock Level API</text>
+<text x="400" y="1684" text-anchor="middle" font-size="11" fill="#3b6d11">GET /stock?sku=APPL-IP15P&warehouseId=1</text>
+<text x="400" y="1700" text-anchor="middle" font-size="11" fill="#3b6d11">Layer 1: Redis cache (TTL 60s) → sub-millisecond</text>
+<text x="400" y="1716" text-anchor="middle" font-size="11" fill="#3b6d11">Cache miss: PostgreSQL → repopulate Redis</text>
+<text x="400" y="1724" text-anchor="middle" font-size="11" fill="#3b6d11">Returns: available, reserved, inTransit, damaged counts</text>
+
+<!-- ====== SECTION 7: DATA STORES ====== -->
+<line x1="30" y1="1800" x2="770" y2="1800" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1792" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1808" width="175" height="148" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="107" y="1830" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="107" y="1848" text-anchor="middle" font-size="10" fill="#3b6d11">Per-SKU stock lock</text>
+<text x="107" y="1864" text-anchor="middle" font-size="10" fill="#3b6d11">(SET NX TTL=30min)</text>
+<text x="107" y="1880" text-anchor="middle" font-size="10" fill="#3b6d11">Stock level cache</text>
+<text x="107" y="1896" text-anchor="middle" font-size="10" fill="#3b6d11">(available/reserved)</text>
+<text x="107" y="1912" text-anchor="middle" font-size="10" fill="#3b6d11">Reorder flag per SKU</text>
+<text x="107" y="1928" text-anchor="middle" font-size="10" fill="#3b6d11">Alert dedup keys</text>
+<text x="107" y="1944" text-anchor="middle" font-size="10" fill="#3b6d11">Pub/sub for alerts</text>
+
+<rect x="211" y="1808" width="175" height="148" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="298" y="1830" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="298" y="1848" text-anchor="middle" font-size="10" fill="#185fa5">Products catalog</text>
+<text x="298" y="1864" text-anchor="middle" font-size="10" fill="#185fa5">Warehouses</text>
+<text x="298" y="1880" text-anchor="middle" font-size="10" fill="#185fa5">Stock items</text>
+<text x="298" y="1896" text-anchor="middle" font-size="10" fill="#185fa5">Stock movements</text>
+<text x="298" y="1912" text-anchor="middle" font-size="10" fill="#185fa5">Purchase orders</text>
+<text x="298" y="1928" text-anchor="middle" font-size="10" fill="#185fa5">Reservations</text>
+<text x="298" y="1944" text-anchor="middle" font-size="10" fill="#185fa5">Audit trail</text>
+
+<rect x="402" y="1808" width="175" height="148" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="489" y="1830" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="489" y="1848" text-anchor="middle" font-size="10" fill="#534ab7">stock-events</text>
+<text x="489" y="1864" text-anchor="middle" font-size="10" fill="#534ab7">stock-inbound-events</text>
+<text x="489" y="1880" text-anchor="middle" font-size="10" fill="#534ab7">order-events</text>
+<text x="489" y="1896" text-anchor="middle" font-size="10" fill="#534ab7">reorder-events</text>
+<text x="489" y="1912" text-anchor="middle" font-size="10" fill="#534ab7">transfer-events</text>
+<text x="489" y="1928" text-anchor="middle" font-size="10" fill="#534ab7">alert-events</text>
+<text x="489" y="1944" text-anchor="middle" font-size="10" fill="#534ab7">Replay on crash</text>
+
+<rect x="593" y="1808" width="187" height="148" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="686" y="1830" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="686" y="1848" text-anchor="middle" font-size="10" fill="#854f0b">Movement history</text>
+<text x="686" y="1864" text-anchor="middle" font-size="10" fill="#854f0b">(time-series)</text>
+<text x="686" y="1880" text-anchor="middle" font-size="10" fill="#854f0b">Daily demand data</text>
+<text x="686" y="1896" text-anchor="middle" font-size="10" fill="#854f0b">Forecast input</text>
+<text x="686" y="1912" text-anchor="middle" font-size="10" fill="#854f0b">Stock snapshot logs</text>
+<text x="686" y="1928" text-anchor="middle" font-size="10" fill="#854f0b">Sales velocity</text>
+<text x="686" y="1944" text-anchor="middle" font-size="10" fill="#854f0b">Cycle count history</text>
+
+<!-- ====== SECTION 8: CORE CHALLENGES ====== -->
+<line x1="30" y1="2020" x2="770" y2="2020" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2012" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 5 hardest design decisions —</text>
+
+<rect x="30" y="2028" width="740" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2048" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">1. Preventing overselling — per-SKU distributed lock</text>
+<text x="400" y="2066" text-anchor="middle" font-size="11" fill="#0f6e56">Redis SET NX (lock per SKU:warehouseId). Only one thread reserves at a time. Release lock after DB write confirmed. TTL = 30 min for reservation expiry.</text>
+
+<rect x="30" y="2092" width="740" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2112" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">2. Consistent locking for transfers (no deadlock)</text>
+<text x="400" y="2130" text-anchor="middle" font-size="11" fill="#185fa5">Always acquire locks in alphabetical key order. Thread A: lock(APPL-IP15P:1), then lock(APPL-IP15P:2). Thread B same order → no deadlock possible.</text>
+
+<rect x="30" y="2156" width="740" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="2176" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">3. Reservation TTL — unpaid orders don't hold stock forever</text>
+<text x="400" y="2194" text-anchor="middle" font-size="11" fill="#854f0b">Redis reservation key has TTL = 30 minutes. Expired reservation → background job releases stock, notifies customer. Same pattern as BookMyShow seat lock.</text>
+
+<rect x="30" y="2220" width="740" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2240" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">4. FEFO for perishables — First Expired First Out</text>
+<text x="400" y="2258" text-anchor="middle" font-size="11" fill="#534ab7">Batches stored with expiry dates. Pick list generator always picks nearest-expiry batch first. Reduces spoilage. Critical for grocery, pharma, FMCG categories.</text>
+
+<rect x="30" y="2284" width="740" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2304" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">5. Reorder without a PO already in flight</text>
+<text x="400" y="2322" text-anchor="middle" font-size="11" fill="#993c1d">Before creating a PO, check if one already exists (CONFIRMED or SHIPPED state). Otherwise low stock triggers multiple POs in quick succession → overstock on arrival.</text>
+
+<!-- COMPARISON TABLE -->
+<line x1="30" y1="2400" x2="770" y2="2400" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2392" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— reorder strategy comparison —</text>
+
+<rect x="30"  y="2408" width="232" height="128" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="146" y="2430" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Fixed Quantity</text>
+<text x="146" y="2450" text-anchor="middle" font-size="11" fill="#3b6d11">Always order same qty</text>
+<text x="146" y="2466" text-anchor="middle" font-size="11" fill="#3b6d11">Simple to implement</text>
+<text x="146" y="2482" text-anchor="middle" font-size="11" fill="#3b6d11">✓ Predictable</text>
+<text x="146" y="2498" text-anchor="middle" font-size="11" fill="#3b6d11">✗ Ignores demand patterns</text>
+<text x="146" y="2514" text-anchor="middle" font-size="11" fill="#3b6d11">Use: stable products</text>
+<text x="146" y="2530" text-anchor="middle" font-size="11" fill="#3b6d11">(stationery, spares)</text>
+
+<rect x="284" y="2408" width="232" height="128" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2430" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">EOQ (Economic Order Qty)</text>
+<text x="400" y="2450" text-anchor="middle" font-size="11" fill="#185fa5">√(2DS/H) minimises cost</text>
+<text x="400" y="2466" text-anchor="middle" font-size="11" fill="#185fa5">Balances order + hold cost</text>
+<text x="400" y="2482" text-anchor="middle" font-size="11" fill="#185fa5">✓ Cost-optimal</text>
+<text x="400" y="2498" text-anchor="middle" font-size="11" fill="#185fa5">✗ Needs demand data</text>
+<text x="400" y="2514" text-anchor="middle" font-size="11" fill="#185fa5">Use: electronics, apparel</text>
+<text x="400" y="2530" text-anchor="middle" font-size="11" fill="#185fa5">(Flipkart, Amazon)</text>
+
+<rect x="538" y="2408" width="232" height="128" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="654" y="2430" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">JIT (Just In Time)</text>
+<text x="654" y="2450" text-anchor="middle" font-size="11" fill="#854f0b">Order only what's needed</text>
+<text x="654" y="2466" text-anchor="middle" font-size="11" fill="#854f0b">Minimise holding cost</text>
+<text x="654" y="2482" text-anchor="middle" font-size="11" fill="#854f0b">✓ Zero overstock</text>
+<text x="654" y="2498" text-anchor="middle" font-size="11" fill="#854f0b">✗ Supplier must be reliable</text>
+<text x="654" y="2514" text-anchor="middle" font-size="11" fill="#854f0b">Use: perishables, FMCG</text>
+<text x="654" y="2530" text-anchor="middle" font-size="11" fill="#854f0b">(Swiggy Instamart, Blinkit)</text>
+
+<!-- FINAL BOX -->
+<rect x="30" y="2560" width="740" height="60" rx="8" fill="#2c2c2a"/>
+<text x="400" y="2582" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">The core principle: available qty = total qty - reserved qty. Never sell what you don't have.</text>
+<text x="400" y="2600" text-anchor="middle" font-size="11" fill="#aaa">Every operation that changes stock must be atomic (Redis lock) + durable (PostgreSQL write) + auditable (Kafka event).</text>
+
+</svg>
+</body></html>

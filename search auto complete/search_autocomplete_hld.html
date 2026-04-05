@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 820px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 760 2080" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: CLIENT TYPE-AHEAD FLOW ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— real-time typeahead flow (must complete in &lt;100ms) —</text>
+
+<!-- USER TYPING -->
+<rect x="200" y="32" width="360" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="54" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">User types in search box</text>
+<text x="380" y="72" text-anchor="middle" font-size="11" fill="#5f5e5a">Debounced: trigger API call after 150ms of no keypress</text>
+<text x="380" y="88" text-anchor="middle" font-size="11" fill="#5f5e5a">Cancel previous in-flight request (AbortController)</text>
+
+<line x1="380" y1="96" x2="380" y2="128" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="116" font-size="10" fill="#888">GET /suggest?q=iph&userId=alice&topK=10</text>
+
+<!-- CDN EDGE CACHE -->
+<rect x="190" y="128" width="380" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="150" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">CDN Edge Cache (Cloudfront)</text>
+<text x="380" y="168" text-anchor="middle" font-size="11" fill="#854f0b">Cache popular prefixes at edge (top 10k prefixes)</text>
+<text x="380" y="184" text-anchor="middle" font-size="11" fill="#854f0b">TTL: 60 seconds — anonymous queries only</text>
+
+<!-- CDN hit -->
+<line x1="570" y1="160" x2="640" y2="212" stroke="#0f6e56" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-g)"/>
+<text x="648" y="196" font-size="10" fill="#0f6e56">CDN hit</text>
+<rect x="558" y="212" width="190" height="44" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="653" y="234" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Return suggestions</text>
+<text x="653" y="248" text-anchor="middle" font-size="10" fill="#3b6d11">~5ms response</text>
+
+<!-- CDN miss -->
+<line x1="380" y1="192" x2="380" y2="240" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="220" font-size="10" fill="#888">CDN miss → origin</text>
+
+<!-- API GATEWAY -->
+<rect x="240" y="240" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="262" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway</text>
+<text x="380" y="278" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth, rate limit (1000 req/min), route</text>
+
+<line x1="380" y1="292" x2="380" y2="328" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- AUTOCOMPLETE SERVICE -->
+<rect x="190" y="328" width="380" height="88" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="350" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Autocomplete Service</text>
+<text x="380" y="368" text-anchor="middle" font-size="11" fill="#0f6e56">Normalize prefix: lowercase, trim, strip special chars</text>
+<text x="380" y="384" text-anchor="middle" font-size="11" fill="#0f6e56">Check Redis prefix cache (L1 hot cache)</text>
+<text x="380" y="400" text-anchor="middle" font-size="11" fill="#0f6e56">Apply ranking strategy: frequency / personalized</text>
+<text x="380" y="416" text-anchor="middle" font-size="11" fill="#0f6e56">Return top-K suggestions in &lt;20ms</text>
+
+<!-- Redis cache hit -->
+<line x1="190" y1="368" x2="90" y2="436" stroke="#0f6e56" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-g)"/>
+<text x="78" y="418" font-size="10" text-anchor="end" fill="#0f6e56">Redis hit</text>
+<rect x="16" y="436" width="148" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="90" y="454" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Return cached</text>
+<text x="90" y="468" text-anchor="middle" font-size="10" fill="#3b6d11">suggestions ~2ms</text>
+
+<!-- Redis cache miss → Trie -->
+<line x1="380" y1="416" x2="380" y2="464" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="444" font-size="10" fill="#888">Redis miss → query Trie</text>
+
+<!-- ====== SECTION 2: TRIE LOOKUP ====== -->
+<line x1="40" y1="512" x2="720" y2="512" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="504" text-anchor="middle" font-size="11" fill="#888">— trie lookup + ranking flow —</text>
+
+<!-- TRIE SERVICE -->
+<rect x="190" y="520" width="380" height="88" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="542" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Trie Service (In-memory per node)</text>
+<text x="380" y="560" text-anchor="middle" font-size="11" fill="#534ab7">Each node caches top-K suggestions at prefix</text>
+<text x="380" y="576" text-anchor="middle" font-size="11" fill="#534ab7">Walk prefix chars → reach target node → return topK</text>
+<text x="380" y="592" text-anchor="middle" font-size="11" fill="#534ab7">O(L) lookup where L = prefix length (e.g. 5 chars)</text>
+<text x="380" y="608" text-anchor="middle" font-size="11" fill="#534ab7">Domain-specific tries: global / ecommerce / social</text>
+
+<!-- parallel: personalization -->
+<line x1="300" y1="608" x2="160" y2="652" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="608" x2="600" y2="652" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="148" y="636" font-size="10" text-anchor="end" fill="#888">trie candidates</text>
+<text x="608" y="636" font-size="10" fill="#888">user context</text>
+
+<!-- TRIE CANDIDATES -->
+<rect x="30"  y="652" width="230" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="145" y="674" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Trie candidates (30 max)</text>
+<text x="145" y="692" text-anchor="middle" font-size="11" fill="#3b6d11">Pre-sorted by global frequency</text>
+<text x="145" y="708" text-anchor="middle" font-size="11" fill="#3b6d11">Fetched in O(L) time</text>
+
+<!-- PERSONALIZATION -->
+<rect x="500" y="652" width="230" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="615" y="674" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Personalization Service</text>
+<text x="615" y="692" text-anchor="middle" font-size="11" fill="#185fa5">User search history (Redis)</text>
+<text x="615" y="708" text-anchor="middle" font-size="11" fill="#185fa5">Boost previously selected terms</text>
+
+<!-- merge + rank -->
+<line x1="145" y1="716" x2="280" y2="760" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="615" y1="716" x2="480" y2="760" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- RANKING + FILTER -->
+<rect x="190" y="760" width="380" height="76" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="782" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Ranking + Filter</text>
+<text x="380" y="800" text-anchor="middle" font-size="11" fill="#854f0b">Apply score: frequency × personalization × trending boost</text>
+<text x="380" y="816" text-anchor="middle" font-size="11" fill="#854f0b">Filter: blocked domains, safe search, locale</text>
+<text x="380" y="832" text-anchor="middle" font-size="11" fill="#854f0b">Return top-10, write result to Redis cache (TTL 60s)</text>
+
+<line x1="380" y1="836" x2="380" y2="872" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="220" y="872" width="320" height="44" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="894" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Suggestions returned to client (&lt;50ms)</text>
+
+<!-- ====== SECTION 3: TRIE BUILD + REFRESH ====== -->
+<line x1="40" y1="972" x2="720" y2="972" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="964" text-anchor="middle" font-size="11" fill="#888">— trie build + refresh pipeline (offline/batch) —</text>
+
+<!-- DATA SOURCES -->
+<rect x="20"  y="980" width="148" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="94"  y="1002" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Search Logs</text>
+<text x="94"  y="1018" text-anchor="middle" font-size="10" fill="#5f5e5a">User query stream</text>
+<text x="94"  y="1034" text-anchor="middle" font-size="10" fill="#5f5e5a">Click-through data</text>
+
+<rect x="186" y="980" width="148" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="260" y="1002" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Product Catalog</text>
+<text x="260" y="1018" text-anchor="middle" font-size="10" fill="#5f5e5a">Item names + prices</text>
+<text x="260" y="1034" text-anchor="middle" font-size="10" fill="#5f5e5a">Updated daily</text>
+
+<rect x="352" y="980" width="148" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="426" y="1002" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">User Profiles</text>
+<text x="426" y="1018" text-anchor="middle" font-size="10" fill="#5f5e5a">Usernames, verified</text>
+<text x="426" y="1034" text-anchor="middle" font-size="10" fill="#5f5e5a">Follower counts</text>
+
+<rect x="518" y="980" width="222" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="629" y="1002" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Trending Events</text>
+<text x="629" y="1018" text-anchor="middle" font-size="10" fill="#5f5e5a">News, sports, viral</text>
+<text x="629" y="1034" text-anchor="middle" font-size="10" fill="#5f5e5a">Real-time updates</text>
+
+<line x1="94"  y1="1044" x2="240" y2="1092" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="260" y1="1044" x2="295" y2="1092" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="426" y1="1044" x2="430" y2="1092" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="629" y1="1044" x2="520" y2="1092" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- BATCH PROCESSOR -->
+<rect x="190" y="1092" width="380" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1114" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Batch Processor (Spark / Flink)</text>
+<text x="380" y="1132" text-anchor="middle" font-size="11" fill="#534ab7">Compute frequency scores from search logs</text>
+<text x="380" y="1148" text-anchor="middle" font-size="11" fill="#534ab7">Merge all sources → ranked suggestion list</text>
+
+<line x1="380" y1="1156" x2="380" y2="1204" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- TWO BUILD PIPELINES -->
+<line x1="300" y1="1224" x2="150" y2="1268" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="1224" x2="610" y2="1268" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="1204" width="380" height="28" rx="6" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1223" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Parallel: offline build + real-time stream</text>
+
+<!-- OFFLINE BUILD -->
+<rect x="20"  y="1268" width="240" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="140" y="1290" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Offline Trie Build (Daily)</text>
+<text x="140" y="1308" text-anchor="middle" font-size="11" fill="#3b6d11">Full rebuild from all-time frequency data</text>
+<text x="140" y="1324" text-anchor="middle" font-size="11" fill="#3b6d11">Build snapshots stored in S3</text>
+<text x="140" y="1340" text-anchor="middle" font-size="11" fill="#3b6d11">Loaded into Trie service on restart</text>
+
+<!-- REAL-TIME STREAM -->
+<rect x="500" y="1268" width="240" height="76" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="620" y="1290" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Real-time Stream (Kafka)</text>
+<text x="620" y="1308" text-anchor="middle" font-size="11" fill="#854f0b">Trending terms updated every 5min</text>
+<text x="620" y="1324" text-anchor="middle" font-size="11" fill="#854f0b">Score updates pushed to Redis cache</text>
+<text x="620" y="1340" text-anchor="middle" font-size="11" fill="#854f0b">Invalidate stale prefix cache entries</text>
+
+<!-- converge to trie nodes -->
+<line x1="140" y1="1344" x2="280" y2="1400" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="620" y1="1344" x2="480" y2="1400" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="1400" width="380" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="1422" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Trie nodes updated — Redis cache invalidated</text>
+<text x="380" y="1438" text-anchor="middle" font-size="11" fill="#0f6e56">Next query gets fresh results with updated scores</text>
+
+<!-- ====== SECTION 4: USER SELECTION FEEDBACK ====== -->
+<line x1="40" y1="1508" x2="720" y2="1508" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1500" text-anchor="middle" font-size="11" fill="#888">— user selection feedback loop —</text>
+
+<rect x="190" y="1516" width="380" height="88" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1538" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Selection Event Handler</text>
+<text x="380" y="1556" text-anchor="middle" font-size="11" fill="#185fa5">User clicks a suggestion → POST /select {prefix, term}</text>
+<text x="380" y="1572" text-anchor="middle" font-size="11" fill="#185fa5">Write to user history in Redis (20-item sliding window)</text>
+<text x="380" y="1588" text-anchor="middle" font-size="11" fill="#185fa5">Publish click event to Kafka → frequency update stream</text>
+<text x="380" y="1604" text-anchor="middle" font-size="11" fill="#185fa5">Invalidate prefix cache → next query gets boosted result</text>
+
+<!-- ====== SECTION 5: SCALE + DISTRIBUTION ====== -->
+<line x1="40" y1="1668" x2="720" y2="1668" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1660" text-anchor="middle" font-size="11" fill="#888">— scale: how to distribute the trie across servers —</text>
+
+<rect x="190" y="1676" width="380" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1698" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Trie Sharding Strategy</text>
+<text x="380" y="1716" text-anchor="middle" font-size="11" fill="#534ab7">Shard by first 2 chars of prefix: "ip" → node A, "ja" → node B</text>
+<text x="380" y="1732" text-anchor="middle" font-size="11" fill="#534ab7">Each shard = ~676 prefix namespaces (26×26)</text>
+<text x="380" y="1748" text-anchor="middle" font-size="11" fill="#534ab7">Hot shards (e.g. "i", "a") get more replicas</text>
+<text x="380" y="1768" text-anchor="middle" font-size="11" fill="#534ab7">Read replicas per shard for horizontal read scale</text>
+
+<!-- shard nodes -->
+<line x1="260" y1="1776" x2="100" y2="1828" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="340" y1="1776" x2="280" y2="1828" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="420" y1="1776" x2="460" y2="1828" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="500" y1="1776" x2="640" y2="1828" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1828" width="148" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="94"  y="1846" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Shard a-f</text>
+<text x="94"  y="1862" text-anchor="middle" font-size="10" fill="#3b6d11">"apple", "azure"...</text>
+
+<rect x="196" y="1828" width="148" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="270" y="1846" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Shard g-m</text>
+<text x="270" y="1862" text-anchor="middle" font-size="10" fill="#3b6d11">"google", "iphone"...</text>
+
+<rect x="372" y="1828" width="148" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="446" y="1846" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Shard n-s</text>
+<text x="446" y="1862" text-anchor="middle" font-size="10" fill="#3b6d11">"netflix", "samsung"...</text>
+
+<rect x="548" y="1828" width="192" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="644" y="1846" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Shard t-z</text>
+<text x="644" y="1862" text-anchor="middle" font-size="10" fill="#3b6d11">"twitter", "youtube"...</text>
+
+<!-- ====== DATA STORES ====== -->
+<line x1="40" y1="1940" x2="720" y2="1940" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1932" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1948" width="172" height="112" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="106" y="1970" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="106" y="1988" text-anchor="middle" font-size="10" fill="#3b6d11">Prefix → suggestions cache</text>
+<text x="106" y="2004" text-anchor="middle" font-size="10" fill="#3b6d11">User search history</text>
+<text x="106" y="2020" text-anchor="middle" font-size="10" fill="#3b6d11">Trending terms</text>
+<text x="106" y="2036" text-anchor="middle" font-size="10" fill="#3b6d11">TTL: 60s for suggestions</text>
+<text x="106" y="2052" text-anchor="middle" font-size="10" fill="#3b6d11">Hot: sub-2ms reads</text>
+
+<rect x="210" y="1948" width="172" height="112" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="296" y="1970" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Trie (In-memory)</text>
+<text x="296" y="1988" text-anchor="middle" font-size="10" fill="#534ab7">Per Autocomplete node</text>
+<text x="296" y="2004" text-anchor="middle" font-size="10" fill="#534ab7">Top-K cached at each node</text>
+<text x="296" y="2020" text-anchor="middle" font-size="10" fill="#534ab7">~2GB per shard for 10M terms</text>
+<text x="296" y="2036" text-anchor="middle" font-size="10" fill="#534ab7">Rebuilt daily from S3</text>
+<text x="296" y="2052" text-anchor="middle" font-size="10" fill="#534ab7">O(L) lookup</text>
+
+<rect x="400" y="1948" width="172" height="112" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="486" y="1970" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Kafka</text>
+<text x="486" y="1988" text-anchor="middle" font-size="10" fill="#854f0b">Search click events</text>
+<text x="486" y="2004" text-anchor="middle" font-size="10" fill="#854f0b">Frequency update stream</text>
+<text x="486" y="2020" text-anchor="middle" font-size="10" fill="#854f0b">Trending refresh stream</text>
+<text x="486" y="2036" text-anchor="middle" font-size="10" fill="#854f0b">Async decoupling</text>
+<text x="486" y="2052" text-anchor="middle" font-size="10" fill="#854f0b">Replayable on failure</text>
+
+<rect x="590" y="1948" width="150" height="112" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="665" y="1970" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">S3 + Cassandra</text>
+<text x="665" y="1988" text-anchor="middle" font-size="10" fill="#185fa5">S3: Trie snapshots</text>
+<text x="665" y="2004" text-anchor="middle" font-size="10" fill="#185fa5">Daily rebuild archives</text>
+<text x="665" y="2020" text-anchor="middle" font-size="10" fill="#185fa5">Cassandra: all-time</text>
+<text x="665" y="2036" text-anchor="middle" font-size="10" fill="#185fa5">frequency history</text>
+<text x="665" y="2052" text-anchor="middle" font-size="10" fill="#185fa5">User click logs</text>
+
+</svg>
+</body></html>

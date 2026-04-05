@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>body{font-family:sans-serif;background:#f9f9f7;padding:24px;}svg{max-width:820px;display:block;margin:auto;}</style>
+</head><body>
+<svg viewBox="0 0 760 2020" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: SEARCH + BROWSE ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— search + browse flow —</text>
+
+<!-- CLIENTS -->
+<rect x="60"  y="32" width="200" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="160" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Mobile App</text>
+<text x="160" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Search movies + shows</text>
+
+<rect x="500" y="32" width="200" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="600" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Web Client</text>
+<text x="600" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Browse + book tickets</text>
+
+<line x1="160" y1="84" x2="300" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="600" y1="84" x2="460" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- API GATEWAY -->
+<rect x="240" y="132" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="154" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway</text>
+<text x="380" y="170" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth (JWT), rate limiting, routing</text>
+
+<line x1="380" y1="184" x2="380" y2="216" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- SEARCH SERVICE -->
+<rect x="210" y="216" width="340" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="238" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Search Service</text>
+<text x="380" y="256" text-anchor="middle" font-size="11" fill="#0f6e56">Find movies by city + date + genre</text>
+<text x="380" y="272" text-anchor="middle" font-size="11" fill="#0f6e56">Elasticsearch for full-text search</text>
+
+<!-- Two separate paths after search service -->
+<line x1="290" y1="280" x2="160" y2="328" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="470" y1="280" x2="600" y2="328" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<text x="148" y="312" font-size="10" text-anchor="end" fill="#888">movie metadata</text>
+<text x="612" y="312" font-size="10" fill="#888">show listings</text>
+
+<!-- ===== LEFT PATH: MOVIE METADATA (cache hit/miss) ===== -->
+
+<!-- STEP 1L: Check Redis for metadata -->
+<rect x="30" y="328" width="240" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="150" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis — metadata cache</text>
+<text x="150" y="368" text-anchor="middle" font-size="11" fill="#3b6d11">Check: title, rating, genre, cast</text>
+<text x="150" y="384" text-anchor="middle" font-size="11" fill="#3b6d11">TTL: 1 hour (changes rarely)</text>
+
+<!-- cache HIT left -->
+<line x1="30" y1="360" x2="4" y2="420" stroke="#0f6e56" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-g)"/>
+<text x="2" y="406" font-size="9" text-anchor="end" fill="#0f6e56">hit ✓</text>
+
+<!-- cache MISS left -->
+<line x1="150" y1="392" x2="150" y2="432" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="166" y="418" font-size="9" fill="#d85a30">miss ✗</text>
+
+<!-- STEP 2L: Movie DB on miss -->
+<rect x="40" y="432" width="220" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="150" y="454" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Movie DB (PostgreSQL)</text>
+<text x="150" y="470" text-anchor="middle" font-size="11" fill="#185fa5">Fetch metadata → populate Redis</text>
+
+<!-- STEP 3L: CDN for binary assets (always, separate concern) -->
+<line x1="150" y1="484" x2="150" y2="520" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="30" y="520" width="240" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="150" y="542" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">CDN (Cloudfront / Akamai)</text>
+<text x="150" y="560" text-anchor="middle" font-size="11" fill="#854f0b">Serve binary assets: posters, trailers</text>
+<text x="150" y="576" text-anchor="middle" font-size="11" fill="#854f0b">Edge node near user — separate concern</text>
+
+<!-- label explaining CDN -->
+<text x="150" y="604" text-anchor="middle" font-size="9" fill="#888" font-style="italic">CDN ≠ cache hit/miss — it's a delivery layer for files</text>
+
+<!-- ===== RIGHT PATH: SHOW LISTINGS (cache hit/miss) ===== -->
+
+<!-- STEP 1R: Check Redis for show listings -->
+<rect x="490" y="328" width="240" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="610" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis — show listings cache</text>
+<text x="610" y="368" text-anchor="middle" font-size="11" fill="#3b6d11">Check: shows by movie + city + date</text>
+<text x="610" y="384" text-anchor="middle" font-size="11" fill="#3b6d11">TTL: 5 min (show times change)</text>
+
+<!-- cache HIT right -->
+<line x1="730" y1="360" x2="754" y2="420" stroke="#0f6e56" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-g)"/>
+<text x="756" y="406" font-size="9" fill="#0f6e56">hit ✓</text>
+
+<!-- cache MISS right -->
+<line x1="610" y1="392" x2="610" y2="432" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="626" y="418" font-size="9" fill="#d85a30">miss ✗</text>
+
+<!-- STEP 2R: Show DB on miss -->
+<rect x="500" y="432" width="220" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="610" y="454" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Show DB (PostgreSQL)</text>
+<text x="610" y="470" text-anchor="middle" font-size="11" fill="#185fa5">Fetch listings → populate Redis</text>
+
+<!-- note on TTL difference -->
+<text x="610" y="502" text-anchor="middle" font-size="9" fill="#888" font-style="italic">Different TTL from metadata — shows update more often</text>
+
+<!-- Both paths converge -->
+<line x1="150" y1="584" x2="300" y2="648" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="610" y1="484" x2="460" y2="648" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- RESULTS TO USER -->
+<rect x="200" y="648" width="360" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="670" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Return to user: movie list + show timings</text>
+<text x="380" y="688" text-anchor="middle" font-size="11" fill="#0f6e56">Movie cards (metadata from Redis/DB)</text>
+<text x="380" y="704" text-anchor="middle" font-size="11" fill="#0f6e56">Poster images served via CDN URLs (separate)</text>
+
+<!-- ====== SECTION 2: SEAT MAP ====== -->
+<line x1="40" y1="768" x2="720" y2="768" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="760" text-anchor="middle" font-size="11" fill="#888">— real-time seat map flow —</text>
+
+<line x1="380" y1="712" x2="380" y2="776" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="750" font-size="10" fill="#888">GET /shows/{id}/seats</text>
+
+<rect x="210" y="776" width="340" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="798" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Seat Map Service</text>
+<text x="380" y="816" text-anchor="middle" font-size="11" fill="#185fa5">Read seat statuses from Redis</text>
+<text x="380" y="832" text-anchor="middle" font-size="11" fill="#185fa5">AVAILABLE / LOCKED / BOOKED per seat</text>
+
+<line x1="560" y1="808" x2="640" y2="856" stroke="#534ab7" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-p)"/>
+<text x="646" y="840" font-size="10" fill="#534ab7">WebSocket</text>
+<rect x="568" y="856" width="180" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="658" y="874" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Live seat updates</text>
+<text x="658" y="888" text-anchor="middle" font-size="10" fill="#534ab7">Push to all viewing clients</text>
+
+<line x1="380" y1="840" x2="380" y2="876" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="220" y="876" width="320" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="898" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Render seat map to user</text>
+<text x="380" y="914" text-anchor="middle" font-size="11" fill="#185fa5">Green = available, Grey = locked/booked</text>
+
+<!-- ====== SECTION 3: BOOKING FLOW ====== -->
+<line x1="40" y1="972" x2="720" y2="972" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="964" text-anchor="middle" font-size="11" fill="#888">— booking flow —</text>
+
+<line x1="380" y1="928" x2="380" y2="980" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="959" font-size="10" fill="#888">POST /book {showId, seatIds[]}</text>
+
+<rect x="200" y="980" width="360" height="76" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1002" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Booking Service</text>
+<text x="380" y="1020" text-anchor="middle" font-size="11" fill="#534ab7">Acquire distributed lock per seat in Redis</text>
+<text x="380" y="1036" text-anchor="middle" font-size="11" fill="#534ab7">SET seat:{id}:lock NX PX 600000</text>
+<text x="380" y="1052" text-anchor="middle" font-size="11" fill="#534ab7">TTL = 10 min (payment window)</text>
+
+<line x1="200" y1="1018" x2="100" y2="1068" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="88" y="1050" font-size="10" text-anchor="end" fill="#d85a30">seat taken</text>
+<rect x="20" y="1068" width="160" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="100" y="1090" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Seat unavailable</text>
+<text x="100" y="1104" text-anchor="middle" font-size="10" fill="#993c1d">Suggest nearby seats</text>
+
+<line x1="380" y1="1056" x2="380" y2="1092" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="200" y="1092" width="360" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="1114" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Seats marked LOCKED in Redis</text>
+<text x="380" y="1130" text-anchor="middle" font-size="11" fill="#854f0b">Broadcast LOCKED status via WebSocket</text>
+
+<line x1="380" y1="1144" x2="380" y2="1180" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="200" y="1180" width="360" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1202" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Payment Service</text>
+<text x="380" y="1220" text-anchor="middle" font-size="11" fill="#534ab7">Charge via Razorpay / Paytm (idempotent)</text>
+<text x="380" y="1236" text-anchor="middle" font-size="11" fill="#534ab7">BookingId as idempotency key</text>
+
+<line x1="560" y1="1212" x2="640" y2="1264" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="560" y="1264" width="180" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="650" y="1282" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Release Redis lock</text>
+<text x="650" y="1296" text-anchor="middle" font-size="10" fill="#993c1d">Seats → AVAILABLE again</text>
+
+<line x1="380" y1="1244" x2="380" y2="1292" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="200" y="1292" width="360" height="76" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="1314" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Confirm booking</text>
+<text x="380" y="1332" text-anchor="middle" font-size="11" fill="#0f6e56">Write Booking record to PostgreSQL</text>
+<text x="380" y="1348" text-anchor="middle" font-size="11" fill="#0f6e56">Seats → BOOKED in Redis + DB</text>
+<text x="380" y="1364" text-anchor="middle" font-size="11" fill="#0f6e56">Broadcast BOOKED via WebSocket</text>
+
+<line x1="380" y1="1368" x2="380" y2="1404" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="210" y="1404" width="340" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1426" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Kafka → Notification Service</text>
+<text x="380" y="1444" text-anchor="middle" font-size="11" fill="#534ab7">Push ticket + QR code to user</text>
+<text x="380" y="1460" text-anchor="middle" font-size="11" fill="#534ab7">Email confirmation + SMS reminder</text>
+
+<!-- ====== SECTION 4: TTL + DATA STORES ====== -->
+<line x1="40" y1="1528" x2="720" y2="1528" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1520" text-anchor="middle" font-size="11" fill="#888">— TTL expiry + data stores —</text>
+
+<rect x="20"  y="1536" width="220" height="88" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="130" y="1558" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Redis TTL Expiry (10 min)</text>
+<text x="130" y="1576" text-anchor="middle" font-size="11" fill="#993c1d">User locked seats but never paid</text>
+<text x="130" y="1592" text-anchor="middle" font-size="11" fill="#993c1d">Lock auto-expires → seats AVAILABLE</text>
+<text x="130" y="1608" text-anchor="middle" font-size="11" fill="#993c1d">WebSocket broadcasts availability</text>
+
+<rect x="260" y="1536" width="200" height="88" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="360" y="1558" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis</text>
+<text x="360" y="1576" text-anchor="middle" font-size="11" fill="#3b6d11">Seat states + locks</text>
+<text x="360" y="1592" text-anchor="middle" font-size="11" fill="#3b6d11">Show availability counts</text>
+<text x="360" y="1608" text-anchor="middle" font-size="11" fill="#3b6d11">Metadata + listing cache</text>
+
+<rect x="480" y="1536" width="260" height="88" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="610" y="1558" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="610" y="1576" text-anchor="middle" font-size="11" fill="#185fa5">Bookings, payments, movies</text>
+<text x="610" y="1592" text-anchor="middle" font-size="11" fill="#185fa5">Shows, theatres, seats</text>
+<text x="610" y="1608" text-anchor="middle" font-size="11" fill="#185fa5">Source of truth for all data</text>
+
+<!-- ====== KEY INSIGHT BOX ====== -->
+<line x1="40" y1="1688" x2="720" y2="1688" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1680" text-anchor="middle" font-size="11" fill="#888">— key design insight (updated flow) —</text>
+
+<rect x="40" y="1696" width="680" height="100" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="1718" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Two separate Redis caches + one CDN — three different concerns</text>
+<text x="380" y="1738" text-anchor="middle" font-size="11" fill="#5f5e5a">Redis metadata cache (TTL 1hr): title, rating, genre — changes very rarely</text>
+<text x="380" y="1756" text-anchor="middle" font-size="11" fill="#5f5e5a">Redis show listings cache (TTL 5min): show times, seats left — changes often</text>
+<text x="380" y="1774" text-anchor="middle" font-size="11" fill="#5f5e5a">CDN: binary files (posters, trailers) — delivery layer, not a cache hit/miss pattern</text>
+
+</svg>
+</body></html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg { max-width: 780px; display: block; margin: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 720 1100" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#7f77dd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- CLIENT -->
+<rect x="260" y="16" width="200" height="48" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="360" y="36" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">Mobile / Web Client</text>
+<text x="360" y="52" text-anchor="middle" font-size="11" fill="#5f5e5a">User adds expense</text>
+
+<line x1="360" y1="64" x2="360" y2="96" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="376" y="84" font-size="10" fill="#888">POST /expense</text>
+
+<!-- API GATEWAY -->
+<rect x="240" y="96" width="240" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="360" y="118" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway</text>
+<text x="360" y="134" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth, rate limiting, routing</text>
+
+<line x1="360" y1="148" x2="360" y2="180" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- EXPENSE SERVICE -->
+<rect x="230" y="180" width="260" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="360" y="202" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Expense Service</text>
+<text x="360" y="220" text-anchor="middle" font-size="11" fill="#0f6e56">Validate split amounts / percents</text>
+<text x="360" y="236" text-anchor="middle" font-size="11" fill="#0f6e56">Persist expense to DB</text>
+
+<!-- three parallel calls from expense service -->
+<line x1="300" y1="244" x2="140" y2="300" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="360" y1="244" x2="360" y2="300" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="420" y1="244" x2="580" y2="300" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<text x="80" y="278" font-size="10" fill="#888">write</text>
+<text x="340" y="278" font-size="10" fill="#888">publish</text>
+<text x="504" y="278" font-size="10" fill="#888">update</text>
+
+<!-- EXPENSE DB -->
+<rect x="40" y="300" width="180" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="130" y="322" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Expense DB</text>
+<text x="130" y="340" text-anchor="middle" font-size="11" fill="#185fa5">PostgreSQL (ACID)</text>
+
+<!-- MESSAGE QUEUE -->
+<rect x="270" y="300" width="180" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="360" y="322" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Message Queue</text>
+<text x="360" y="340" text-anchor="middle" font-size="11" fill="#534ab7">Kafka / RabbitMQ</text>
+
+<!-- BALANCE SERVICE -->
+<rect x="500" y="300" width="180" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="590" y="322" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Balance Service</text>
+<text x="590" y="340" text-anchor="middle" font-size="11" fill="#0f6e56">Recompute net balances</text>
+
+<!-- Balance service writes to cache + balance DB -->
+<line x1="590" y1="352" x2="590" y2="400" stroke="#0f6e56" stroke-width="1" marker-end="url(#arrow-g)"/>
+
+<rect x="500" y="400" width="180" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="590" y="422" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Balance DB</text>
+<text x="590" y="440" text-anchor="middle" font-size="11" fill="#3b6d11">Redis (fast reads)</text>
+
+<!-- Kafka fans out to notification service -->
+<line x1="360" y1="352" x2="360" y2="416" stroke="#7f77dd" stroke-width="1" marker-end="url(#arrow-p)"/>
+
+<!-- NOTIFICATION SERVICE -->
+<rect x="240" y="416" width="240" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="360" y="438" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Notification Service</text>
+<text x="360" y="456" text-anchor="middle" font-size="11" fill="#534ab7">Consumes Kafka events</text>
+<text x="360" y="472" text-anchor="middle" font-size="11" fill="#534ab7">Fan-out to all group members</text>
+
+<!-- fan out to push / email / sms -->
+<line x1="300" y1="480" x2="140" y2="532" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="360" y1="480" x2="360" y2="532" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="420" y1="480" x2="540" y2="532" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="40"  y="532" width="160" height="44" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="120" y="554" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Push Notification</text>
+<text x="120" y="568" text-anchor="middle" font-size="11" fill="#854f0b">FCM / APNs</text>
+
+<rect x="270" y="532" width="160" height="44" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="350" y="554" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Email Alert</text>
+<text x="350" y="568" text-anchor="middle" font-size="11" fill="#854f0b">SendGrid / SES</text>
+
+<rect x="490" y="532" width="160" height="44" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="570" y="554" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">SMS Alert</text>
+<text x="570" y="568" text-anchor="middle" font-size="11" fill="#854f0b">Twilio</text>
+
+<!-- DIVIDER: read flow -->
+<line x1="40" y1="628" x2="680" y2="628" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="360" y="620" text-anchor="middle" font-size="11" fill="#888">— read flow: user views balances / settle up —</text>
+
+<!-- CLIENT READ -->
+<rect x="260" y="636" width="200" height="48" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="360" y="656" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">Client</text>
+<text x="360" y="672" text-anchor="middle" font-size="11" fill="#5f5e5a">GET /balances or /settle</text>
+
+<line x1="360" y1="684" x2="360" y2="716" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- API GATEWAY READ -->
+<rect x="240" y="716" width="240" height="44" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="360" y="738" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway</text>
+<text x="360" y="752" text-anchor="middle" font-size="11" fill="#5f5e5a">Route to Balance Service</text>
+
+<line x1="360" y1="760" x2="360" y2="792" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- BALANCE SERVICE READ -->
+<rect x="230" y="792" width="260" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="360" y="814" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Balance Service</text>
+<text x="360" y="832" text-anchor="middle" font-size="11" fill="#0f6e56">Check Redis cache first</text>
+<text x="360" y="848" text-anchor="middle" font-size="11" fill="#0f6e56">Cache miss → query Balance DB</text>
+
+<!-- cache hit vs miss -->
+<line x1="280" y1="856" x2="160" y2="900" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="440" y1="856" x2="540" y2="900" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<text x="148" y="886" font-size="10" text-anchor="end" fill="#888">cache hit</text>
+<text x="548" y="886" font-size="10" fill="#888">cache miss</text>
+
+<rect x="40" y="900" width="200" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="140" y="922" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis Cache</text>
+<text x="140" y="940" text-anchor="middle" font-size="11" fill="#3b6d11">Return balances instantly</text>
+
+<rect x="460" y="900" width="200" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="560" y="922" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Balance DB (Postgres)</text>
+<text x="560" y="940" text-anchor="middle" font-size="11" fill="#185fa5">Run greedy settle query</text>
+
+<!-- both return to client -->
+<line x1="140" y1="952" x2="280" y2="992" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="560" y1="952" x2="440" y2="992" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="220" y="992" width="280" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="360" y="1014" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Return balances to client</text>
+<text x="360" y="1032" text-anchor="middle" font-size="11" fill="#0f6e56">Settle-up transactions shown</text>
+
+</svg>
+</body>
+</html>

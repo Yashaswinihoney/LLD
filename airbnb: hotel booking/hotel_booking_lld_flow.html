@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>body{font-family:sans-serif;background:#f9f9f7;padding:24px;}svg{max-width:820px;display:block;margin:auto;}</style>
+</head><body>
+<svg viewBox="0 0 760 1180" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<!-- SINGLETON -->
+<rect x="200" y="20" width="360" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="42" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">HotelBookingSystem.getInstance()</text>
+<text x="380" y="60" text-anchor="middle" font-size="11" fill="#5f5e5a">Singleton — owns hotels, bookings, observers, strategy</text>
+
+<line x1="380" y1="72" x2="380" y2="108" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="95" font-size="10" fill="#888">searchHotels(city, minStars)</text>
+
+<!-- SEARCH HOTELS -->
+<rect x="210" y="108" width="340" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="130" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Search Hotels</text>
+<text x="380" y="148" text-anchor="middle" font-size="11" fill="#0f6e56">Filter by city + minStars from ConcurrentHashMap</text>
+
+<line x1="380" y1="160" x2="380" y2="196" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="183" font-size="10" fill="#888">searchAvailableRooms(hotel, type, checkIn, checkOut)</text>
+
+<!-- SEARCH ROOMS -->
+<rect x="200" y="196" width="360" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="218" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Hotel.searchAvailableRooms() — synchronized</text>
+<text x="380" y="236" text-anchor="middle" font-size="11" fill="#0f6e56">Filter by type, exclude UNDER_MAINTENANCE</text>
+<text x="380" y="252" text-anchor="middle" font-size="11" fill="#0f6e56">Check bookedDates map — no date overlap</text>
+
+<line x1="380" y1="260" x2="380" y2="296" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="283" font-size="10" fill="#888">bookRoom(user, hotel, room, dates, method)</text>
+
+<!-- SYNC BLOCK -->
+<rect x="190" y="296" width="380" height="76" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="318" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Enter synchronized(hotel) block</text>
+<text x="380" y="336" text-anchor="middle" font-size="11" fill="#534ab7">Re-check availability inside lock</text>
+<text x="380" y="352" text-anchor="middle" font-size="11" fill="#534ab7">Prevents double booking race condition</text>
+<text x="380" y="368" text-anchor="middle" font-size="11" fill="#534ab7">Only one thread can book per hotel at a time</text>
+
+<!-- re-check fail -->
+<line x1="190" y1="334" x2="90" y2="396" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="78" y="378" font-size="10" text-anchor="end" fill="#d85a30">no longer available</text>
+<rect x="20" y="396" width="150" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="95" y="422" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Return null</text>
+
+<line x1="380" y1="372" x2="380" y2="420" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PRICING STRATEGY -->
+<rect x="190" y="420" width="380" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="442" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">PricingStrategy.calculate(room, checkIn, checkOut)</text>
+<text x="380" y="460" text-anchor="middle" font-size="11" fill="#854f0b">Strategy pattern — swappable at runtime</text>
+<text x="380" y="476" text-anchor="middle" font-size="11" fill="#854f0b">Standard / WeekendSurge / LongStayDiscount</text>
+
+<line x1="265" y1="484" x2="130" y2="524" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="484" x2="380" y2="524" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="495" y1="484" x2="620" y2="524" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="30"  y="524" width="190" height="44" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="125" y="542" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">StandardPricing</text>
+<text x="125" y="557" text-anchor="middle" font-size="10" fill="#854f0b">nights x daily rate</text>
+
+<rect x="285" y="524" width="190" height="44" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="542" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">LongStayDiscount</text>
+<text x="380" y="557" text-anchor="middle" font-size="10" fill="#854f0b">15% off if 7+ nights</text>
+
+<rect x="540" y="524" width="190" height="44" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="635" y="542" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">WeekendSurge</text>
+<text x="635" y="557" text-anchor="middle" font-size="10" fill="#854f0b">30% surge</text>
+
+<line x1="380" y1="568" x2="380" y2="608" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PAYMENT -->
+<rect x="200" y="608" width="360" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="630" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Payment.process()</text>
+<text x="380" y="648" text-anchor="middle" font-size="11" fill="#185fa5">Create Payment in PENDING state</text>
+<text x="380" y="664" text-anchor="middle" font-size="11" fill="#185fa5">Simulate gateway call — UPI / CARD / NETBANKING</text>
+
+<!-- payment fail -->
+<line x1="560" y1="640" x2="640" y2="692" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="570" y="692" width="170" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="655" y="710" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Abort booking</text>
+<text x="655" y="724" text-anchor="middle" font-size="10" fill="#993c1d">Dates not marked</text>
+
+<line x1="380" y1="672" x2="380" y2="720" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- MARK DATES -->
+<rect x="200" y="720" width="360" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="742" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">hotel.markDatesBooked() — synchronized</text>
+<text x="380" y="760" text-anchor="middle" font-size="11" fill="#0f6e56">Add dates to bookedDates set</text>
+<text x="380" y="776" text-anchor="middle" font-size="11" fill="#0f6e56">booking.confirm() — status CONFIRMED</text>
+
+<line x1="380" y1="784" x2="380" y2="820" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- NOTIFY OBSERVERS -->
+<rect x="200" y="820" width="360" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="842" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Notify Observers — Observer pattern</text>
+<text x="380" y="860" text-anchor="middle" font-size="11" fill="#0f6e56">EmailNotifier.onBookingConfirmed(booking)</text>
+<text x="380" y="876" text-anchor="middle" font-size="11" fill="#0f6e56">SMSNotifier.onBookingConfirmed(booking)</text>
+
+<line x1="380" y1="884" x2="380" y2="920" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="220" y="920" width="320" height="44" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="942" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Return confirmed Booking to caller</text>
+
+<!-- CANCEL FLOW -->
+<line x1="40" y1="1004" x2="720" y2="1004" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="996" text-anchor="middle" font-size="11" fill="#888">— cancel flow —</text>
+
+<rect x="200" y="1012" width="360" height="76" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="380" y="1034" text-anchor="middle" font-size="13" font-weight="600" fill="#712b13">cancelBooking(bookingId)</text>
+<text x="380" y="1052" text-anchor="middle" font-size="11" fill="#993c1d">hotel.releaseDates() — remove from bookedDates</text>
+<text x="380" y="1068" text-anchor="middle" font-size="11" fill="#993c1d">booking.cancel() — Payment.refund()</text>
+<text x="380" y="1084" text-anchor="middle" font-size="11" fill="#993c1d">Notify observers — email + SMS cancellation</text>
+
+<!-- PATTERNS -->
+<line x1="40" y1="1140" x2="720" y2="1140" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1132" text-anchor="middle" font-size="11" fill="#888">— patterns used —</text>
+<rect x="20"  y="1148" width="148" height="24" rx="6" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="94"  y="1164" text-anchor="middle" font-size="10" font-weight="600" fill="#085041">Singleton (System)</text>
+<rect x="180" y="1148" width="148" height="24" rx="6" fill="#faeeda" stroke="#ba7517"/>
+<text x="254" y="1164" text-anchor="middle" font-size="10" font-weight="600" fill="#633806">Strategy (Pricing)</text>
+<rect x="340" y="1148" width="148" height="24" rx="6" fill="#eedefe" stroke="#7f77dd"/>
+<text x="414" y="1164" text-anchor="middle" font-size="10" font-weight="600" fill="#3c3489">Observer (Notify)</text>
+<rect x="500" y="1148" width="200" height="24" rx="6" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="600" y="1164" text-anchor="middle" font-size="10" font-weight="600" fill="#0c447c">Synchronized (Concurrency)</text>
+
+</svg>
+</body></html>

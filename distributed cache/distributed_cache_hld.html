@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 820px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 760 2240" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: READ PATH (cache hit/miss) ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— read path: cache hit / miss flow —</text>
+
+<!-- CLIENT -->
+<rect x="240" y="32" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="52" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">Application Server</text>
+<text x="380" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">GET key="product:iphone:price"</text>
+
+<line x1="380" y1="84" x2="380" y2="116" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CONSISTENT HASH ROUTER -->
+<rect x="200" y="116" width="360" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="138" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Consistent Hash Router</text>
+<text x="380" y="156" text-anchor="middle" font-size="11" fill="#534ab7">hash("product:iphone:price") → node on ring</text>
+<text x="380" y="172" text-anchor="middle" font-size="11" fill="#534ab7">Route to Redis Shard N (deterministic)</text>
+
+<line x1="380" y1="180" x2="380" y2="228" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- REDIS SHARD -->
+<rect x="190" y="228" width="380" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="250" text-anchor="middle" font-size="13" font-weight="600" fill="#27500a">Redis Shard Node</text>
+<text x="380" y="268" text-anchor="middle" font-size="11" fill="#3b6d11">Lookup key in in-memory hash table</text>
+<text x="380" y="284" text-anchor="middle" font-size="11" fill="#3b6d11">Check TTL — expired? Remove + return nil</text>
+
+<!-- HIT -->
+<line x1="190" y1="256" x2="90" y2="316" stroke="#0f6e56" stroke-width="1" marker-end="url(#arrow-g)"/>
+<text x="78" y="300" font-size="10" text-anchor="end" fill="#0f6e56">HIT (~1ms)</text>
+<rect x="16" y="316" width="148" height="44" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="90" y="334" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Return value</text>
+<text x="90" y="348" text-anchor="middle" font-size="10" fill="#3b6d11">No DB call needed</text>
+
+<!-- MISS -->
+<line x1="380" y1="292" x2="380" y2="352" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="326" font-size="10" fill="#888">MISS</text>
+
+<!-- DB FALLBACK -->
+<rect x="190" y="352" width="380" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="374" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Database (PostgreSQL / Cassandra)</text>
+<text x="380" y="392" text-anchor="middle" font-size="11" fill="#185fa5">Fetch value from DB (~10-50ms)</text>
+<text x="380" y="408" text-anchor="middle" font-size="11" fill="#185fa5">Write to Redis shard (populate cache)</text>
+
+<line x1="380" y1="416" x2="380" y2="452" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="220" y="452" width="320" height="44" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="474" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Return value to application</text>
+
+<!-- ====== SECTION 2: EVICTION POLICIES ====== -->
+<line x1="40" y1="556" x2="720" y2="556" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="548" text-anchor="middle" font-size="11" fill="#888">— eviction policies (when cache is full) —</text>
+
+<rect x="20"  y="564" width="215" height="120" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="127" y="586" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">LRU</text>
+<text x="127" y="606" text-anchor="middle" font-size="11" fill="#534ab7">Least Recently Used</text>
+<text x="127" y="622" text-anchor="middle" font-size="11" fill="#534ab7">LinkedHashMap (access order)</text>
+<text x="127" y="638" text-anchor="middle" font-size="11" fill="#534ab7">O(1) get, put, evict</text>
+<text x="127" y="654" text-anchor="middle" font-size="11" fill="#534ab7">Best for: session cache</text>
+<text x="127" y="670" text-anchor="middle" font-size="11" fill="#534ab7">general-purpose workloads</text>
+
+<rect x="250" y="564" width="215" height="120" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="357" y="586" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">LFU</text>
+<text x="357" y="606" text-anchor="middle" font-size="11" fill="#534ab7">Least Frequently Used</text>
+<text x="357" y="622" text-anchor="middle" font-size="11" fill="#534ab7">Min-heap by access count</text>
+<text x="357" y="638" text-anchor="middle" font-size="11" fill="#534ab7">O(log n) on access</text>
+<text x="357" y="654" text-anchor="middle" font-size="11" fill="#534ab7">Best for: product catalog</text>
+<text x="357" y="670" text-anchor="middle" font-size="11" fill="#534ab7">stable hot-item workloads</text>
+
+<rect x="480" y="564" width="260" height="120" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="610" y="586" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">TTL-based</text>
+<text x="610" y="606" text-anchor="middle" font-size="11" fill="#534ab7">Time-To-Live expiry</text>
+<text x="610" y="622" text-anchor="middle" font-size="11" fill="#534ab7">Each key has expiry timestamp</text>
+<text x="610" y="638" text-anchor="middle" font-size="11" fill="#534ab7">Lazy expiry on read + bg scan</text>
+<text x="610" y="654" text-anchor="middle" font-size="11" fill="#534ab7">Best for: OTP, rate limits</text>
+<text x="610" y="670" text-anchor="middle" font-size="11" fill="#534ab7">auth tokens, seat locks</text>
+
+<!-- ====== SECTION 3: CONSISTENT HASHING ====== -->
+<line x1="40" y1="744" x2="720" y2="744" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="736" text-anchor="middle" font-size="11" fill="#888">— consistent hashing: how keys distribute across shards —</text>
+
+<rect x="190" y="752" width="380" height="112" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="774" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Consistent Hash Ring</text>
+<text x="380" y="792" text-anchor="middle" font-size="11" fill="#0f6e56">Hash ring: 0 → 2^64, nodes placed at positions</text>
+<text x="380" y="808" text-anchor="middle" font-size="11" fill="#0f6e56">Each node has 100-200 virtual nodes (replicas)</text>
+<text x="380" y="824" text-anchor="middle" font-size="11" fill="#0f6e56">Key → hash → walk clockwise → nearest node</text>
+<text x="380" y="840" text-anchor="middle" font-size="11" fill="#0f6e56">Node added: only ~1/N keys remapped</text>
+<text x="380" y="856" text-anchor="middle" font-size="11" fill="#0f6e56">Node removed: only that node's keys remapped</text>
+
+<!-- 3 nodes on ring -->
+<line x1="290" y1="864" x2="140" y2="908" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="864" x2="380" y2="908" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="470" y1="864" x2="620" y2="908" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="908" width="200" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="120" y="930" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Shard 1 (Redis A)</text>
+<text x="120" y="946" text-anchor="middle" font-size="10" fill="#3b6d11">keys: user:*, session:*</text>
+
+<rect x="290" y="908" width="180" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="930" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Shard 2 (Redis B)</text>
+<text x="380" y="946" text-anchor="middle" font-size="10" fill="#3b6d11">keys: product:*, cart:*</text>
+
+<rect x="540" y="908" width="200" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="640" y="930" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Shard 3 (Redis C)</text>
+<text x="640" y="946" text-anchor="middle" font-size="10" fill="#3b6d11">keys: otp:*, rate:*</text>
+
+<!-- ====== SECTION 4: WRITE POLICIES ====== -->
+<line x1="40" y1="1020" x2="720" y2="1020" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1012" text-anchor="middle" font-size="11" fill="#888">— write policies: how writes go to cache + DB —</text>
+
+<rect x="20"  y="1028" width="222" height="120" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="131" y="1050" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Write-Through</text>
+<text x="131" y="1070" text-anchor="middle" font-size="11" fill="#854f0b">Write → Cache AND DB</text>
+<text x="131" y="1086" text-anchor="middle" font-size="11" fill="#854f0b">simultaneously</text>
+<text x="131" y="1102" text-anchor="middle" font-size="11" fill="#854f0b">✓ No data loss</text>
+<text x="131" y="1118" text-anchor="middle" font-size="11" fill="#854f0b">✗ Higher write latency</text>
+<text x="131" y="1134" text-anchor="middle" font-size="11" fill="#854f0b">Use: payment, orders</text>
+
+<rect x="268" y="1028" width="222" height="120" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="379" y="1050" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Write-Back</text>
+<text x="379" y="1070" text-anchor="middle" font-size="11" fill="#854f0b">Write → Cache only</text>
+<text x="379" y="1086" text-anchor="middle" font-size="11" fill="#854f0b">Flush to DB async</text>
+<text x="379" y="1102" text-anchor="middle" font-size="11" fill="#854f0b">✓ Lowest write latency</text>
+<text x="379" y="1118" text-anchor="middle" font-size="11" fill="#854f0b">✗ Risk: data loss on crash</text>
+<text x="379" y="1134" text-anchor="middle" font-size="11" fill="#854f0b">Use: analytics, counts</text>
+
+<rect x="516" y="1028" width="224" height="120" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="628" y="1050" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Write-Around</text>
+<text x="628" y="1070" text-anchor="middle" font-size="11" fill="#854f0b">Write → DB only</text>
+<text x="628" y="1086" text-anchor="middle" font-size="11" fill="#854f0b">Cache populated on read</text>
+<text x="628" y="1102" text-anchor="middle" font-size="11" fill="#854f0b">✓ Cache not polluted</text>
+<text x="628" y="1118" text-anchor="middle" font-size="11" fill="#854f0b">✗ First read is a miss</text>
+<text x="628" y="1134" text-anchor="middle" font-size="11" fill="#854f0b">Use: infrequent writes</text>
+
+<!-- ====== SECTION 5: REPLICATION + HA ====== -->
+<line x1="40" y1="1208" x2="720" y2="1208" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1200" text-anchor="middle" font-size="11" fill="#888">— high availability: replication + sentinel —</text>
+
+<rect x="190" y="1216" width="380" height="100" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1238" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Redis Sentinel / Cluster HA</text>
+<text x="380" y="1256" text-anchor="middle" font-size="11" fill="#185fa5">Each shard: 1 primary + 2 replicas</text>
+<text x="380" y="1272" text-anchor="middle" font-size="11" fill="#185fa5">Writes → primary only | Reads → any replica</text>
+<text x="380" y="1288" text-anchor="middle" font-size="11" fill="#185fa5">Primary fails → Sentinel promotes replica in &lt;30s</text>
+<text x="380" y="1304" text-anchor="middle" font-size="11" fill="#185fa5">Redis Cluster: auto-sharding + failover built-in</text>
+<text x="380" y="1316" text-anchor="middle" font-size="11" fill="#185fa5">Async replication: replica lag ~1ms in same DC</text>
+
+<!-- shard with replicas -->
+<line x1="290" y1="1316" x2="140" y2="1364" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="470" y1="1316" x2="620" y2="1364" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1364" width="220" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="130" y="1386" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Primary (writes)</text>
+<text x="130" y="1404" text-anchor="middle" font-size="11" fill="#3b6d11">Single writer, strong consistency</text>
+<text x="130" y="1420" text-anchor="middle" font-size="11" fill="#3b6d11">Replicates async to replicas</text>
+
+<rect x="520" y="1364" width="220" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="630" y="1386" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Replicas (reads)</text>
+<text x="630" y="1404" text-anchor="middle" font-size="11" fill="#3b6d11">Scale read throughput</text>
+<text x="630" y="1420" text-anchor="middle" font-size="11" fill="#3b6d11">Promoted to primary on failure</text>
+
+<!-- ====== SECTION 6: CACHE STAMPEDE PREVENTION ====== -->
+<line x1="40" y1="1488" x2="720" y2="1488" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1480" text-anchor="middle" font-size="11" fill="#888">— cache stampede / thundering herd prevention —</text>
+
+<rect x="20"  y="1496" width="340" height="120" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="190" y="1518" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Problem: Cache Stampede</text>
+<text x="190" y="1538" text-anchor="middle" font-size="11" fill="#993c1d">Popular key expires at same moment</text>
+<text x="190" y="1554" text-anchor="middle" font-size="11" fill="#993c1d">1000 requests hit DB simultaneously</text>
+<text x="190" y="1570" text-anchor="middle" font-size="11" fill="#993c1d">DB overloaded, latency spikes</text>
+<text x="190" y="1586" text-anchor="middle" font-size="11" fill="#993c1d">All 1000 re-populate cache with</text>
+<text x="190" y="1602" text-anchor="middle" font-size="11" fill="#993c1d">same value (wasted work)</text>
+
+<rect x="400" y="1496" width="340" height="120" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="570" y="1518" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Solutions</text>
+<text x="570" y="1538" text-anchor="middle" font-size="11" fill="#3b6d11">1. Mutex/lock: only 1 thread fetches DB</text>
+<text x="570" y="1554" text-anchor="middle" font-size="11" fill="#3b6d11">   others wait and get cached result</text>
+<text x="570" y="1570" text-anchor="middle" font-size="11" fill="#3b6d11">2. Probabilistic early refresh: refresh</text>
+<text x="570" y="1586" text-anchor="middle" font-size="11" fill="#3b6d11">   before expiry based on probability</text>
+<text x="570" y="1602" text-anchor="middle" font-size="11" fill="#3b6d11">3. Jitter: TTL = base + random(0, 30s)</text>
+
+<!-- ====== SECTION 7: REDIS INTERNALS ====== -->
+<line x1="40" y1="1676" x2="720" y2="1676" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1668" text-anchor="middle" font-size="11" fill="#888">— Redis internals (what interviewers ask about) —</text>
+
+<rect x="20"  y="1684" width="340" height="136" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="190" y="1706" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Why Redis is fast</text>
+<text x="190" y="1726" text-anchor="middle" font-size="11" fill="#534ab7">Single-threaded event loop (no lock contention)</text>
+<text x="190" y="1742" text-anchor="middle" font-size="11" fill="#534ab7">All data in RAM (no disk I/O on reads)</text>
+<text x="190" y="1758" text-anchor="middle" font-size="11" fill="#534ab7">Non-blocking I/O multiplexing (epoll)</text>
+<text x="190" y="1774" text-anchor="middle" font-size="11" fill="#534ab7">Optimized data structures per type</text>
+<text x="190" y="1790" text-anchor="middle" font-size="11" fill="#534ab7">String→SDS, List→ziplist/quicklist</text>
+<text x="190" y="1806" text-anchor="middle" font-size="11" fill="#534ab7">Set→hashtable, ZSet→skiplist+hashtable</text>
+
+<rect x="400" y="1684" width="340" height="136" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="570" y="1706" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Persistence options</text>
+<text x="570" y="1726" text-anchor="middle" font-size="11" fill="#534ab7">RDB (snapshot): point-in-time dump to disk</text>
+<text x="570" y="1742" text-anchor="middle" font-size="11" fill="#534ab7">every N seconds if M keys changed</text>
+<text x="570" y="1758" text-anchor="middle" font-size="11" fill="#534ab7">AOF (append-only file): log every write</text>
+<text x="570" y="1774" text-anchor="middle" font-size="11" fill="#534ab7">fsync every second or every write</text>
+<text x="570" y="1790" text-anchor="middle" font-size="11" fill="#534ab7">RDB+AOF: recommended for production</text>
+<text x="570" y="1806" text-anchor="middle" font-size="11" fill="#534ab7">Hybrid: AOF with periodic RDB snapshots</text>
+
+<!-- ====== DATA STORES ====== -->
+<line x1="40" y1="1880" x2="720" y2="1880" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1872" text-anchor="middle" font-size="11" fill="#888">— use cases across all our systems —</text>
+
+<rect x="20"  y="1888" width="340" height="148" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="190" y="1910" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">What we cached in every system</text>
+<text x="190" y="1930" text-anchor="middle" font-size="11" fill="#3b6d11">URL Shortener: shortCode → longUrl (TTL=expiry)</text>
+<text x="190" y="1946" text-anchor="middle" font-size="11" fill="#3b6d11">Chat: userId → wsNodeId (TTL=60s presence)</text>
+<text x="190" y="1962" text-anchor="middle" font-size="11" fill="#3b6d11">Twitter: feed inbox per user (sorted set)</text>
+<text x="190" y="1978" text-anchor="middle" font-size="11" fill="#3b6d11">BookMyShow: seat locks (SET NX TTL=10min)</text>
+<text x="190" y="1994" text-anchor="middle" font-size="11" fill="#3b6d11">Rate Limiter: request counts (INCR + EXPIRE)</text>
+<text x="190" y="2010" text-anchor="middle" font-size="11" fill="#3b6d11">Payment: idempotency keys (TTL=24hr)</text>
+<text x="190" y="2026" text-anchor="middle" font-size="11" fill="#3b6d11">Shopping Cart: cart sessions (TTL=7days)</text>
+
+<rect x="400" y="1888" width="340" height="148" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="570" y="1910" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Redis data structures used</text>
+<text x="570" y="1930" text-anchor="middle" font-size="11" fill="#185fa5">STRING: simple key-value, counters (INCR)</text>
+<text x="570" y="1946" text-anchor="middle" font-size="11" fill="#185fa5">HASH: user profiles, session objects</text>
+<text x="570" y="1962" text-anchor="middle" font-size="11" fill="#185fa5">LIST: offline message queue per user</text>
+<text x="570" y="1978" text-anchor="middle" font-size="11" fill="#185fa5">SET: unique visitors, mutual followers</text>
+<text x="570" y="1994" text-anchor="middle" font-size="11" fill="#185fa5">SORTED SET: feed inbox (score=timestamp)</text>
+<text x="570" y="2010" text-anchor="middle" font-size="11" fill="#185fa5">BITFIELD: feature flags, online bitmap</text>
+<text x="570" y="2026" text-anchor="middle" font-size="11" fill="#185fa5">PUBSUB: real-time event distribution</text>
+
+<!-- INSIGHT BOX -->
+<line x1="40" y1="2096" x2="720" y2="2096" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2088" text-anchor="middle" font-size="11" fill="#888">— when to use cache vs not —</text>
+
+<rect x="20" y="2104" width="720" height="128" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="2126" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Cache Decision Framework</text>
+<text x="380" y="2148" text-anchor="middle" font-size="11" fill="#5f5e5a">✓ Cache when: data is read-heavy, changes rarely, can tolerate slight staleness (e.g. product price)</text>
+<text x="380" y="2166" text-anchor="middle" font-size="11" fill="#5f5e5a">✓ Cache when: DB query is expensive (joins, aggregations) and result is stable for N seconds</text>
+<text x="380" y="2184" text-anchor="middle" font-size="11" fill="#5f5e5a">✗ Don't cache: financial data that must be real-time accurate (use DB with read replicas instead)</text>
+<text x="380" y="2202" text-anchor="middle" font-size="11" fill="#5f5e5a">✗ Don't cache: highly personalised data with near-infinite key space (cache hit rate would be ~0%)</text>
+<text x="380" y="2220" text-anchor="middle" font-size="11" fill="#5f5e5a">Rule: if expected hit rate &lt; 30%, cache adds latency without benefit — measure before caching</text>
+
+</svg>
+</body></html>

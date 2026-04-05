@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 820px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 760 2180" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: CONTENT INGESTION (WRITE PATH) ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— content ingestion pipeline (licensed content, not user uploads) —</text>
+
+<!-- CONTENT SOURCES -->
+<rect x="40"  y="32" width="200" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="140" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Studio / Distributor</text>
+<text x="140" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Licensed .mxf / .mov master files</text>
+
+<rect x="520" y="32" width="200" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="620" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Netflix Originals</text>
+<text x="620" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Internal production → direct ingest</text>
+
+<line x1="140" y1="84" x2="280" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="620" y1="84" x2="480" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CONTENT INGESTION SERVICE -->
+<rect x="190" y="132" width="380" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="154" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Content Ingestion Service</text>
+<text x="380" y="172" text-anchor="middle" font-size="11" fill="#0f6e56">Store raw master file in S3 cold storage</text>
+<text x="380" y="188" text-anchor="middle" font-size="11" fill="#0f6e56">Transcode to H.264/H.265 in SD, HD, 4K, HDR</text>
+<text x="380" y="204" text-anchor="middle" font-size="11" fill="#0f6e56">Generate subtitle tracks (30+ languages)</text>
+<text x="380" y="220" text-anchor="middle" font-size="11" fill="#0f6e56">Split into 2-second MPEG-DASH/HLS segments</text>
+<text x="380" y="232" text-anchor="middle" font-size="11" fill="#0f6e56">Tag region licensing: available in IN, US, UK...</text>
+
+<line x1="380" y1="232" x2="380" y2="280" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CDN PUSH -->
+<rect x="190" y="280" width="380" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="302" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Push segments to Open Connect CDN</text>
+<text x="380" y="320" text-anchor="middle" font-size="11" fill="#854f0b">Netflix's own CDN — ISP-embedded appliances globally</text>
+<text x="380" y="336" text-anchor="middle" font-size="11" fill="#854f0b">Popular titles pre-positioned during off-peak hours</text>
+
+<line x1="380" y1="344" x2="380" y2="392" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- METADATA + INDEX -->
+<rect x="190" y="392" width="380" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="414" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Write metadata to PostgreSQL + Elasticsearch</text>
+<text x="380" y="430" text-anchor="middle" font-size="11" fill="#3b6d11">Title, cast, genres, rating, regions — searchable</text>
+
+<!-- ====== SECTION 2: PLAY FLOW ====== -->
+<line x1="40" y1="504" x2="720" y2="504" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="496" text-anchor="middle" font-size="11" fill="#888">— play content flow (read hot path) —</text>
+
+<!-- DEVICE -->
+<rect x="240" y="512" width="280" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="534" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">Client Device</text>
+<text x="380" y="552" text-anchor="middle" font-size="11" fill="#5f5e5a">TV / Phone / Laptop / Tablet</text>
+<text x="380" y="568" text-anchor="middle" font-size="11" fill="#5f5e5a">GET /play?contentId=X&profileId=Y</text>
+
+<line x1="380" y1="576" x2="380" y2="608" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- API GATEWAY -->
+<rect x="240" y="608" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="630" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway + Load Balancer</text>
+<text x="380" y="646" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth (JWT), rate limiting, region routing</text>
+
+<line x1="380" y1="660" x2="380" y2="696" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PLAYBACK SERVICE -->
+<rect x="190" y="696" width="380" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="718" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Playback Service</text>
+<text x="380" y="736" text-anchor="middle" font-size="11" fill="#0f6e56">1. Validate subscription — is account active?</text>
+<text x="380" y="752" text-anchor="middle" font-size="11" fill="#0f6e56">2. Check concurrent stream count (plan limit)</text>
+<text x="380" y="768" text-anchor="middle" font-size="11" fill="#0f6e56">3. Profile rating gate — kids profile blocked from MA</text>
+<text x="380" y="784" text-anchor="middle" font-size="11" fill="#0f6e56">4. Region check — content licensed in this country?</text>
+<text x="380" y="796" text-anchor="middle" font-size="11" fill="#0f6e56">5. Return manifest URL (m3u8 / mpd) to client</text>
+
+<!-- concurrent limit fail -->
+<line x1="190" y1="752" x2="90" y2="820" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="78" y="802" font-size="10" text-anchor="end" fill="#d85a30">limit exceeded</text>
+<rect x="16" y="820" width="148" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="90" y="838" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">HTTP 403</text>
+<text x="90" y="852" text-anchor="middle" font-size="10" fill="#993c1d">Upgrade plan prompt</text>
+
+<line x1="380" y1="796" x2="380" y2="856" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- STEERING SERVICE -->
+<rect x="190" y="856" width="380" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="878" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Steering Service (CDN Selection)</text>
+<text x="380" y="896" text-anchor="middle" font-size="11" fill="#534ab7">Detect client IP → resolve nearest CDN node</text>
+<text x="380" y="912" text-anchor="middle" font-size="11" fill="#534ab7">Pick lowest-latency Open Connect Appliance</text>
+
+<line x1="380" y1="920" x2="380" y2="968" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CDN STREAMING -->
+<rect x="190" y="968" width="380" height="88" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="990" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Open Connect CDN (Netflix's own CDN)</text>
+<text x="380" y="1008" text-anchor="middle" font-size="11" fill="#854f0b">Client fetches 2-second DASH/HLS segments</text>
+<text x="380" y="1024" text-anchor="middle" font-size="11" fill="#854f0b">ABR: measure bandwidth → switch quality seamlessly</text>
+<text x="380" y="1040" text-anchor="middle" font-size="11" fill="#854f0b">Prefetch next 3 segments → zero buffering</text>
+<text x="380" y="1056" text-anchor="middle" font-size="11" fill="#854f0b">CDN miss → origin S3 → edge caches segment</text>
+
+<!-- ====== SECTION 3: HOME SCREEN / RECOMMENDATION ====== -->
+<line x1="40" y1="1120" x2="720" y2="1120" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1112" text-anchor="middle" font-size="11" fill="#888">— home screen + recommendation flow —</text>
+
+<rect x="240" y="1128" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="1150" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">User opens Netflix</text>
+<text x="380" y="1166" text-anchor="middle" font-size="11" fill="#5f5e5a">GET /home?profileId=Y</text>
+
+<line x1="380" y1="1180" x2="380" y2="1212" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- HOME SERVICE -->
+<rect x="190" y="1212" width="380" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="1234" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Home Service</text>
+<text x="380" y="1252" text-anchor="middle" font-size="11" fill="#0f6e56">Row 1: Continue Watching (from Redis)</text>
+<text x="380" y="1268" text-anchor="middle" font-size="11" fill="#0f6e56">Row 2: My List</text>
+<text x="380" y="1284" text-anchor="middle" font-size="11" fill="#0f6e56">Row 3-N: ML recommendations per profile</text>
+<text x="380" y="1300" text-anchor="middle" font-size="11" fill="#0f6e56">Cached per profile in Redis (TTL 2min)</text>
+<text x="380" y="1312" text-anchor="middle" font-size="11" fill="#0f6e56">Region-filtered: only show licensed titles</text>
+
+<line x1="380" y1="1312" x2="380" y2="1360" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ML RECOMMENDATION -->
+<rect x="190" y="1360" width="380" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1382" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Recommendation Engine (ML)</text>
+<text x="380" y="1400" text-anchor="middle" font-size="11" fill="#534ab7">Collaborative filtering: similar users watched...</text>
+<text x="380" y="1416" text-anchor="middle" font-size="11" fill="#534ab7">Content-based: genre/actor/director preferences</text>
+<text x="380" y="1424" text-anchor="middle" font-size="11" fill="#534ab7">Taste Match %: predicted enjoyment score</text>
+<text x="380" y="1440" text-anchor="middle" font-size="11" fill="#534ab7">Artwork personalisation: show different thumbnail</text>
+<text x="380" y="1456" text-anchor="middle" font-size="11" fill="#534ab7">to different users for same title</text>
+
+<!-- ====== SECTION 4: CONTINUE WATCHING + DOWNLOAD ====== -->
+<line x1="40" y1="1524" x2="720" y2="1524" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1516" text-anchor="middle" font-size="11" fill="#888">— continue watching + download flow —</text>
+
+<line x1="300" y1="1544" x2="160" y2="1588" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="1544" x2="600" y2="1588" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="1532" width="380" height="20" rx="6" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="1546" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Async: save progress + handle downloads</text>
+
+<!-- CONTINUE WATCHING -->
+<rect x="20"  y="1588" width="240" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="130" y="1610" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Continue Watching Service</text>
+<text x="130" y="1628" text-anchor="middle" font-size="11" fill="#3b6d11">Save: profileId → {contentId, positionSecs}</text>
+<text x="130" y="1644" text-anchor="middle" font-size="11" fill="#3b6d11">Redis (fast reads) + DB (persistent)</text>
+<text x="130" y="1660" text-anchor="middle" font-size="11" fill="#3b6d11">Mark complete if 95% watched</text>
+
+<!-- DOWNLOAD SERVICE -->
+<rect x="500" y="1588" width="240" height="76" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="620" y="1610" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Download Service</text>
+<text x="620" y="1628" text-anchor="middle" font-size="11" fill="#185fa5">Plan gate: Standard/Premium only</text>
+<text x="620" y="1644" text-anchor="middle" font-size="11" fill="#185fa5">Download encrypted segments to device</text>
+<text x="620" y="1660" text-anchor="middle" font-size="11" fill="#185fa5">License TTL: 30 days (DRM enforced)</text>
+
+<!-- ====== SECTION 5: KEY ARCHITECTURAL DECISIONS ====== -->
+<line x1="40" y1="1728" x2="720" y2="1728" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1720" text-anchor="middle" font-size="11" fill="#888">— Netflix's unique architectural decisions —</text>
+
+<rect x="20"  y="1736" width="350" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="195" y="1758" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Open Connect (Netflix's own CDN)</text>
+<text x="195" y="1776" text-anchor="middle" font-size="11" fill="#534ab7">Netflix embeds hardware appliances inside ISPs</text>
+<text x="195" y="1792" text-anchor="middle" font-size="11" fill="#534ab7">No public CDN (no Cloudfront/Akamai for video)</text>
+<text x="195" y="1808" text-anchor="middle" font-size="11" fill="#534ab7">Pre-positions popular content during off-peak hours</text>
+<text x="195" y="1824" text-anchor="middle" font-size="11" fill="#534ab7">Eliminates most inter-network traffic costs</text>
+
+<rect x="390" y="1736" width="350" height="100" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="565" y="1758" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Personalised Thumbnail (A/B Test)</text>
+<text x="565" y="1776" text-anchor="middle" font-size="11" fill="#854f0b">Same movie → different artwork per user</text>
+<text x="565" y="1792" text-anchor="middle" font-size="11" fill="#854f0b">Action fans see action scene thumbnail</text>
+<text x="565" y="1808" text-anchor="middle" font-size="11" fill="#854f0b">Romance fans see romantic scene thumbnail</text>
+<text x="565" y="1824" text-anchor="middle" font-size="11" fill="#854f0b">Tested via multi-armed bandit algorithm</text>
+
+<!-- ====== DATA STORES ====== -->
+<line x1="40" y1="1900" x2="720" y2="1900" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1892" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1908" width="148" height="128" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="94"  y="1930" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="94"  y="1948" text-anchor="middle" font-size="10" fill="#3b6d11">Continue watching</text>
+<text x="94"  y="1964" text-anchor="middle" font-size="10" fill="#3b6d11">Home feed per profile</text>
+<text x="94"  y="1980" text-anchor="middle" font-size="10" fill="#3b6d11">Active sessions</text>
+<text x="94"  y="1996" text-anchor="middle" font-size="10" fill="#3b6d11">Metadata cache</text>
+<text x="94"  y="2012" text-anchor="middle" font-size="10" fill="#3b6d11">Search typeahead</text>
+<text x="94"  y="2028" text-anchor="middle" font-size="10" fill="#3b6d11">User preferences</text>
+
+<rect x="186" y="1908" width="148" height="128" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="260" y="1930" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="260" y="1948" text-anchor="middle" font-size="10" fill="#185fa5">Accounts, profiles</text>
+<text x="260" y="1964" text-anchor="middle" font-size="10" fill="#185fa5">Subscriptions</text>
+<text x="260" y="1980" text-anchor="middle" font-size="10" fill="#185fa5">Content metadata</text>
+<text x="260" y="1996" text-anchor="middle" font-size="10" fill="#185fa5">Region licenses</text>
+<text x="260" y="2012" text-anchor="middle" font-size="10" fill="#185fa5">Watch history</text>
+<text x="260" y="2028" text-anchor="middle" font-size="10" fill="#185fa5">Payments, plans</text>
+
+<rect x="352" y="1908" width="148" height="128" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="426" y="1930" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="426" y="1948" text-anchor="middle" font-size="10" fill="#854f0b">View events</text>
+<text x="426" y="1964" text-anchor="middle" font-size="10" fill="#854f0b">Watch time series</text>
+<text x="426" y="1980" text-anchor="middle" font-size="10" fill="#854f0b">QoE metrics</text>
+<text x="426" y="1996" text-anchor="middle" font-size="10" fill="#854f0b">ABR decisions log</text>
+<text x="426" y="2012" text-anchor="middle" font-size="10" fill="#854f0b">A/B test results</text>
+<text x="426" y="2028" text-anchor="middle" font-size="10" fill="#854f0b">Recommendation logs</text>
+
+<rect x="518" y="1908" width="222" height="128" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="629" y="1930" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">S3 + Elasticsearch</text>
+<text x="629" y="1948" text-anchor="middle" font-size="10" fill="#534ab7">S3: raw master files</text>
+<text x="629" y="1964" text-anchor="middle" font-size="10" fill="#534ab7">Transcoded segments</text>
+<text x="629" y="1980" text-anchor="middle" font-size="10" fill="#534ab7">Subtitle files (30+ langs)</text>
+<text x="629" y="1996" text-anchor="middle" font-size="10" fill="#534ab7">ES: full-text content search</text>
+<text x="629" y="2012" text-anchor="middle" font-size="10" fill="#534ab7">Cast/director lookup</text>
+<text x="629" y="2028" text-anchor="middle" font-size="10" fill="#534ab7">Genre faceted search</text>
+
+<!-- FINAL COMPARISON BOX -->
+<line x1="40" y1="2100" x2="720" y2="2100" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2092" text-anchor="middle" font-size="11" fill="#888">— Netflix vs YouTube: key architectural differences —</text>
+<rect x="20" y="2108" width="720" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="2130" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Netflix: Licensed content, no UGC → focus is CDN (Open Connect) + ML recommendation</text>
+<text x="380" y="2150" text-anchor="middle" font-size="11" fill="#5f5e5a">YouTube: User uploads, UGC → focus is transcoding pipeline + scale of creator ecosystem</text>
+<text x="380" y="2168" text-anchor="middle" font-size="11" fill="#5f5e5a">Netflix unique: personalised thumbnails, Open Connect CDN, multi-profile per account, DRM downloads</text>
+
+</svg>
+</body></html>

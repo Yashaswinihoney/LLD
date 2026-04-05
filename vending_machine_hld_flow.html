@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg { max-width: 820px; display: block; margin: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 760 1580" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: PRODUCT SELECTION + PAYMENT FLOW ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— product selection + payment flow —</text>
+
+<!-- INPUT SOURCES -->
+<rect x="20"  y="32" width="160" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="100" y="54" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Physical Machine</text>
+<text x="100" y="72" text-anchor="middle" font-size="11" fill="#5f5e5a">Touchscreen + keypad</text>
+<text x="100" y="88" text-anchor="middle" font-size="11" fill="#5f5e5a">Coin / note slot</text>
+
+<rect x="300" y="32" width="160" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="54" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Mobile App</text>
+<text x="380" y="72" text-anchor="middle" font-size="11" fill="#5f5e5a">Scan QR on machine</text>
+<text x="380" y="88" text-anchor="middle" font-size="11" fill="#5f5e5a">Browse + pay remotely</text>
+
+<rect x="580" y="32" width="160" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="660" y="54" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Contactless / NFC</text>
+<text x="660" y="72" text-anchor="middle" font-size="11" fill="#5f5e5a">Tap card / phone</text>
+<text x="660" y="88" text-anchor="middle" font-size="11" fill="#5f5e5a">UPI / Apple Pay</text>
+
+<!-- all converge to edge controller -->
+<line x1="100" y1="96"  x2="260" y2="148" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="96"  x2="380" y2="148" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="660" y1="96"  x2="500" y2="148" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- EDGE CONTROLLER (IoT) -->
+<rect x="190" y="148" width="380" height="76" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="170" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Edge Controller (IoT Device)</text>
+<text x="380" y="188" text-anchor="middle" font-size="11" fill="#854f0b">Runs State Machine locally (Idle → HasMoney → Dispensing)</text>
+<text x="380" y="204" text-anchor="middle" font-size="11" fill="#854f0b">Handles offline mode — works without cloud</text>
+<text x="380" y="220" text-anchor="middle" font-size="11" fill="#854f0b">Syncs events to cloud via MQTT</text>
+
+<line x1="380" y1="224" x2="380" y2="260" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="246" font-size="10" fill="#888">POST /purchase over TLS</text>
+
+<!-- API GATEWAY -->
+<rect x="240" y="260" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="282" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway</text>
+<text x="380" y="298" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth, rate limiting, machine routing</text>
+
+<line x1="380" y1="312" x2="380" y2="348" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- VENDING SERVICE (core) -->
+<rect x="200" y="348" width="360" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="370" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Vending Service</text>
+<text x="380" y="388" text-anchor="middle" font-size="11" fill="#0f6e56">Validate product availability (Redis inventory)</text>
+<text x="380" y="404" text-anchor="middle" font-size="11" fill="#0f6e56">Lock product slot — prevent concurrent purchase</text>
+
+<!-- slot lock fail -->
+<line x1="200" y1="376" x2="100" y2="432" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="88" y="414" font-size="10" text-anchor="end" fill="#d85a30">out of stock</text>
+<rect x="20" y="432" width="160" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="100" y="450" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Notify user</text>
+<text x="100" y="464" text-anchor="middle" font-size="10" fill="#993c1d">Suggest alternatives</text>
+
+<line x1="380" y1="412" x2="380" y2="460" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PAYMENT SERVICE -->
+<rect x="200" y="460" width="360" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="482" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Payment Service</text>
+<text x="380" y="500" text-anchor="middle" font-size="11" fill="#534ab7">Cashless: Razorpay / UPI / card (idempotent)</text>
+<text x="380" y="516" text-anchor="middle" font-size="11" fill="#534ab7">Cash: edge controller validates locally</text>
+
+<!-- payment fail -->
+<line x1="560" y1="492" x2="640" y2="544" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="570" y="544" width="170" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="655" y="562" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Release slot lock</text>
+<text x="655" y="576" text-anchor="middle" font-size="10" fill="#993c1d">Refund if pre-charged</text>
+
+<line x1="380" y1="524" x2="380" y2="572" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- DISPENSE COMMAND -->
+<rect x="200" y="572" width="360" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="594" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Dispense command → Edge Controller</text>
+<text x="380" y="612" text-anchor="middle" font-size="11" fill="#0f6e56">Cloud sends dispense signal via MQTT</text>
+<text x="380" y="628" text-anchor="middle" font-size="11" fill="#0f6e56">Inventory decremented in Redis + DB</text>
+
+<line x1="380" y1="636" x2="380" y2="672" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- KAFKA + NOTIFICATIONS -->
+<rect x="210" y="672" width="340" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="694" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Kafka → Notification + Analytics</text>
+<text x="380" y="712" text-anchor="middle" font-size="11" fill="#534ab7">Receipt pushed to mobile app</text>
+<text x="380" y="728" text-anchor="middle" font-size="11" fill="#534ab7">Purchase event logged for analytics</text>
+
+<!-- ====== SECTION 2: REAL-TIME INVENTORY FLOW ====== -->
+<line x1="40" y1="784" x2="720" y2="784" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="776" text-anchor="middle" font-size="11" fill="#888">— real-time inventory tracking flow —</text>
+
+<!-- EDGE TELEMETRY -->
+<rect x="200" y="792" width="360" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="814" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Edge Controller Telemetry</text>
+<text x="380" y="832" text-anchor="middle" font-size="11" fill="#854f0b">Streams slot levels every 30 seconds via MQTT</text>
+<text x="380" y="848" text-anchor="middle" font-size="11" fill="#854f0b">Temperature, motor faults, door sensor state</text>
+
+<line x1="380" y1="856" x2="380" y2="892" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- IOT INGESTION -->
+<rect x="230" y="892" width="300" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="914" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">IoT Ingestion Layer</text>
+<text x="380" y="930" text-anchor="middle" font-size="11" fill="#185fa5">MQTT broker → Kafka stream</text>
+
+<line x1="380" y1="944" x2="380" y2="980" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- STREAM PROCESSOR -->
+<rect x="210" y="980" width="360" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1002" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Stream Processor (Kafka Streams)</text>
+<text x="380" y="1020" text-anchor="middle" font-size="11" fill="#534ab7">Update Redis inventory per machine per slot</text>
+<text x="380" y="1036" text-anchor="middle" font-size="11" fill="#534ab7">Detect low stock threshold (&lt; 2 items)</text>
+
+<!-- fan out -->
+<line x1="300" y1="1044" x2="160" y2="1092" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="1044" x2="380" y2="1092" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="1044" x2="580" y2="1092" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="40"  y="1092" width="200" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="140" y="1114" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis Inventory Store</text>
+<text x="140" y="1130" text-anchor="middle" font-size="11" fill="#3b6d11">Live stock per slot per machine</text>
+
+<rect x="290" y="1092" width="180" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1114" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Cassandra</text>
+<text x="380" y="1130" text-anchor="middle" font-size="11" fill="#185fa5">Telemetry + sales history</text>
+
+<rect x="520" y="1092" width="200" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="620" y="1114" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Restock Alert Service</text>
+<text x="620" y="1130" text-anchor="middle" font-size="11" fill="#993c1d">Notify field ops team</text>
+
+<!-- ====== SECTION 3: PREDICTIVE RESTOCKING ====== -->
+<line x1="40" y1="1192" x2="720" y2="1192" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1184" text-anchor="middle" font-size="11" fill="#888">— predictive restocking + pricing flow —</text>
+
+<rect x="200" y="1200" width="360" height="76" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="1222" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Analytics + ML Service</text>
+<text x="380" y="1240" text-anchor="middle" font-size="11" fill="#0f6e56">Predict restock needs: day, time, location</text>
+<text x="380" y="1256" text-anchor="middle" font-size="11" fill="#0f6e56">Dynamic pricing: surge on hot items at peak hours</text>
+<text x="380" y="1272" text-anchor="middle" font-size="11" fill="#0f6e56">A/B test: which products sell best per location</text>
+
+<!-- two outputs -->
+<line x1="300" y1="1276" x2="160" y2="1320" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="1276" x2="600" y2="1320" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="40"  y="1320" width="230" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="155" y="1342" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Restock Schedule Service</text>
+<text x="155" y="1358" text-anchor="middle" font-size="11" fill="#185fa5">Optimal van routes + timing</text>
+
+<rect x="490" y="1320" width="230" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="605" y="1342" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Pricing Config Service</text>
+<text x="605" y="1358" text-anchor="middle" font-size="11" fill="#534ab7">Push updated prices to edge devices</text>
+
+<!-- ====== DATA STORES ====== -->
+<line x1="40" y1="1420" x2="720" y2="1420" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1412" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1428" width="148" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="94"  y="1450" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="94"  y="1468" text-anchor="middle" font-size="10" fill="#3b6d11">Slot inventory levels</text>
+<text x="94"  y="1484" text-anchor="middle" font-size="10" fill="#3b6d11">Slot locks (SET NX)</text>
+<text x="94"  y="1500" text-anchor="middle" font-size="10" fill="#3b6d11">Machine states</text>
+
+<rect x="186" y="1428" width="148" height="76" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="260" y="1450" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="260" y="1468" text-anchor="middle" font-size="10" fill="#185fa5">Machines, products</text>
+<text x="260" y="1484" text-anchor="middle" font-size="10" fill="#185fa5">Transactions, pricing</text>
+<text x="260" y="1500" text-anchor="middle" font-size="10" fill="#185fa5">User accounts</text>
+
+<rect x="352" y="1428" width="148" height="76" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="426" y="1450" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="426" y="1468" text-anchor="middle" font-size="10" fill="#534ab7">Purchase events</text>
+<text x="426" y="1484" text-anchor="middle" font-size="10" fill="#534ab7">Telemetry stream</text>
+<text x="426" y="1500" text-anchor="middle" font-size="10" fill="#534ab7">Restock alerts</text>
+
+<rect x="518" y="1428" width="148" height="76" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="592" y="1450" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="592" y="1468" text-anchor="middle" font-size="10" fill="#854f0b">Sales history</text>
+<text x="592" y="1484" text-anchor="middle" font-size="10" fill="#854f0b">Telemetry time-series</text>
+<text x="592" y="1500" text-anchor="middle" font-size="10" fill="#854f0b">ML training data</text>
+
+</svg>
+</body>
+</html>

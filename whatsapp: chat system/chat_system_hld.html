@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 820px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 760 1960" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: CONNECTION FLOW ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— client connection flow (WebSocket handshake) —</text>
+
+<!-- CLIENTS -->
+<rect x="40"  y="32" width="180" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="130" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Phone A (Alice)</text>
+<text x="130" y="70" text-anchor="middle" font-size="11" fill="#5f5e5a">Opens app → connect</text>
+<text x="130" y="86" text-anchor="middle" font-size="11" fill="#5f5e5a">WebSocket client</text>
+
+<rect x="540" y="32" width="180" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="630" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Phone B (Bob)</text>
+<text x="630" y="70" text-anchor="middle" font-size="11" fill="#5f5e5a">Opens app → connect</text>
+<text x="630" y="86" text-anchor="middle" font-size="11" fill="#5f5e5a">WebSocket client</text>
+
+<line x1="130" y1="96" x2="270" y2="152" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="630" y1="96" x2="490" y2="152" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- API GATEWAY / LB -->
+<rect x="210" y="152" width="340" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="174" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">Load Balancer + API Gateway</text>
+<text x="380" y="190" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth (JWT), sticky sessions, route to WS node</text>
+
+<line x1="380" y1="204" x2="380" y2="240" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- WS SERVER POOL -->
+<rect x="190" y="240" width="380" height="76" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="262" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">WebSocket Server Pool</text>
+<text x="380" y="280" text-anchor="middle" font-size="11" fill="#534ab7">Persistent bidirectional connection per user</text>
+<text x="380" y="296" text-anchor="middle" font-size="11" fill="#534ab7">Each server handles ~100k concurrent connections</text>
+<text x="380" y="312" text-anchor="middle" font-size="11" fill="#534ab7">Sticky session: user always hits same WS node</text>
+
+<!-- register presence -->
+<line x1="380" y1="316" x2="380" y2="364" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PRESENCE SERVICE -->
+<rect x="200" y="364" width="360" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="386" text-anchor="middle" font-size="13" font-weight="600" fill="#27500a">Presence Service</text>
+<text x="380" y="404" text-anchor="middle" font-size="11" fill="#3b6d11">Register: userId → wsNodeId in Redis</text>
+<text x="380" y="420" text-anchor="middle" font-size="11" fill="#3b6d11">Heartbeat every 30s — TTL = 60s (auto-offline)</text>
+
+<!-- ====== SECTION 2: SEND MESSAGE FLOW ====== -->
+<line x1="40" y1="488" x2="720" y2="488" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="480" text-anchor="middle" font-size="11" fill="#888">— send message flow —</text>
+
+<line x1="380" y1="428" x2="380" y2="496" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="466" font-size="10" fill="#888">Alice sends: {chatId, content, type}</text>
+
+<!-- CHAT SERVICE -->
+<rect x="190" y="496" width="380" height="88" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="518" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Chat Service</text>
+<text x="380" y="536" text-anchor="middle" font-size="11" fill="#0f6e56">Validate: user is member of chatId?</text>
+<text x="380" y="552" text-anchor="middle" font-size="11" fill="#0f6e56">Assign messageId (Snowflake / UUID)</text>
+<text x="380" y="568" text-anchor="middle" font-size="11" fill="#0f6e56">Status: SENDING → SENT</text>
+<text x="380" y="584" text-anchor="middle" font-size="11" fill="#0f6e56">ACK back to Alice: message received by server</text>
+
+<line x1="380" y1="584" x2="380" y2="632" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PARALLEL: DB write + fanout -->
+<line x1="290" y1="652" x2="140" y2="700" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="470" y1="652" x2="620" y2="700" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="632" width="380" height="28" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="651" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Parallel: persist + fan-out</text>
+
+<!-- CASSANDRA -->
+<rect x="20"  y="700" width="220" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="130" y="722" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Cassandra (Message Store)</text>
+<text x="130" y="740" text-anchor="middle" font-size="11" fill="#854f0b">Write: chatId + timestamp → message</text>
+<text x="130" y="756" text-anchor="middle" font-size="11" fill="#854f0b">Partition key = chatId (fast reads)</text>
+
+<!-- KAFKA FANOUT -->
+<rect x="520" y="700" width="220" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="630" y="722" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Kafka — chat-messages topic</text>
+<text x="630" y="740" text-anchor="middle" font-size="11" fill="#534ab7">Fan-out event to all recipients</text>
+<text x="630" y="756" text-anchor="middle" font-size="11" fill="#534ab7">Partitioned by chatId</text>
+
+<!-- ====== SECTION 3: DELIVERY FLOW ====== -->
+<line x1="40" y1="824" x2="720" y2="824" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="816" text-anchor="middle" font-size="11" fill="#888">— message delivery flow (online vs offline) —</text>
+
+<line x1="130" y1="764" x2="200" y2="832" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="630" y1="764" x2="560" y2="832" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- DELIVERY SERVICE -->
+<rect x="190" y="832" width="380" height="76" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="854" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Delivery Service (Kafka Consumer)</text>
+<text x="380" y="872" text-anchor="middle" font-size="11" fill="#0f6e56">For each recipient: check Presence Service</text>
+<text x="380" y="888" text-anchor="middle" font-size="11" fill="#0f6e56">Is user ONLINE? → which wsNodeId?</text>
+<text x="380" y="904" text-anchor="middle" font-size="11" fill="#0f6e56">Route to correct WebSocket node</text>
+
+<!-- online branch -->
+<line x1="280" y1="908" x2="140" y2="960" stroke="#0f6e56" stroke-width="1" marker-end="url(#arrow-g)"/>
+<text x="128" y="942" font-size="10" text-anchor="end" fill="#0f6e56">ONLINE</text>
+
+<!-- offline branch -->
+<line x1="480" y1="908" x2="620" y2="960" stroke="#d85a30" stroke-width="1" marker-end="url(#arrow-r)"/>
+<text x="628" y="942" font-size="10" fill="#d85a30">OFFLINE</text>
+
+<!-- ONLINE: WS push -->
+<rect x="20"  y="960" width="220" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="130" y="982" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">WS Node (Bob's node)</text>
+<text x="130" y="1000" text-anchor="middle" font-size="11" fill="#3b6d11">Push message to Bob's socket</text>
+<text x="130" y="1016" text-anchor="middle" font-size="11" fill="#3b6d11">Bob sees message instantly</text>
+<text x="130" y="1032" text-anchor="middle" font-size="11" fill="#3b6d11">Bob's app ACKs → DELIVERED</text>
+
+<!-- OFFLINE: queue + push -->
+<rect x="520" y="960" width="220" height="76" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="630" y="982" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Offline Queue (Redis)</text>
+<text x="630" y="1000" text-anchor="middle" font-size="11" fill="#993c1d">Store pending messages per user</text>
+<text x="630" y="1016" text-anchor="middle" font-size="11" fill="#993c1d">Push notification (FCM / APNs)</text>
+<text x="630" y="1032" text-anchor="middle" font-size="11" fill="#993c1d">Flush on reconnect</text>
+
+<!-- Both → Delivery status update -->
+<line x1="130" y1="1036" x2="280" y2="1096" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="630" y1="1036" x2="480" y2="1096" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- DELIVERY RECEIPT -->
+<rect x="190" y="1096" width="380" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1118" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Delivery Receipt → Alice</text>
+<text x="380" y="1136" text-anchor="middle" font-size="11" fill="#185fa5">Status update: SENT → DELIVERED (✓✓)</text>
+<text x="380" y="1152" text-anchor="middle" font-size="11" fill="#185fa5">Pushed to Alice via her WebSocket connection</text>
+
+<!-- ====== SECTION 4: READ RECEIPT + TYPING ====== -->
+<line x1="40" y1="1216" x2="720" y2="1216" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1208" text-anchor="middle" font-size="11" fill="#888">— read receipt + typing indicator flow —</text>
+
+<line x1="300" y1="1236" x2="160" y2="1280" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="1236" x2="600" y2="1280" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="1224" width="380" height="20" rx="6" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="1238" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Bob reads message / starts typing</text>
+
+<rect x="20"  y="1280" width="240" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="140" y="1302" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Read Receipt</text>
+<text x="140" y="1320" text-anchor="middle" font-size="11" fill="#3b6d11">Bob's app sends READ ack to server</text>
+<text x="140" y="1336" text-anchor="middle" font-size="11" fill="#3b6d11">Server pushes ✓✓ (blue) to Alice</text>
+
+<rect x="500" y="1280" width="240" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="620" y="1302" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Typing Indicator</text>
+<text x="620" y="1320" text-anchor="middle" font-size="11" fill="#854f0b">Bob typing → WS event to Alice</text>
+<text x="620" y="1336" text-anchor="middle" font-size="11" fill="#854f0b">TTL: stop after 5s of no keypress</text>
+
+<!-- ====== SECTION 5: MEDIA UPLOAD ====== -->
+<line x1="40" y1="1404" x2="720" y2="1404" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1396" text-anchor="middle" font-size="11" fill="#888">— media message flow (image / video / audio) —</text>
+
+<rect x="190" y="1412" width="380" height="88" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1434" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Media Upload Flow</text>
+<text x="380" y="1452" text-anchor="middle" font-size="11" fill="#185fa5">1. Client requests presigned S3 URL from Media Service</text>
+<text x="380" y="1468" text-anchor="middle" font-size="11" fill="#185fa5">2. Client uploads directly to S3 (bypasses chat servers)</text>
+<text x="380" y="1484" text-anchor="middle" font-size="11" fill="#185fa5">3. S3 event → Media Service → transcoding (video)</text>
+<text x="380" y="1500" text-anchor="middle" font-size="11" fill="#185fa5">4. CDN URL sent as message content via Chat Service</text>
+
+<!-- ====== SECTION 6: GROUP MESSAGE FAN-OUT ====== -->
+<line x1="40" y1="1560" x2="720" y2="1560" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1552" text-anchor="middle" font-size="11" fill="#888">— group message fan-out (1 message → N recipients) —</text>
+
+<rect x="190" y="1568" width="380" height="88" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1590" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Group Fan-out Service</text>
+<text x="380" y="1608" text-anchor="middle" font-size="11" fill="#534ab7">Fetch group members from Group Service</text>
+<text x="380" y="1624" text-anchor="middle" font-size="11" fill="#534ab7">For each member: check presence → route to WS node</text>
+<text x="380" y="1640" text-anchor="middle" font-size="11" fill="#534ab7">Small groups (&lt;256): fan-out on write (push immediately)</text>
+<text x="380" y="1656" text-anchor="middle" font-size="11" fill="#534ab7">Large groups: fan-out on read (pull on open)</text>
+
+<!-- members -->
+<line x1="260" y1="1656" x2="100" y2="1708" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="340" y1="1656" x2="280" y2="1708" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="420" y1="1656" x2="450" y2="1708" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="500" y1="1656" x2="630" y2="1708" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1708" width="140" height="44" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="90"  y="1726" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Member 1</text>
+<text x="90"  y="1742" text-anchor="middle" font-size="10" fill="#3b6d11">Online → WS</text>
+
+<rect x="220" y="1708" width="140" height="44" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="290" y="1726" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Member 2</text>
+<text x="290" y="1742" text-anchor="middle" font-size="10" fill="#3b6d11">Online → WS</text>
+
+<rect x="380" y="1708" width="140" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="450" y="1726" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Member 3</text>
+<text x="450" y="1742" text-anchor="middle" font-size="10" fill="#993c1d">Offline → push</text>
+
+<rect x="560" y="1708" width="180" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="650" y="1726" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Member N</text>
+<text x="650" y="1742" text-anchor="middle" font-size="10" fill="#993c1d">Offline → queue</text>
+
+<!-- ====== DATA STORES ====== -->
+<line x1="40" y1="1812" x2="720" y2="1812" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1804" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1820" width="148" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="94"  y="1842" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="94"  y="1860" text-anchor="middle" font-size="10" fill="#3b6d11">userId → wsNodeId</text>
+<text x="94"  y="1876" text-anchor="middle" font-size="10" fill="#3b6d11">Online presence TTL</text>
+<text x="94"  y="1892" text-anchor="middle" font-size="10" fill="#3b6d11">Offline msg queue</text>
+<text x="94"  y="1908" text-anchor="middle" font-size="10" fill="#3b6d11">Typing TTL</text>
+
+<rect x="186" y="1820" width="148" height="100" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="260" y="1842" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="260" y="1860" text-anchor="middle" font-size="10" fill="#854f0b">Messages by chatId</text>
+<text x="260" y="1876" text-anchor="middle" font-size="10" fill="#854f0b">Partition = chatId</text>
+<text x="260" y="1892" text-anchor="middle" font-size="10" fill="#854f0b">Sort = timestamp</text>
+<text x="260" y="1908" text-anchor="middle" font-size="10" fill="#854f0b">Write-heavy</text>
+
+<rect x="352" y="1820" width="148" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="426" y="1842" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="426" y="1860" text-anchor="middle" font-size="10" fill="#534ab7">chat-messages topic</text>
+<text x="426" y="1876" text-anchor="middle" font-size="10" fill="#534ab7">Partitioned by chatId</text>
+<text x="426" y="1892" text-anchor="middle" font-size="10" fill="#534ab7">Fan-out to delivery</text>
+<text x="426" y="1908" text-anchor="middle" font-size="10" fill="#534ab7">Async decoupling</text>
+
+<rect x="518" y="1820" width="222" height="100" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="629" y="1842" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="629" y="1860" text-anchor="middle" font-size="10" fill="#185fa5">Users, groups, members</text>
+<text x="629" y="1876" text-anchor="middle" font-size="10" fill="#185fa5">Chat metadata</text>
+<text x="629" y="1892" text-anchor="middle" font-size="10" fill="#185fa5">Media references</text>
+<text x="629" y="1908" text-anchor="middle" font-size="10" fill="#185fa5">User settings</text>
+
+</svg>
+</body></html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 820px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 760 2200" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: UPLOAD FLOW ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— video upload + processing pipeline —</text>
+
+<rect x="240" y="32" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="52" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">Creator uploads video</text>
+<text x="380" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">POST /upload (multipart, chunked for large files)</text>
+
+<line x1="380" y1="84" x2="380" y2="116" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- API GATEWAY -->
+<rect x="240" y="116" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="138" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway</text>
+<text x="380" y="154" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth, rate limit (per channel), route</text>
+
+<line x1="380" y1="168" x2="380" y2="204" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- UPLOAD SERVICE -->
+<rect x="190" y="204" width="380" height="76" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="226" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Upload Service</text>
+<text x="380" y="244" text-anchor="middle" font-size="11" fill="#0f6e56">Chunked upload: reassemble in object storage (S3)</text>
+<text x="380" y="260" text-anchor="middle" font-size="11" fill="#0f6e56">Generate videoId, write metadata to PostgreSQL</text>
+<text x="380" y="276" text-anchor="middle" font-size="11" fill="#0f6e56">Publish upload-complete event to Kafka</text>
+
+<line x1="380" y1="280" x2="380" y2="328" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- KAFKA PROCESSING TRIGGER -->
+<rect x="200" y="328" width="360" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Kafka — video-upload-events topic</text>
+<text x="380" y="366" text-anchor="middle" font-size="11" fill="#534ab7">Triggers processing pipeline workers</text>
+
+<!-- PROCESSING PIPELINE - CoR -->
+<line x1="380" y1="380" x2="380" y2="428" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="428" width="380" height="124" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="450" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Processing Pipeline (Chain of Responsibility)</text>
+<text x="380" y="468" text-anchor="middle" font-size="11" fill="#854f0b">Step 1: Validate format + size + content policy</text>
+<text x="380" y="484" text-anchor="middle" font-size="11" fill="#854f0b">Step 2: Transcode → 144p, 360p, 720p, 1080p, 4K (parallel)</text>
+<text x="380" y="500" text-anchor="middle" font-size="11" fill="#854f0b">Step 3: Generate 3 auto-thumbnails (frame extraction)</text>
+<text x="380" y="516" text-anchor="middle" font-size="11" fill="#854f0b">Step 4: Auto-generate subtitles (Whisper AI)</text>
+<text x="380" y="532" text-anchor="middle" font-size="11" fill="#854f0b">Step 5: Content moderation (AI hate/violence/copyright)</text>
+<text x="380" y="548" text-anchor="middle" font-size="11" fill="#854f0b">Step 6: Index in Elasticsearch + mark PUBLISHED</text>
+
+<!-- content violation -->
+<line x1="190" y1="512" x2="90" y2="568" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="78" y="550" font-size="10" text-anchor="end" fill="#d85a30">violation</text>
+<rect x="16" y="568" width="148" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="90" y="586" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Block video</text>
+<text x="90" y="600" text-anchor="middle" font-size="10" fill="#993c1d">Notify creator</text>
+
+<line x1="380" y1="552" x2="380" y2="612" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CDN UPLOAD -->
+<rect x="190" y="612" width="380" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="634" text-anchor="middle" font-size="13" font-weight="600" fill="#27500a">Push to CDN (Cloudfront / Akamai)</text>
+<text x="380" y="652" text-anchor="middle" font-size="11" fill="#3b6d11">All quality variants distributed to edge nodes globally</text>
+<text x="380" y="668" text-anchor="middle" font-size="11" fill="#3b6d11">Viewer in India → India edge, US → US edge</text>
+
+<line x1="380" y1="676" x2="380" y2="724" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- NOTIFY SUBSCRIBERS -->
+<rect x="200" y="724" width="360" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="746" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Kafka → Fan-out to subscribers</text>
+<text x="380" y="762" text-anchor="middle" font-size="11" fill="#534ab7">Push + email notification to subscribed users</text>
+
+<!-- ====== SECTION 2: WATCH / STREAM FLOW ====== -->
+<line x1="40" y1="836" x2="720" y2="836" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="828" text-anchor="middle" font-size="11" fill="#888">— watch / stream flow (read hot path) —</text>
+
+<rect x="240" y="844" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="864" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">Viewer opens video</text>
+<text x="380" y="880" text-anchor="middle" font-size="11" fill="#5f5e5a">GET /watch?v={videoId}</text>
+
+<line x1="380" y1="896" x2="380" y2="928" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- VIDEO METADATA — cache hit/miss -->
+<rect x="190" y="928" width="380" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="950" text-anchor="middle" font-size="13" font-weight="600" fill="#27500a">Video Metadata Service (cache hit/miss)</text>
+<text x="380" y="968" text-anchor="middle" font-size="11" fill="#3b6d11">Redis cache: videoId → {title, channel, thumbUrl, views}</text>
+<text x="380" y="984" text-anchor="middle" font-size="11" fill="#3b6d11">Cache miss → PostgreSQL → repopulate Redis (TTL 5min)</text>
+
+<line x1="380" y1="992" x2="380" y2="1040" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ABR STREAM -->
+<rect x="190" y="1040" width="380" height="88" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1062" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">ABR Streaming (Adaptive Bitrate)</text>
+<text x="380" y="1080" text-anchor="middle" font-size="11" fill="#185fa5">Measure viewer bandwidth every 2 seconds</text>
+<text x="380" y="1096" text-anchor="middle" font-size="11" fill="#185fa5">Select quality: 144p → 4K based on bandwidth</text>
+<text x="380" y="1112" text-anchor="middle" font-size="11" fill="#185fa5">Fetch segments from CDN edge node (~5ms latency)</text>
+<text x="380" y="1128" text-anchor="middle" font-size="11" fill="#185fa5">HLS / DASH: 2-second video segments, prefetch next</text>
+
+<line x1="380" y1="1128" x2="380" y2="1176" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PARALLEL: view count + recommendations -->
+<line x1="300" y1="1196" x2="160" y2="1240" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="1196" x2="600" y2="1240" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="1176" width="380" height="28" rx="6" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="1195" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Async: view count + recommendations</text>
+
+<!-- VIEW COUNT -->
+<rect x="20"  y="1240" width="240" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="130" y="1262" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">View Count Service</text>
+<text x="130" y="1280" text-anchor="middle" font-size="11" fill="#3b6d11">Redis counter: INCR view:{videoId}</text>
+<text x="130" y="1296" text-anchor="middle" font-size="11" fill="#3b6d11">Batch flush to DB every 30s</text>
+
+<!-- RECOMMENDATION SERVICE -->
+<rect x="500" y="1240" width="240" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="620" y="1262" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Recommendation Service</text>
+<text x="620" y="1280" text-anchor="middle" font-size="11" fill="#534ab7">Collaborative / Content / Trending</text>
+<text x="620" y="1296" text-anchor="middle" font-size="11" fill="#534ab7">ML model: watch history + CTR</text>
+
+<!-- ====== SECTION 3: HOME FEED ====== -->
+<line x1="40" y1="1364" x2="720" y2="1364" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1356" text-anchor="middle" font-size="11" fill="#888">— home feed + search flow —</text>
+
+<line x1="300" y1="1384" x2="160" y2="1428" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="1384" x2="600" y2="1428" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="1372" width="380" height="20" rx="6" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1386" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">Two parallel requests on page load</text>
+
+<!-- HOME FEED SERVICE -->
+<rect x="20"  y="1428" width="240" height="76" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="130" y="1450" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Home Feed Service</text>
+<text x="130" y="1468" text-anchor="middle" font-size="11" fill="#0f6e56">Merge: subscription feed + recommendations</text>
+<text x="130" y="1484" text-anchor="middle" font-size="11" fill="#0f6e56">Cache in Redis per user (TTL 2min)</text>
+<text x="130" y="1500" text-anchor="middle" font-size="11" fill="#0f6e56">Personalised using ML model score</text>
+
+<!-- SEARCH SERVICE -->
+<rect x="500" y="1428" width="240" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="620" y="1450" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Search Service</text>
+<text x="620" y="1468" text-anchor="middle" font-size="11" fill="#3b6d11">Elasticsearch full-text + tag index</text>
+<text x="620" y="1484" text-anchor="middle" font-size="11" fill="#3b6d11">Filters: duration, date, channel, quality</text>
+<text x="620" y="1500" text-anchor="middle" font-size="11" fill="#3b6d11">Ranked by relevance + CTR signal</text>
+
+<!-- ====== SECTION 4: CDN ARCHITECTURE ====== -->
+<line x1="40" y1="1568" x2="720" y2="1568" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1560" text-anchor="middle" font-size="11" fill="#888">— CDN architecture (the backbone of YouTube's scale) —</text>
+
+<rect x="190" y="1576" width="380" height="100" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="1598" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">CDN Edge Architecture</text>
+<text x="380" y="1616" text-anchor="middle" font-size="11" fill="#854f0b">1,000+ edge nodes globally — video served from nearest</text>
+<text x="380" y="1632" text-anchor="middle" font-size="11" fill="#854f0b">Each edge caches hot videos (top 20% = 80% of traffic)</text>
+<text x="380" y="1648" text-anchor="middle" font-size="11" fill="#854f0b">Cache miss → regional cache → origin (S3)</text>
+<text x="380" y="1664" text-anchor="middle" font-size="11" fill="#854f0b">DASH/HLS: 2-second segments allow quality switching mid-stream</text>
+<text x="380" y="1680" text-anchor="middle" font-size="11" fill="#854f0b">Segments pre-cached based on trending videos prediction</text>
+
+<!-- ====== SECTION 5: ANALYTICS ====== -->
+<line x1="40" y1="1748" x2="720" y2="1748" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1740" text-anchor="middle" font-size="11" fill="#888">— creator analytics + ad revenue pipeline —</text>
+
+<rect x="190" y="1756" width="380" height="88" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1778" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Analytics + Monetisation Pipeline</text>
+<text x="380" y="1796" text-anchor="middle" font-size="11" fill="#185fa5">Kafka stream: views, watch-time, CTR, likes, comments</text>
+<text x="380" y="1812" text-anchor="middle" font-size="11" fill="#185fa5">Flink stream processor: real-time aggregations</text>
+<text x="380" y="1828" text-anchor="middle" font-size="11" fill="#185fa5">Cassandra: time-series metrics per video/channel/day</text>
+<text x="380" y="1844" text-anchor="middle" font-size="11" fill="#185fa5">Ad revenue calculated on CPM / CPC basis per 1000 views</text>
+
+<!-- ====== DATA STORES ====== -->
+<line x1="40" y1="1912" x2="720" y2="1912" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1904" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1920" width="148" height="128" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="94"  y="1942" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="94"  y="1960" text-anchor="middle" font-size="10" fill="#3b6d11">Video metadata cache</text>
+<text x="94"  y="1976" text-anchor="middle" font-size="10" fill="#3b6d11">View count counters</text>
+<text x="94"  y="1992" text-anchor="middle" font-size="10" fill="#3b6d11">Home feed per user</text>
+<text x="94"  y="2008" text-anchor="middle" font-size="10" fill="#3b6d11">User watch history</text>
+<text x="94"  y="2024" text-anchor="middle" font-size="10" fill="#3b6d11">Search typeahead</text>
+<text x="94"  y="2040" text-anchor="middle" font-size="10" fill="#3b6d11">Trending videos</text>
+
+<rect x="186" y="1920" width="148" height="128" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="260" y="1942" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="260" y="1960" text-anchor="middle" font-size="10" fill="#185fa5">Video metadata</text>
+<text x="260" y="1976" text-anchor="middle" font-size="10" fill="#185fa5">User accounts</text>
+<text x="260" y="1992" text-anchor="middle" font-size="10" fill="#185fa5">Channels, subscriptions</text>
+<text x="260" y="2008" text-anchor="middle" font-size="10" fill="#185fa5">Comments (sharded)</text>
+<text x="260" y="2024" text-anchor="middle" font-size="10" fill="#185fa5">Payments, ad revenue</text>
+<text x="260" y="2040" text-anchor="middle" font-size="10" fill="#185fa5">Content policies</text>
+
+<rect x="352" y="1920" width="148" height="128" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="426" y="1942" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="426" y="1960" text-anchor="middle" font-size="10" fill="#534ab7">Upload events</text>
+<text x="426" y="1976" text-anchor="middle" font-size="10" fill="#534ab7">View events</text>
+<text x="426" y="1992" text-anchor="middle" font-size="10" fill="#534ab7">Like/comment events</text>
+<text x="426" y="2008" text-anchor="middle" font-size="10" fill="#534ab7">Subscription events</text>
+<text x="426" y="2024" text-anchor="middle" font-size="10" fill="#534ab7">Analytics stream</text>
+<text x="426" y="2040" text-anchor="middle" font-size="10" fill="#534ab7">Notification fan-out</text>
+
+<rect x="518" y="1920" width="148" height="128" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="592" y="1942" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra + S3</text>
+<text x="592" y="1960" text-anchor="middle" font-size="10" fill="#854f0b">Cassandra: view counts</text>
+<text x="592" y="1976" text-anchor="middle" font-size="10" fill="#854f0b">time-series per day</text>
+<text x="592" y="1992" text-anchor="middle" font-size="10" fill="#854f0b">channel analytics</text>
+<text x="592" y="2008" text-anchor="middle" font-size="10" fill="#854f0b">S3: raw video files</text>
+<text x="592" y="2024" text-anchor="middle" font-size="10" fill="#854f0b">transcoded segments</text>
+<text x="592" y="2040" text-anchor="middle" font-size="10" fill="#854f0b">subtitle files</text>
+
+<!-- INSIGHT BOX -->
+<line x1="40" y1="2112" x2="720" y2="2112" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2104" text-anchor="middle" font-size="11" fill="#888">— why YouTube ≠ Netflix architecturally —</text>
+<rect x="20" y="2120" width="720" height="72" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="2142" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">YouTube: UGC (User Generated Content) — scale challenge is upload + processing pipeline</text>
+<text x="380" y="2160" text-anchor="middle" font-size="11" fill="#5f5e5a">Netflix: licensed content — scale challenge is global CDN delivery + personalised recommendation</text>
+<text x="380" y="2178" text-anchor="middle" font-size="11" fill="#5f5e5a">YouTube processes 500 hours of video/minute — transcoding at this scale requires distributed GPU clusters</text>
+
+</svg>
+</body></html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 3200" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#ba7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- =====================================================
+     TITLE
+===================================================== -->
+<rect x="0" y="0" width="800" height="48" fill="#2c2c2a"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">HIGH AVAILABILITY + RESILIENCE — SYSTEM DESIGN</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">How to keep systems running when components fail</text>
+
+<!-- =====================================================
+     SECTION 1: THE 3 GOALS
+===================================================== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— the three goals —</text>
+
+<rect x="30"  y="80" width="224" height="88" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="142" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">High Availability (HA)</text>
+<text x="142" y="122" text-anchor="middle" font-size="11" fill="#3b6d11">System is UP and reachable</text>
+<text x="142" y="138" text-anchor="middle" font-size="11" fill="#3b6d11">Target: 99.99% uptime</text>
+<text x="142" y="154" text-anchor="middle" font-size="11" fill="#3b6d11">= &lt;52 min downtime/year</text>
+
+<rect x="288" y="80" width="224" height="88" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Fault Tolerance</text>
+<text x="400" y="122" text-anchor="middle" font-size="11" fill="#185fa5">System works despite failures</text>
+<text x="400" y="138" text-anchor="middle" font-size="11" fill="#185fa5">No single point of failure</text>
+<text x="400" y="154" text-anchor="middle" font-size="11" fill="#185fa5">Degrade gracefully, not crash</text>
+
+<rect x="546" y="80" width="224" height="88" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="658" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Resilience</text>
+<text x="658" y="122" text-anchor="middle" font-size="11" fill="#534ab7">System recovers quickly</text>
+<text x="658" y="138" text-anchor="middle" font-size="11" fill="#534ab7">RTO: Recovery Time Objective</text>
+<text x="658" y="154" text-anchor="middle" font-size="11" fill="#534ab7">RPO: Recovery Point Objective</text>
+
+<!-- =====================================================
+     SECTION 2: FULL SYSTEM ARCHITECTURE
+===================================================== -->
+<line x1="30" y1="220" x2="770" y2="220" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="212" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— layer-by-layer HA architecture —</text>
+
+<!-- LAYER 0: CLIENTS -->
+<text x="400" y="242" text-anchor="middle" font-size="10" fill="#aaa">[ Layer 0: Client ]</text>
+<rect x="250" y="248" width="300" height="44" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="266" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Users (Mobile / Web / API)</text>
+<text x="400" y="282" text-anchor="middle" font-size="10" fill="#5f5e5a">Retry with exponential backoff + jitter on timeout</text>
+
+<line x1="400" y1="292" x2="400" y2="316" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- LAYER 1: DNS + CDN (global load balancing) -->
+<text x="400" y="333" text-anchor="middle" font-size="10" fill="#aaa">[ Layer 1: Global Traffic ]</text>
+<rect x="150" y="340" width="500" height="76" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="364" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">DNS + CDN (Global Load Balancing)</text>
+<text x="400" y="382" text-anchor="middle" font-size="11" fill="#854f0b">Route 53 / Cloudflare: GeoDNS → nearest region</text>
+<text x="400" y="398" text-anchor="middle" font-size="11" fill="#854f0b">Health check every 10s — remove unhealthy region automatically</text>
+<text x="400" y="414" text-anchor="middle" font-size="11" fill="#854f0b">Anycast routing: request auto-routes to alive PoP</text>
+
+<line x1="400" y1="416" x2="400" y2="444" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- LAYER 2: LOAD BALANCER -->
+<text x="400" y="461" text-anchor="middle" font-size="10" fill="#aaa">[ Layer 2: Load Balancing ]</text>
+<rect x="150" y="468" width="500" height="88" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="490" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">Load Balancer Cluster (Active-Active)</text>
+<text x="400" y="508" text-anchor="middle" font-size="11" fill="#185fa5">2+ LB nodes — if one dies, others absorb traffic</text>
+<text x="400" y="524" text-anchor="middle" font-size="11" fill="#185fa5">Algorithms: Round-Robin / Least-Connections / IP-Hash</text>
+<text x="400" y="540" text-anchor="middle" font-size="11" fill="#185fa5">Health probes every 5s — remove sick servers within 15s</text>
+<text x="400" y="556" text-anchor="middle" font-size="11" fill="#185fa5">Connection draining: 30s for in-flight requests to finish</text>
+
+<line x1="400" y1="556" x2="400" y2="584" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- LAYER 3: API GATEWAY -->
+<text x="400" y="601" text-anchor="middle" font-size="10" fill="#aaa">[ Layer 3: API Gateway ]</text>
+<rect x="150" y="608" width="500" height="76" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="630" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">API Gateway</text>
+<text x="400" y="648" text-anchor="middle" font-size="11" fill="#0f6e56">Auth, rate limiting, request validation</text>
+<text x="400" y="664" text-anchor="middle" font-size="11" fill="#0f6e56">Circuit breaker per downstream service</text>
+<text x="400" y="680" text-anchor="middle" font-size="11" fill="#0f6e56">Timeout enforcement: every call has a max wait time</text>
+
+<line x1="250" y1="684" x2="120" y2="732" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="684" x2="400" y2="732" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="550" y1="684" x2="680" y2="732" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- LAYER 4: SERVICES (3 replicas each) -->
+<text x="400" y="749" text-anchor="middle" font-size="10" fill="#aaa">[ Layer 4: Stateless Services — horizontally scaled ]</text>
+
+<rect x="20"  y="756" width="220" height="72" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="130" y="778" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Service A</text>
+<text x="130" y="796" text-anchor="middle" font-size="11" fill="#0f6e56">3 replicas (pods)</text>
+<text x="130" y="812" text-anchor="middle" font-size="11" fill="#0f6e56">Stateless: no local state</text>
+
+<rect x="290" y="756" width="220" height="72" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="778" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Service B</text>
+<text x="400" y="796" text-anchor="middle" font-size="11" fill="#0f6e56">3 replicas (pods)</text>
+<text x="400" y="812" text-anchor="middle" font-size="11" fill="#0f6e56">Auto-scaled by CPU/RPS</text>
+
+<rect x="560" y="756" width="220" height="72" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="670" y="778" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Service C</text>
+<text x="670" y="796" text-anchor="middle" font-size="11" fill="#0f6e56">3 replicas (pods)</text>
+<text x="670" y="812" text-anchor="middle" font-size="11" fill="#0f6e56">K8s restarts crashed pods</text>
+
+<line x1="130" y1="828" x2="200" y2="872" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="828" x2="400" y2="872" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="670" y1="828" x2="600" y2="872" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- LAYER 5: MESSAGE QUEUE -->
+<text x="400" y="889" text-anchor="middle" font-size="10" fill="#aaa">[ Layer 5: Async Decoupling ]</text>
+<rect x="150" y="896" width="500" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="918" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Kafka (Message Queue) — Durable Buffer</text>
+<text x="400" y="936" text-anchor="middle" font-size="11" fill="#534ab7">Producers never wait for consumers — absorbs traffic spikes</text>
+<text x="400" y="952" text-anchor="middle" font-size="11" fill="#534ab7">Replication factor 3: survives 2 broker failures | Replayable on crash</text>
+
+<line x1="400" y1="960" x2="400" y2="988" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- LAYER 6: DATA LAYER -->
+<text x="400" y="1005" text-anchor="middle" font-size="10" fill="#aaa">[ Layer 6: Data Layer — HA storage ]</text>
+
+<line x1="300" y1="1012" x2="160" y2="1056" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="1012" x2="400" y2="1056" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="500" y1="1012" x2="640" y2="1056" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="150" y="1008" width="500" height="12" rx="4" fill="#f1efe8" stroke="#888780"/>
+
+<!-- DB CLUSTER -->
+<rect x="20"  y="1056" width="260" height="76" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="150" y="1078" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">DB Cluster (PostgreSQL)</text>
+<text x="150" y="1096" text-anchor="middle" font-size="11" fill="#854f0b">1 primary + 2 read replicas</text>
+<text x="150" y="1112" text-anchor="middle" font-size="11" fill="#854f0b">Auto-failover &lt;30s (Patroni)</text>
+
+<!-- CACHE CLUSTER -->
+<rect x="310" y="1056" width="180" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="1078" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis Cluster</text>
+<text x="400" y="1096" text-anchor="middle" font-size="11" fill="#3b6d11">3 shards × 2 replicas</text>
+<text x="400" y="1112" text-anchor="middle" font-size="11" fill="#3b6d11">Sentinel auto-failover</text>
+
+<!-- OBJECT STORAGE -->
+<rect x="520" y="1056" width="260" height="76" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="650" y="1078" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Object Storage (S3)</text>
+<text x="650" y="1096" text-anchor="middle" font-size="11" fill="#854f0b">99.999999999% durability</text>
+<text x="650" y="1112" text-anchor="middle" font-size="11" fill="#854f0b">Cross-region replication</text>
+
+<!-- =====================================================
+     SECTION 3: CIRCUIT BREAKER
+===================================================== -->
+<line x1="30" y1="1200" x2="770" y2="1200" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1192" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— circuit breaker pattern (most important resilience pattern) —</text>
+
+<!-- 3 states -->
+<rect x="30"  y="1208" width="220" height="120" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="140" y="1230" text-anchor="middle" font-size="13" font-weight="700" fill="#27500a">CLOSED ✓</text>
+<text x="140" y="1252" text-anchor="middle" font-size="11" fill="#3b6d11">Normal operation</text>
+<text x="140" y="1268" text-anchor="middle" font-size="11" fill="#3b6d11">Requests pass through</text>
+<text x="140" y="1284" text-anchor="middle" font-size="11" fill="#3b6d11">Counting failures...</text>
+<text x="140" y="1300" text-anchor="middle" font-size="10" fill="#3b6d11" font-style="italic">threshold: 5 failures / 10s</text>
+
+<rect x="290" y="1208" width="220" height="120" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="1230" text-anchor="middle" font-size="13" font-weight="700" fill="#712b13">OPEN ✗</text>
+<text x="400" y="1252" text-anchor="middle" font-size="11" fill="#993c1d">Downstream is failing</text>
+<text x="400" y="1268" text-anchor="middle" font-size="11" fill="#993c1d">Block ALL requests immediately</text>
+<text x="400" y="1284" text-anchor="middle" font-size="11" fill="#993c1d">Return fallback / error fast</text>
+<text x="400" y="1300" text-anchor="middle" font-size="10" fill="#993c1d" font-style="italic">no wasted threads waiting</text>
+
+<rect x="550" y="1208" width="220" height="120" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="660" y="1230" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">HALF-OPEN ⟳</text>
+<text x="660" y="1252" text-anchor="middle" font-size="11" fill="#854f0b">After timeout (e.g. 30s)</text>
+<text x="660" y="1268" text-anchor="middle" font-size="11" fill="#854f0b">Allow 1 probe request</text>
+<text x="660" y="1284" text-anchor="middle" font-size="11" fill="#854f0b">Success → CLOSED again</text>
+<text x="660" y="1300" text-anchor="middle" font-size="10" fill="#854f0b" font-style="italic">Fail → back to OPEN</text>
+
+<!-- arrows between states -->
+<line x1="250" y1="1268" x2="288" y2="1268" stroke="#d85a30" stroke-width="1.5" marker-end="url(#arrow-r)"/>
+<text x="270" y="1258" font-size="9" text-anchor="middle" fill="#d85a30">threshold</text>
+<text x="270" y="1282" font-size="9" text-anchor="middle" fill="#d85a30">exceeded</text>
+
+<line x1="510" y1="1268" x2="548" y2="1268" stroke="#ba7517" stroke-width="1.5" marker-end="url(#arrow-o)"/>
+<text x="530" y="1258" font-size="9" text-anchor="middle" fill="#ba7517">timeout</text>
+<text x="530" y="1282" font-size="9" text-anchor="middle" fill="#ba7517">elapsed</text>
+
+<!-- WHY CIRCUIT BREAKER -->
+<rect x="30" y="1344" width="740" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="1366" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Why it matters: without circuit breaker — cascade failure</text>
+<text x="400" y="1384" text-anchor="middle" font-size="11" fill="#5f5e5a">Service A calls B (which is down) → A threads pile up waiting → A's thread pool exhausts → A dies → C calling A also dies → full outage</text>
+<text x="400" y="1400" text-anchor="middle" font-size="11" fill="#5f5e5a">With circuit breaker: A detects B is down, opens circuit, returns error fast — A stays alive and serves other requests</text>
+
+<!-- =====================================================
+     SECTION 4: RETRY + TIMEOUT + FALLBACK
+===================================================== -->
+<line x1="30" y1="1472" x2="770" y2="1472" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1464" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— retry / timeout / fallback — the trio that keeps services alive —</text>
+
+<rect x="30"  y="1480" width="230" height="120" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="145" y="1502" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Retry with Backoff</text>
+<text x="145" y="1522" text-anchor="middle" font-size="11" fill="#185fa5">Retry on transient errors only</text>
+<text x="145" y="1538" text-anchor="middle" font-size="11" fill="#185fa5">Exponential backoff:</text>
+<text x="145" y="1554" text-anchor="middle" font-size="11" fill="#185fa5">1s → 2s → 4s → 8s</text>
+<text x="145" y="1570" text-anchor="middle" font-size="11" fill="#185fa5">+ Jitter (avoid thundering</text>
+<text x="145" y="1586" text-anchor="middle" font-size="11" fill="#185fa5">herd on retry storm)</text>
+
+<rect x="285" y="1480" width="230" height="120" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="1502" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Timeouts (mandatory)</text>
+<text x="400" y="1522" text-anchor="middle" font-size="11" fill="#185fa5">Every outbound call: timeout</text>
+<text x="400" y="1538" text-anchor="middle" font-size="11" fill="#185fa5">Connect timeout: 1s</text>
+<text x="400" y="1554" text-anchor="middle" font-size="11" fill="#185fa5">Read timeout: 3s</text>
+<text x="400" y="1570" text-anchor="middle" font-size="11" fill="#185fa5">Never wait forever —</text>
+<text x="400" y="1586" text-anchor="middle" font-size="11" fill="#185fa5">threads are finite</text>
+
+<rect x="540" y="1480" width="230" height="120" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="655" y="1502" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Graceful Fallback</text>
+<text x="655" y="1522" text-anchor="middle" font-size="11" fill="#185fa5">Serve stale cache on miss</text>
+<text x="655" y="1538" text-anchor="middle" font-size="11" fill="#185fa5">Return partial data</text>
+<text x="655" y="1554" text-anchor="middle" font-size="11" fill="#185fa5">Static default response</text>
+<text x="655" y="1570" text-anchor="middle" font-size="11" fill="#185fa5">Degrade feature not service</text>
+<text x="655" y="1586" text-anchor="middle" font-size="11" fill="#185fa5">(e.g. hide recs, keep checkout)</text>
+
+<!-- =====================================================
+     SECTION 5: MULTI-REGION DEPLOYMENT
+===================================================== -->
+<line x1="30" y1="1668" x2="770" y2="1668" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1660" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— multi-region deployment: surviving datacenter failure —</text>
+
+<!-- Active-Active -->
+<rect x="30"  y="1676" width="350" height="136" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="205" y="1698" text-anchor="middle" font-size="13" font-weight="700" fill="#27500a">Active-Active</text>
+<text x="205" y="1718" text-anchor="middle" font-size="11" fill="#3b6d11">Both regions serve live traffic</text>
+<text x="205" y="1734" text-anchor="middle" font-size="11" fill="#3b6d11">GeoDNS routes users to nearest region</text>
+<text x="205" y="1750" text-anchor="middle" font-size="11" fill="#3b6d11">Data synced bidirectionally (conflicts possible)</text>
+<text x="205" y="1766" text-anchor="middle" font-size="11" fill="#3b6d11">RTO ≈ 0 (instant failover)</text>
+<text x="205" y="1782" text-anchor="middle" font-size="11" fill="#3b6d11">✓ Best HA  ✗ Complex + expensive</text>
+<text x="205" y="1798" text-anchor="middle" font-size="11" fill="#3b6d11">Use: WhatsApp, Netflix, Razorpay</text>
+
+<!-- Active-Passive -->
+<rect x="420" y="1676" width="350" height="136" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="595" y="1698" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">Active-Passive</text>
+<text x="595" y="1718" text-anchor="middle" font-size="11" fill="#854f0b">Primary region serves traffic</text>
+<text x="595" y="1734" text-anchor="middle" font-size="11" fill="#854f0b">Standby region replicates data</text>
+<text x="595" y="1750" text-anchor="middle" font-size="11" fill="#854f0b">Failover: DNS cutover to standby</text>
+<text x="595" y="1766" text-anchor="middle" font-size="11" fill="#854f0b">RTO ≈ 1-5 min  RPO ≈ seconds</text>
+<text x="595" y="1782" text-anchor="middle" font-size="11" fill="#854f0b">✓ Simpler  ✗ Standby is wasted cost</text>
+<text x="595" y="1798" text-anchor="middle" font-size="11" fill="#854f0b">Use: smaller services, non-critical paths</text>
+
+<!-- =====================================================
+     SECTION 6: DATABASE HA STRATEGIES
+===================================================== -->
+<line x1="30" y1="1880" x2="770" y2="1880" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1872" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— database high availability strategies —</text>
+
+<rect x="30"  y="1888" width="220" height="132" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="140" y="1910" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Primary-Replica</text>
+<text x="140" y="1930" text-anchor="middle" font-size="11" fill="#854f0b">1 primary (writes)</text>
+<text x="140" y="1946" text-anchor="middle" font-size="11" fill="#854f0b">2+ read replicas</text>
+<text x="140" y="1962" text-anchor="middle" font-size="11" fill="#854f0b">Patroni: auto-promote</text>
+<text x="140" y="1978" text-anchor="middle" font-size="11" fill="#854f0b">on primary failure</text>
+<text x="140" y="1994" text-anchor="middle" font-size="11" fill="#854f0b">Failover &lt;30s</text>
+
+<rect x="270" y="1888" width="220" height="132" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="1910" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Sharding</text>
+<text x="380" y="1930" text-anchor="middle" font-size="11" fill="#854f0b">Split data by key range</text>
+<text x="380" y="1946" text-anchor="middle" font-size="11" fill="#854f0b">or consistent hash</text>
+<text x="380" y="1962" text-anchor="middle" font-size="11" fill="#854f0b">Each shard has own</text>
+<text x="380" y="1978" text-anchor="middle" font-size="11" fill="#854f0b">primary + replicas</text>
+<text x="380" y="1994" text-anchor="middle" font-size="11" fill="#854f0b">Scale writes + storage</text>
+
+<rect x="510" y="1888" width="260" height="132" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="640" y="1910" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Backup + PITR</text>
+<text x="640" y="1930" text-anchor="middle" font-size="11" fill="#854f0b">Full backup nightly (S3)</text>
+<text x="640" y="1946" text-anchor="middle" font-size="11" fill="#854f0b">WAL streaming → S3</text>
+<text x="640" y="1962" text-anchor="middle" font-size="11" fill="#854f0b">Point-In-Time Recovery</text>
+<text x="640" y="1978" text-anchor="middle" font-size="11" fill="#854f0b">Restore to any second</text>
+<text x="640" y="1994" text-anchor="middle" font-size="11" fill="#854f0b">RPO &lt; 1 second</text>
+
+<!-- =====================================================
+     SECTION 7: OBSERVABILITY STACK
+===================================================== -->
+<line x1="30" y1="2088" x2="770" y2="2088" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2080" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— observability: detect failures before users do —</text>
+
+<rect x="30"  y="2096" width="220" height="120" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="140" y="2118" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Metrics</text>
+<text x="140" y="2138" text-anchor="middle" font-size="11" fill="#534ab7">Prometheus + Grafana</text>
+<text x="140" y="2154" text-anchor="middle" font-size="11" fill="#534ab7">p99 latency, error rate</text>
+<text x="140" y="2170" text-anchor="middle" font-size="11" fill="#534ab7">RPS, CPU, memory</text>
+<text x="140" y="2186" text-anchor="middle" font-size="11" fill="#534ab7">Alert: error rate &gt; 1%</text>
+<text x="140" y="2202" text-anchor="middle" font-size="11" fill="#534ab7">→ PagerDuty on-call</text>
+
+<rect x="290" y="2096" width="220" height="120" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2118" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Logs</text>
+<text x="400" y="2138" text-anchor="middle" font-size="11" fill="#534ab7">ELK / Loki + Grafana</text>
+<text x="400" y="2154" text-anchor="middle" font-size="11" fill="#534ab7">Structured JSON logs</text>
+<text x="400" y="2170" text-anchor="middle" font-size="11" fill="#534ab7">Correlation via traceId</text>
+<text x="400" y="2186" text-anchor="middle" font-size="11" fill="#534ab7">7 days hot → S3 cold</text>
+<text x="400" y="2202" text-anchor="middle" font-size="11" fill="#534ab7">Error log alerting</text>
+
+<rect x="550" y="2096" width="220" height="120" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="660" y="2118" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Traces</text>
+<text x="660" y="2138" text-anchor="middle" font-size="11" fill="#534ab7">Jaeger / Zipkin</text>
+<text x="660" y="2154" text-anchor="middle" font-size="11" fill="#534ab7">Distributed tracing</text>
+<text x="660" y="2170" text-anchor="middle" font-size="11" fill="#534ab7">Latency waterfall view</text>
+<text x="660" y="2186" text-anchor="middle" font-size="11" fill="#534ab7">Find slow DB queries</text>
+<text x="660" y="2202" text-anchor="middle" font-size="11" fill="#534ab7">Find cascading delays</text>
+
+<!-- SLO/SLA box -->
+<rect x="30" y="2232" width="740" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2254" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">SLO / SLA / SLI — what you promise users</text>
+<text x="400" y="2272" text-anchor="middle" font-size="11" fill="#0f6e56">SLI (indicator): p99 latency &lt; 200ms measured per minute | SLO (objective): 99.9% of requests succeed | SLA (agreement): if SLO missed → credits</text>
+<text x="400" y="2288" text-anchor="middle" font-size="11" fill="#0f6e56">Error budget: 99.9% SLO = 0.1% allowed failures = 43 min/month downtime budget — burn rate alert if draining too fast</text>
+
+<!-- =====================================================
+     SECTION 8: CHAOS ENGINEERING
+===================================================== -->
+<line x1="30" y1="2364" x2="770" y2="2364" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2356" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— chaos engineering: deliberately break things before they break you —</text>
+
+<rect x="30"  y="2372" width="350" height="100" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="205" y="2394" text-anchor="middle" font-size="13" font-weight="700" fill="#712b13">What to test (Netflix Chaos Monkey)</text>
+<text x="205" y="2414" text-anchor="middle" font-size="11" fill="#993c1d">Kill random pods in production — do auto-restarts work?</text>
+<text x="205" y="2430" text-anchor="middle" font-size="11" fill="#993c1d">Cut network between services — circuit breakers fire?</text>
+<text x="205" y="2446" text-anchor="middle" font-size="11" fill="#993c1d">Fill disk — does graceful degradation kick in?</text>
+<text x="205" y="2462" text-anchor="middle" font-size="11" fill="#993c1d">Inject latency — timeouts enforced?</text>
+
+<rect x="420" y="2372" width="350" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="595" y="2394" text-anchor="middle" font-size="13" font-weight="700" fill="#27500a">Gameday — Runbook</text>
+<text x="595" y="2414" text-anchor="middle" font-size="11" fill="#3b6d11">Simulate: primary DB fails → auto-failover in &lt;30s?</text>
+<text x="595" y="2430" text-anchor="middle" font-size="11" fill="#3b6d11">Simulate: entire AZ down → traffic routes to AZ-2?</text>
+<text x="595" y="2446" text-anchor="middle" font-size="11" fill="#3b6d11">Simulate: Kafka lag spikes → consumers auto-scale?</text>
+<text x="595" y="2462" text-anchor="middle" font-size="11" fill="#3b6d11">Measure: RTO + RPO vs targets</text>
+
+<!-- =====================================================
+     SECTION 9: HA CHECKLIST
+===================================================== -->
+<line x1="30" y1="2544" x2="770" y2="2544" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2536" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— HA design checklist (say this in every interview) —</text>
+
+<rect x="30"  y="2552" width="350" height="200" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="205" y="2574" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Infrastructure</text>
+<text x="205" y="2594" text-anchor="middle" font-size="11" fill="#185fa5">☑ No single point of failure at every layer</text>
+<text x="205" y="2610" text-anchor="middle" font-size="11" fill="#185fa5">☑ Services deployed across 2+ AZs</text>
+<text x="205" y="2626" text-anchor="middle" font-size="11" fill="#185fa5">☑ DB: primary + replicas + auto-failover</text>
+<text x="205" y="2642" text-anchor="middle" font-size="11" fill="#185fa5">☑ Redis: Sentinel or Cluster mode</text>
+<text x="205" y="2658" text-anchor="middle" font-size="11" fill="#185fa5">☑ Kafka: replication factor ≥ 3</text>
+<text x="205" y="2674" text-anchor="middle" font-size="11" fill="#185fa5">☑ Load balancer: 2+ nodes active-active</text>
+<text x="205" y="2690" text-anchor="middle" font-size="11" fill="#185fa5">☑ K8s: liveness + readiness probes</text>
+<text x="205" y="2706" text-anchor="middle" font-size="11" fill="#185fa5">☑ Health checks + auto-restart</text>
+<text x="205" y="2742" text-anchor="middle" font-size="11" fill="#185fa5">☑ Daily backups + cross-region copy</text>
+
+<rect x="420" y="2552" width="350" height="200" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="595" y="2574" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Application</text>
+<text x="595" y="2594" text-anchor="middle" font-size="11" fill="#534ab7">☑ Circuit breaker on every downstream call</text>
+<text x="595" y="2610" text-anchor="middle" font-size="11" fill="#534ab7">☑ Timeout on every network call</text>
+<text x="595" y="2626" text-anchor="middle" font-size="11" fill="#534ab7">☑ Retry with exponential backoff + jitter</text>
+<text x="595" y="2642" text-anchor="middle" font-size="11" fill="#534ab7">☑ Graceful degradation on cache miss</text>
+<text x="595" y="2658" text-anchor="middle" font-size="11" fill="#534ab7">☑ Idempotent write operations</text>
+<text x="595" y="2674" text-anchor="middle" font-size="11" fill="#534ab7">☑ Bulkhead: isolate thread pools per service</text>
+<text x="595" y="2690" text-anchor="middle" font-size="11" fill="#534ab7">☑ Rate limiting (protect from overload)</text>
+<text x="595" y="2706" text-anchor="middle" font-size="11" fill="#534ab7">☑ Async via Kafka (decouple services)</text>
+<text x="595" y="2722" text-anchor="middle" font-size="11" fill="#534ab7">☑ SLO/SLA defined + error budgets</text>
+<text x="595" y="2742" text-anchor="middle" font-size="11" fill="#534ab7">☑ Chaos testing in staging regularly</text>
+
+<!-- FINAL INSIGHT -->
+<rect x="30" y="2768" width="740" height="56" rx="8" fill="#2c2c2a"/>
+<text x="400" y="2790" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">The core principle: assume everything will fail, design for recovery not prevention</text>
+<text x="400" y="2810" text-anchor="middle" font-size="11" fill="#aaa">Hard disks fail (3-5%/year). Servers crash. Networks partition. Power goes out. Code has bugs. Plan for all of it.</text>
+
+</svg>
+</body></html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg { max-width: 820px; display: block; margin: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 760 1380" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: REQUEST FLOW ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— ride request flow —</text>
+
+<!-- INPUT SOURCES -->
+<rect x="40"  y="32" width="160" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="120" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Floor Panel</text>
+<text x="120" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">User presses UP/DOWN</text>
+
+<rect x="300" y="32" width="160" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Mobile App</text>
+<text x="380" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Pre-book elevator</text>
+
+<rect x="560" y="32" width="160" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="640" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">In-car Panel</text>
+<text x="640" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">User selects floor</text>
+
+<!-- all hit API gateway -->
+<line x1="120" y1="84" x2="280" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="84" x2="380" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="640" y1="84" x2="480" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- API GATEWAY -->
+<rect x="240" y="132" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="154" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway</text>
+<text x="380" y="170" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth, rate limiting, building routing</text>
+
+<line x1="380" y1="184" x2="380" y2="216" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- DISPATCH SERVICE -->
+<rect x="210" y="216" width="340" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="238" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Dispatch Service</text>
+<text x="380" y="256" text-anchor="middle" font-size="11" fill="#0f6e56">Core brain — receives all floor requests</text>
+<text x="380" y="272" text-anchor="middle" font-size="11" fill="#0f6e56">Queries Elevator State Store (Redis)</text>
+
+<!-- parallel calls -->
+<line x1="300" y1="280" x2="160" y2="328" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="280" x2="590" y2="328" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="148" y="310" font-size="10" text-anchor="end" fill="#888">get states</text>
+<text x="598" y="310" font-size="10" fill="#888">get traffic</text>
+
+<!-- ELEVATOR STATE STORE -->
+<rect x="40" y="328" width="230" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="155" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Elevator State Store</text>
+<text x="155" y="368" text-anchor="middle" font-size="11" fill="#3b6d11">Redis: floor, direction, load</text>
+<text x="155" y="384" text-anchor="middle" font-size="11" fill="#3b6d11">Updated every 1s via IoT stream</text>
+
+<!-- TRAFFIC ANALYTICS -->
+<rect x="490" y="328" width="230" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="605" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Traffic Analytics</text>
+<text x="605" y="368" text-anchor="middle" font-size="11" fill="#185fa5">Peak hour patterns</text>
+<text x="605" y="384" text-anchor="middle" font-size="11" fill="#185fa5">Floor demand predictions</text>
+
+<!-- converge to scheduling -->
+<line x1="155" y1="392" x2="280" y2="436" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="605" y1="392" x2="480" y2="436" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- SCHEDULING ALGORITHM -->
+<rect x="190" y="436" width="380" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="458" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Scheduling Algorithm</text>
+<text x="380" y="476" text-anchor="middle" font-size="11" fill="#534ab7">SCAN: continue direction, pick up en-route</text>
+<text x="380" y="492" text-anchor="middle" font-size="11" fill="#534ab7">Assign best elevator → publish to Kafka</text>
+
+<line x1="380" y1="500" x2="380" y2="532" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- KAFKA -->
+<rect x="250" y="532" width="260" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="554" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Kafka — dispatch-commands topic</text>
+<text x="380" y="570" text-anchor="middle" font-size="11" fill="#534ab7">One message per elevator assignment</text>
+
+<!-- fan out to elevator controllers -->
+<line x1="300" y1="584" x2="160" y2="628" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="584" x2="380" y2="628" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="584" x2="600" y2="628" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="50"  y="628" width="180" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="140" y="650" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Elevator 1 Controller</text>
+<text x="140" y="666" text-anchor="middle" font-size="11" fill="#854f0b">IoT embedded system</text>
+
+<rect x="290" y="628" width="180" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="650" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Elevator 2 Controller</text>
+<text x="380" y="666" text-anchor="middle" font-size="11" fill="#854f0b">IoT embedded system</text>
+
+<rect x="530" y="628" width="180" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="620" y="650" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Elevator N Controller</text>
+<text x="620" y="666" text-anchor="middle" font-size="11" fill="#854f0b">IoT embedded system</text>
+
+<!-- ====== SECTION 2: TELEMETRY FLOW ====== -->
+<line x1="40" y1="724" x2="720" y2="724" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="716" text-anchor="middle" font-size="11" fill="#888">— real-time telemetry flow (elevator → cloud) —</text>
+
+<!-- ELEVATOR SENSORS -->
+<rect x="210" y="732" width="340" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="754" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Elevator IoT Sensors</text>
+<text x="380" y="772" text-anchor="middle" font-size="11" fill="#854f0b">Floor position, door state, load, speed</text>
+<text x="380" y="788" text-anchor="middle" font-size="11" fill="#854f0b">Streams telemetry every 1 second</text>
+
+<line x1="380" y1="796" x2="380" y2="828" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- IOT INGESTION -->
+<rect x="230" y="828" width="300" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="850" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">IoT Ingestion Layer</text>
+<text x="380" y="866" text-anchor="middle" font-size="11" fill="#185fa5">MQTT broker / AWS IoT Core</text>
+
+<line x1="380" y1="880" x2="380" y2="912" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- STREAM PROCESSOR -->
+<rect x="210" y="912" width="340" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="934" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Stream Processor</text>
+<text x="380" y="952" text-anchor="middle" font-size="11" fill="#534ab7">Kafka Streams / Flink</text>
+<text x="380" y="968" text-anchor="middle" font-size="11" fill="#534ab7">Detect anomalies, update state store</text>
+
+<!-- fan out -->
+<line x1="300" y1="976" x2="160" y2="1020" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="976" x2="380" y2="1020" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="976" x2="600" y2="1020" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="50"  y="1020" width="190" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="145" y="1042" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis State Store</text>
+<text x="145" y="1058" text-anchor="middle" font-size="11" fill="#3b6d11">Live elevator positions</text>
+
+<rect x="290" y="1020" width="180" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1042" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Cassandra</text>
+<text x="380" y="1058" text-anchor="middle" font-size="11" fill="#185fa5">Telemetry history, analytics</text>
+
+<rect x="520" y="1020" width="200" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="620" y="1042" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Alert Service</text>
+<text x="620" y="1058" text-anchor="middle" font-size="11" fill="#993c1d">Fault detection → maintenance</text>
+
+<!-- ====== SECTION 3: FAULT + MAINTENANCE ====== -->
+<line x1="40" y1="1108" x2="720" y2="1108" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1100" text-anchor="middle" font-size="11" fill="#888">— fault detection + maintenance flow —</text>
+
+<rect x="210" y="1116" width="340" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="380" y="1138" text-anchor="middle" font-size="13" font-weight="600" fill="#712b13">Fault Detected</text>
+<text x="380" y="1154" text-anchor="middle" font-size="11" fill="#993c1d">Door stuck, overload, motor fault</text>
+
+<line x1="380" y1="1168" x2="380" y2="1200" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="210" y="1200" width="340" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1222" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Maintenance Service</text>
+<text x="380" y="1240" text-anchor="middle" font-size="11" fill="#534ab7">Remove elevator from dispatch pool</text>
+<text x="380" y="1256" text-anchor="middle" font-size="11" fill="#534ab7">Notify technician via push / SMS</text>
+
+<!-- ====== DATA STORES ====== -->
+<line x1="40" y1="1306" x2="720" y2="1306" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1298" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="30"  y="1314" width="148" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="104" y="1336" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="104" y="1352" text-anchor="middle" font-size="10" fill="#3b6d11">Live elevator states</text>
+
+<rect x="196" y="1314" width="148" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="270" y="1336" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="270" y="1352" text-anchor="middle" font-size="10" fill="#185fa5">Buildings, floors, config</text>
+
+<rect x="362" y="1314" width="148" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="436" y="1336" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="436" y="1352" text-anchor="middle" font-size="10" fill="#534ab7">Dispatch commands, events</text>
+
+<rect x="528" y="1314" width="148" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="602" y="1336" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="602" y="1352" text-anchor="middle" font-size="10" fill="#854f0b">Telemetry history</text>
+
+</svg>
+</body>
+</html>

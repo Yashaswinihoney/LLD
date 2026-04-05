@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg { max-width: 820px; display: block; margin: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 760 1580" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: CARD INSERT + AUTH FLOW ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— card insert + authentication flow —</text>
+
+<!-- ATM HARDWARE -->
+<rect x="220" y="32" width="320" height="76" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="54" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">ATM Hardware (Edge Device)</text>
+<text x="380" y="72" text-anchor="middle" font-size="11" fill="#5f5e5a">Card reader: reads magnetic strip / chip (EMV)</text>
+<text x="380" y="88" text-anchor="middle" font-size="11" fill="#5f5e5a">PIN pad: encrypts PIN locally via HSM</text>
+
+<line x1="380" y1="108" x2="380" y2="140" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="128" font-size="10" fill="#888">Encrypted card data + PIN block over TLS</text>
+
+<!-- ATM SWITCH / GATEWAY -->
+<rect x="210" y="140" width="340" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="162" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">ATM Switch / Network Gateway</text>
+<text x="380" y="180" text-anchor="middle" font-size="11" fill="#5f5e5a">Routes transaction to correct bank network</text>
+<text x="380" y="196" text-anchor="middle" font-size="11" fill="#5f5e5a">Visa / Mastercard / RuPay network</text>
+
+<!-- two paths: same bank vs different bank -->
+<line x1="300" y1="204" x2="160" y2="256" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="204" x2="600" y2="256" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="148" y="236" font-size="10" text-anchor="end" fill="#888">same bank card</text>
+<text x="608" y="236" font-size="10" fill="#888">different bank card</text>
+
+<!-- ISSUING BANK AUTH SERVICE -->
+<rect x="30" y="256" width="240" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="150" y="278" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Issuing Bank Auth Service</text>
+<text x="150" y="296" text-anchor="middle" font-size="11" fill="#0f6e56">Verify card + PIN (HSM decryption)</text>
+<text x="150" y="312" text-anchor="middle" font-size="11" fill="#0f6e56">Check account status + balance</text>
+
+<!-- VISA / MASTERCARD NETWORK -->
+<rect x="490" y="256" width="240" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="610" y="278" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Card Network (Visa/MC)</text>
+<text x="610" y="296" text-anchor="middle" font-size="11" fill="#534ab7">Route to issuing bank abroad</text>
+<text x="610" y="312" text-anchor="middle" font-size="11" fill="#534ab7">ISO 8583 message format</text>
+
+<!-- auth fail paths -->
+<line x1="150" y1="320" x2="80" y2="368" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="68" y="352" font-size="10" text-anchor="end" fill="#d85a30">wrong PIN / blocked</text>
+<rect x="20" y="368" width="160" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="100" y="386" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Auth failed</text>
+<text x="100" y="400" text-anchor="middle" font-size="10" fill="#993c1d">Eject card, log attempt</text>
+
+<!-- both converge to auth success -->
+<line x1="150" y1="320" x2="300" y2="380" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="610" y1="320" x2="460" y2="380" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- AUTH SUCCESS -->
+<rect x="220" y="380" width="320" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="402" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Authentication successful</text>
+<text x="380" y="418" text-anchor="middle" font-size="11" fill="#0f6e56">Session token issued, state → Authenticated</text>
+
+<!-- ====== SECTION 2: WITHDRAWAL FLOW ====== -->
+<line x1="40" y1="472" x2="720" y2="472" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="464" text-anchor="middle" font-size="11" fill="#888">— withdrawal flow —</text>
+
+<line x1="380" y1="432" x2="380" y2="480" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="460" font-size="10" fill="#888">User requests withdrawal amount</text>
+
+<!-- FRAUD DETECTION (parallel) -->
+<line x1="300" y1="500" x2="160" y2="548" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="500" x2="600" y2="548" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="210" y="480" width="340" height="28" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="499" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Parallel checks before processing</text>
+
+<!-- FRAUD DETECTION -->
+<rect x="30" y="548" width="240" height="76" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="150" y="570" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Fraud Detection Service</text>
+<text x="150" y="588" text-anchor="middle" font-size="11" fill="#993c1d">Velocity check: too many withdrawals?</text>
+<text x="150" y="604" text-anchor="middle" font-size="11" fill="#993c1d">Geo-anomaly: card used in 2 countries?</text>
+<text x="150" y="620" text-anchor="middle" font-size="11" fill="#993c1d">ML model: unusual amount pattern</text>
+
+<!-- LIMIT CHECK -->
+<rect x="490" y="548" width="240" height="76" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="610" y="570" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Limit Check Service</text>
+<text x="610" y="588" text-anchor="middle" font-size="11" fill="#185fa5">Daily withdrawal limit check</text>
+<text x="610" y="604" text-anchor="middle" font-size="11" fill="#185fa5">Account balance check</text>
+<text x="610" y="620" text-anchor="middle" font-size="11" fill="#185fa5">ATM vault cash check</text>
+
+<!-- fraud flagged -->
+<line x1="150" y1="624" x2="80" y2="672" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="20" y="672" width="160" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="100" y="690" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Block + alert user</text>
+<text x="100" y="704" text-anchor="middle" font-size="10" fill="#993c1d">SMS / push notification</text>
+
+<!-- limit fail -->
+<line x1="610" y1="624" x2="660" y2="672" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="580" y="672" width="160" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="660" y="690" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Decline transaction</text>
+<text x="660" y="704" text-anchor="middle" font-size="10" fill="#993c1d">Show reason to user</text>
+
+<!-- both pass -->
+<line x1="150" y1="624" x2="300" y2="688" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="610" y1="624" x2="460" y2="688" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- TWO PHASE DEBIT -->
+<rect x="190" y="688" width="380" height="76" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="710" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Two-phase debit (distributed transaction)</text>
+<text x="380" y="728" text-anchor="middle" font-size="11" fill="#534ab7">Phase 1: debit account balance (bank DB)</text>
+<text x="380" y="744" text-anchor="middle" font-size="11" fill="#534ab7">Phase 2: deduct ATM vault cash</text>
+<text x="380" y="760" text-anchor="middle" font-size="11" fill="#534ab7">Both must succeed — else full rollback</text>
+
+<!-- phase fail: rollback -->
+<line x1="570" y1="724" x2="650" y2="780" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="570" y="780" width="170" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="655" y="798" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Rollback</text>
+<text x="655" y="814" text-anchor="middle" font-size="10" fill="#993c1d">Re-credit account if vault fails</text>
+
+<line x1="380" y1="764" x2="380" y2="812" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- DISPENSE CASH -->
+<rect x="220" y="812" width="320" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="834" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Dispense cash + print receipt</text>
+<text x="380" y="850" text-anchor="middle" font-size="11" fill="#0f6e56">ATM hardware physically dispenses notes</text>
+
+<line x1="380" y1="864" x2="380" y2="900" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- TRANSACTION LOG -->
+<rect x="210" y="900" width="340" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="922" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Transaction Logging Service</text>
+<text x="380" y="940" text-anchor="middle" font-size="11" fill="#854f0b">Write immutable audit log to Kafka</text>
+<text x="380" y="956" text-anchor="middle" font-size="11" fill="#854f0b">Persist to Cassandra (time-series)</text>
+
+<!-- ====== SECTION 3: VAULT MONITORING FLOW ====== -->
+<line x1="40" y1="1008" x2="720" y2="1008" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1000" text-anchor="middle" font-size="11" fill="#888">— ATM vault monitoring + replenishment flow —</text>
+
+<rect x="210" y="1016" width="340" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="1038" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">ATM Monitoring Service</text>
+<text x="380" y="1056" text-anchor="middle" font-size="11" fill="#854f0b">Tracks vault cash level in real time</text>
+<text x="380" y="1072" text-anchor="middle" font-size="11" fill="#854f0b">Heartbeat every 60s → Central Dashboard</text>
+
+<!-- two branches -->
+<line x1="300" y1="1080" x2="160" y2="1128" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="1080" x2="600" y2="1128" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="148" y="1110" font-size="10" text-anchor="end" fill="#888">low cash (&lt;20%)</text>
+<text x="608" y="1110" font-size="10" fill="#888">hardware fault</text>
+
+<rect x="30" y="1128" width="240" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="150" y="1150" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Cash Replenishment Alert</text>
+<text x="150" y="1166" text-anchor="middle" font-size="11" fill="#185fa5">Notify nearest cash van team</text>
+
+<rect x="490" y="1128" width="240" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="610" y="1150" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">ATM Out-of-Service</text>
+<text x="610" y="1166" text-anchor="middle" font-size="11" fill="#993c1d">Mark unavailable, alert engineer</text>
+
+<!-- ====== SECTION 4: NOTIFICATION FLOW ====== -->
+<line x1="40" y1="1228" x2="720" y2="1228" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1220" text-anchor="middle" font-size="11" fill="#888">— post-transaction notification + data stores —</text>
+
+<!-- NOTIFICATION -->
+<rect x="210" y="1236" width="340" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1258" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Notification Service (via Kafka)</text>
+<text x="380" y="1276" text-anchor="middle" font-size="11" fill="#534ab7">SMS: "₹5000 debited from SBI account"</text>
+<text x="380" y="1292" text-anchor="middle" font-size="11" fill="#534ab7">Push: transaction alert + balance update</text>
+
+<!-- DATA STORES -->
+<rect x="20"  y="1336" width="148" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="94"  y="1358" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="94"  y="1376" text-anchor="middle" font-size="10" fill="#3b6d11">Session tokens</text>
+<text x="94"  y="1392" text-anchor="middle" font-size="10" fill="#3b6d11">Daily limit counters</text>
+<text x="94"  y="1408" text-anchor="middle" font-size="10" fill="#3b6d11">Vault cash levels</text>
+
+<rect x="186" y="1336" width="148" height="76" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="260" y="1358" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="260" y="1376" text-anchor="middle" font-size="10" fill="#185fa5">Accounts, cards</text>
+<text x="260" y="1392" text-anchor="middle" font-size="10" fill="#185fa5">balances, limits</text>
+<text x="260" y="1408" text-anchor="middle" font-size="10" fill="#185fa5">ATM registry</text>
+
+<rect x="352" y="1336" width="148" height="76" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="426" y="1358" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="426" y="1376" text-anchor="middle" font-size="10" fill="#534ab7">Transaction events</text>
+<text x="426" y="1392" text-anchor="middle" font-size="10" fill="#534ab7">Audit logs</text>
+<text x="426" y="1408" text-anchor="middle" font-size="10" fill="#534ab7">Notifications</text>
+
+<rect x="518" y="1336" width="148" height="76" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="592" y="1358" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="592" y="1376" text-anchor="middle" font-size="10" fill="#854f0b">Transaction history</text>
+<text x="592" y="1392" text-anchor="middle" font-size="10" fill="#854f0b">Fraud patterns</text>
+<text x="592" y="1408" text-anchor="middle" font-size="10" fill="#854f0b">Vault telemetry</text>
+
+</svg>
+</body>
+</html>

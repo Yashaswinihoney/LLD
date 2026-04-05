@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg { max-width: 820px; display: block; margin: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 760 1400" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: SEARCH FLOW ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— search + reserve flow —</text>
+
+<!-- INPUT SOURCES -->
+<rect x="40"  y="32" width="180" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="130" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Mobile / Web App</text>
+<text x="130" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Search nearby parking</text>
+
+<rect x="300" y="32" width="180" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="390" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Entry Gate Kiosk</text>
+<text x="390" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Walk-in vehicle scan</text>
+
+<rect x="560" y="32" width="160" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="640" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Pre-booking App</text>
+<text x="640" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Reserve spot in advance</text>
+
+<!-- converge to API gateway -->
+<line x1="130" y1="84" x2="280" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="390" y1="84" x2="390" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="640" y1="84" x2="500" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- API GATEWAY -->
+<rect x="240" y="132" width="300" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="390" y="154" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway</text>
+<text x="390" y="170" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth, rate limiting, routing</text>
+
+<line x1="390" y1="184" x2="390" y2="216" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- SEARCH SERVICE -->
+<rect x="220" y="216" width="340" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="390" y="238" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Search Service</text>
+<text x="390" y="256" text-anchor="middle" font-size="11" fill="#0f6e56">Find lots near location (GeoHash)</text>
+<text x="390" y="272" text-anchor="middle" font-size="11" fill="#0f6e56">Filter by vehicle type + availability</text>
+
+<!-- cache hit vs miss -->
+<line x1="310" y1="280" x2="160" y2="328" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="470" y1="280" x2="600" y2="328" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="148" y="310" font-size="10" text-anchor="end" fill="#888">cache hit</text>
+<text x="608" y="310" font-size="10" fill="#888">cache miss</text>
+
+<!-- REDIS -->
+<rect x="50" y="328" width="210" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="155" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis Cache</text>
+<text x="155" y="366" text-anchor="middle" font-size="11" fill="#3b6d11">Spot counts per lot + GeoHash index</text>
+
+<!-- INVENTORY SERVICE -->
+<rect x="490" y="328" width="220" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="600" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Inventory Service</text>
+<text x="600" y="366" text-anchor="middle" font-size="11" fill="#0f6e56">Query Spot DB, populate cache</text>
+
+<!-- merge -->
+<line x1="155" y1="380" x2="300" y2="428" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="600" y1="380" x2="480" y2="428" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- RESULTS -->
+<rect x="230" y="428" width="320" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="390" y="450" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Return available lots to user</text>
+<text x="390" y="466" text-anchor="middle" font-size="11" fill="#0f6e56">With spot count, price, distance</text>
+
+<line x1="390" y1="480" x2="390" y2="512" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="406" y="500" font-size="10" fill="#888">POST /reserve</text>
+
+<!-- ====== SECTION 2: BOOKING FLOW ====== -->
+<line x1="40" y1="508" x2="720" y2="508" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="390" y="500" text-anchor="middle" font-size="11" fill="#888">— booking flow —</text>
+
+<!-- RESERVATION SERVICE -->
+<rect x="220" y="516" width="340" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="390" y="538" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Reservation Service</text>
+<text x="390" y="556" text-anchor="middle" font-size="11" fill="#185fa5">Acquire distributed lock on spot</text>
+<text x="390" y="572" text-anchor="middle" font-size="11" fill="#185fa5">Redis lock with TTL (15 min)</text>
+
+<!-- lock fail -->
+<line x1="220" y1="548" x2="100" y2="600" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="88" y="582" font-size="10" text-anchor="end" fill="#d85a30">lock taken</text>
+<rect x="20" y="600" width="160" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="100" y="622" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Spot unavailable</text>
+
+<line x1="390" y1="580" x2="390" y2="616" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PRICING SERVICE -->
+<rect x="220" y="616" width="340" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="390" y="638" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Pricing Service</text>
+<text x="390" y="656" text-anchor="middle" font-size="11" fill="#854f0b">Dynamic pricing: peak hours, spot type</text>
+<text x="390" y="672" text-anchor="middle" font-size="11" fill="#854f0b">SMALL &lt; MEDIUM &lt; LARGE rates</text>
+
+<line x1="390" y1="680" x2="390" y2="716" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PAYMENT SERVICE -->
+<rect x="220" y="716" width="340" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="390" y="738" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Payment Service</text>
+<text x="390" y="756" text-anchor="middle" font-size="11" fill="#534ab7">Charge upfront or on exit (idempotent)</text>
+<text x="390" y="772" text-anchor="middle" font-size="11" fill="#534ab7">Stripe / Razorpay gateway</text>
+
+<!-- payment fail -->
+<line x1="560" y1="748" x2="640" y2="800" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="560" y="800" width="170" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="645" y="818" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Release Redis lock</text>
+<text x="645" y="832" text-anchor="middle" font-size="11" fill="#993c1d">Spot → AVAILABLE</text>
+
+<line x1="390" y1="780" x2="390" y2="816" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CONFIRM BOOKING -->
+<rect x="220" y="816" width="340" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="390" y="838" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Confirm booking</text>
+<text x="390" y="856" text-anchor="middle" font-size="11" fill="#0f6e56">Write ticket to DB (lot, spot, vehicle, time)</text>
+<text x="390" y="872" text-anchor="middle" font-size="11" fill="#0f6e56">Spot status → BOOKED in DB + Redis</text>
+
+<line x1="390" y1="880" x2="390" y2="912" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- NOTIFICATION -->
+<rect x="230" y="912" width="320" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="390" y="934" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Notification Service (via Kafka)</text>
+<text x="390" y="950" text-anchor="middle" font-size="11" fill="#534ab7">Push ticket + QR code to user</text>
+
+<!-- ====== SECTION 3: ENTRY / EXIT FLOW ====== -->
+<line x1="40" y1="1000" x2="720" y2="1000" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="390" y="992" text-anchor="middle" font-size="11" fill="#888">— entry / exit gate flow —</text>
+
+<!-- ENTRY GATE -->
+<rect x="60" y="1008" width="240" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="180" y="1030" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Entry Gate</text>
+<text x="180" y="1048" text-anchor="middle" font-size="11" fill="#854f0b">Scan QR / License plate (ANPR)</text>
+<text x="180" y="1064" text-anchor="middle" font-size="11" fill="#854f0b">Validate against Reservation DB</text>
+
+<!-- EXIT GATE -->
+<rect x="460" y="1008" width="240" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="580" y="1030" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Exit Gate</text>
+<text x="580" y="1048" text-anchor="middle" font-size="11" fill="#854f0b">Scan QR / License plate</text>
+<text x="580" y="1064" text-anchor="middle" font-size="11" fill="#854f0b">Trigger billing + open barrier</text>
+
+<!-- entry gate flow -->
+<line x1="180" y1="1072" x2="180" y2="1108" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="60" y="1108" width="240" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="180" y="1130" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Spot status → OCCUPIED</text>
+<text x="180" y="1146" text-anchor="middle" font-size="11" fill="#0f6e56">Update Redis + DB, log entry time</text>
+
+<!-- exit gate flow -->
+<line x1="580" y1="1072" x2="580" y2="1108" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="460" y="1108" width="240" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="580" y="1130" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Billing Service</text>
+<text x="580" y="1146" text-anchor="middle" font-size="11" fill="#534ab7">Calculate overstay charges if any</text>
+
+<line x1="580" y1="1160" x2="580" y2="1196" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="460" y="1196" width="240" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="580" y="1218" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Spot → AVAILABLE</text>
+<text x="580" y="1234" text-anchor="middle" font-size="11" fill="#0f6e56">Update Redis + DB, send receipt</text>
+
+<!-- ====== SECTION 4: DISPLAY BOARD ====== -->
+<line x1="40" y1="1288" x2="720" y2="1288" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="390" y="1280" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="30"  y="1296" width="148" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="104" y="1318" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="104" y="1334" text-anchor="middle" font-size="10" fill="#3b6d11">Spot availability + GeoHash</text>
+
+<rect x="196" y="1296" width="148" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="270" y="1318" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="270" y="1334" text-anchor="middle" font-size="10" fill="#185fa5">Tickets, payments, lots</text>
+
+<rect x="362" y="1296" width="148" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="436" y="1318" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="436" y="1334" text-anchor="middle" font-size="10" fill="#534ab7">Spot events, notifications</text>
+
+<rect x="528" y="1296" width="148" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="602" y="1318" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="602" y="1334" text-anchor="middle" font-size="10" fill="#854f0b">Entry/exit logs, analytics</text>
+
+</svg>
+</body>
+</html>
