@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 2720" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#2c2c2a"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">LIBRARY MANAGEMENT SYSTEM — HLD APPLICATION FLOW</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">Borrow · Return · Reserve · Fine · Search · Notifications</text>
+
+<!-- ====== SECTION 1: BORROW FLOW ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— borrow book flow —</text>
+
+<rect x="40"  y="80" width="200" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="140" y="100" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Member (Web / App / Kiosk)</text>
+<text x="140" y="116" text-anchor="middle" font-size="11" fill="#5f5e5a">Scan membership card + book barcode</text>
+
+<rect x="560" y="80" width="200" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="660" y="100" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Librarian Terminal</text>
+<text x="660" y="116" text-anchor="middle" font-size="11" fill="#5f5e5a">Manual issue / return</text>
+
+<line x1="140" y1="132" x2="280" y2="180" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="660" y1="132" x2="520" y2="180" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- API GATEWAY -->
+<rect x="220" y="180" width="360" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="202" text-anchor="middle" font-size="13" font-weight="700" fill="#2c2c2a">API Gateway</text>
+<text x="400" y="218" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth (member card scan / JWT), rate limiting</text>
+
+<line x1="400" y1="232" x2="400" y2="268" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- LIBRARY SERVICE -->
+<rect x="160" y="268" width="480" height="112" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="290" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Library Service — Borrow</text>
+<text x="400" y="308" text-anchor="middle" font-size="11" fill="#0f6e56">1. Lookup member + book by memberId + barcode</text>
+<text x="400" y="324" text-anchor="middle" font-size="11" fill="#0f6e56">2. Validation chain: membership → limit → fine → availability → reference</text>
+<text x="400" y="340" text-anchor="middle" font-size="11" fill="#0f6e56">3. Atomically mark copy BORROWED (DB update + Redis cache)</text>
+<text x="400" y="356" text-anchor="middle" font-size="11" fill="#0f6e56">4. Create loan record → set due date by member type</text>
+<text x="400" y="368" text-anchor="middle" font-size="11" fill="#0f6e56">5. Kafka: loan-created event → notifications + analytics</text>
+<text x="400" y="380" text-anchor="middle" font-size="11" fill="#0f6e56">6. Print / send receipt to member</text>
+
+<!-- validation fail -->
+<line x1="160" y1="324" x2="80" y2="396" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="16" y="396" width="148" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="90" y="414" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Reject</text>
+<text x="90" y="430" text-anchor="middle" font-size="10" fill="#993c1d">reason + suggest action</text>
+<text x="90" y="444" text-anchor="middle" font-size="10" fill="#993c1d">(reserve / pay fine)</text>
+
+<line x1="400" y1="380" x2="400" y2="444" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PARALLEL WRITE -->
+<line x1="300" y1="464" x2="160" y2="508" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="500" y1="464" x2="640" y2="508" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="444" width="420" height="28" rx="6" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="463" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Parallel: persist loan + publish event</text>
+
+<rect x="20"  y="508" width="270" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="155" y="530" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">PostgreSQL + Redis</text>
+<text x="155" y="548" text-anchor="middle" font-size="11" fill="#3b6d11">loans table + copy status update</text>
+<text x="155" y="564" text-anchor="middle" font-size="11" fill="#3b6d11">Redis: availability cache invalidated</text>
+
+<rect x="510" y="508" width="270" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="645" y="530" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Kafka — loan-events</text>
+<text x="645" y="548" text-anchor="middle" font-size="11" fill="#534ab7">Email receipt to member</text>
+<text x="645" y="564" text-anchor="middle" font-size="11" fill="#534ab7">Analytics: borrow count updated</text>
+
+<!-- ====== SECTION 2: RETURN + FINE FLOW ====== -->
+<line x1="30" y1="636" x2="770" y2="636" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="628" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— return + fine calculation flow —</text>
+
+<rect x="160" y="644" width="480" height="112" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="666" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">Return Flow</text>
+<text x="400" y="684" text-anchor="middle" font-size="11" fill="#854f0b">1. Scan book barcode → find active loan</text>
+<text x="400" y="700" text-anchor="middle" font-size="11" fill="#854f0b">2. Fine calculation: today vs dueDate → apply strategy</text>
+<text x="400" y="716" text-anchor="middle" font-size="11" fill="#854f0b">3. Inspect book condition → update copy condition</text>
+<text x="400" y="732" text-anchor="middle" font-size="11" fill="#854f0b">4. Mark loan RETURNED, copy AVAILABLE in DB + Redis</text>
+<text x="400" y="748" text-anchor="middle" font-size="11" fill="#854f0b">5. Check reservation queue → notify next in queue if any</text>
+
+<line x1="300" y1="756" x2="160" y2="820" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="500" y1="756" x2="640" y2="820" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="820" width="240" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="140" y="842" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">No Reservation Queue</text>
+<text x="140" y="860" text-anchor="middle" font-size="11" fill="#3b6d11">Copy goes back to AVAILABLE</text>
+<text x="140" y="876" text-anchor="middle" font-size="11" fill="#3b6d11">Anyone can borrow it now</text>
+
+<rect x="540" y="820" width="240" height="76" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="660" y="842" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Reservation Queue Exists</text>
+<text x="660" y="860" text-anchor="middle" font-size="11" fill="#534ab7">Copy → RESERVED for next member</text>
+<text x="660" y="876" text-anchor="middle" font-size="11" fill="#534ab7">SMS/push: "Your book is ready!"</text>
+
+<!-- ====== SECTION 3: RESERVATION FLOW ====== -->
+<line x1="30" y1="960" x2="770" y2="960" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="952" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— reservation queue flow —</text>
+
+<rect x="160" y="968" width="480" height="100" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="990" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">Reservation Service</text>
+<text x="400" y="1008" text-anchor="middle" font-size="11" fill="#185fa5">Member requests unavailable book → add to FIFO queue</text>
+<text x="400" y="1024" text-anchor="middle" font-size="11" fill="#185fa5">Queue stored per bookId: [(member1, ts), (member2, ts)...]</text>
+<text x="400" y="1040" text-anchor="middle" font-size="11" fill="#185fa5">On return: dequeue head → assign copy → notify member</text>
+<text x="400" y="1056" text-anchor="middle" font-size="11" fill="#185fa5">Member has 3 days to collect → else expires, next in queue</text>
+<text x="400" y="1068" text-anchor="middle" font-size="11" fill="#185fa5">Cancel reservation: remove from queue, reassign position numbers</text>
+
+<!-- ====== SECTION 4: OVERDUE + FINE SYSTEM ====== -->
+<line x1="30" y1="1136" x2="770" y2="1136" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1128" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— overdue detection + fine system —</text>
+
+<rect x="30"  y="1144" width="350" height="124" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="205" y="1166" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Overdue Detection (Scheduled Job)</text>
+<text x="205" y="1186" text-anchor="middle" font-size="11" fill="#993c1d">Cron job runs daily at midnight</text>
+<text x="205" y="1202" text-anchor="middle" font-size="11" fill="#993c1d">SELECT loans WHERE dueDate &lt; today AND status=ACTIVE</text>
+<text x="205" y="1218" text-anchor="middle" font-size="11" fill="#993c1d">Mark OVERDUE → compute fine</text>
+<text x="205" y="1234" text-anchor="middle" font-size="11" fill="#993c1d">Publish overdue-event → reminder email/SMS</text>
+<text x="205" y="1250" text-anchor="middle" font-size="11" fill="#993c1d">Accumulate fine per member in DB</text>
+
+<rect x="420" y="1144" width="350" height="124" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="595" y="1166" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Fine Strategies</text>
+<text x="595" y="1186" text-anchor="middle" font-size="11" fill="#854f0b">Fixed: ₹5/day (simple)</text>
+<text x="595" y="1202" text-anchor="middle" font-size="11" fill="#854f0b">Tiered: ₹2→₹5→₹10/day (escalating)</text>
+<text x="595" y="1218" text-anchor="middle" font-size="11" fill="#854f0b">Waiver: faculty/premium get 2-day grace</text>
+<text x="595" y="1234" text-anchor="middle" font-size="11" fill="#854f0b">Max fine cap: cost of book replacement</text>
+<text x="595" y="1250" text-anchor="middle" font-size="11" fill="#854f0b">Fine blocks borrowing if &gt; ₹100</text>
+
+<!-- ====== SECTION 5: SEARCH FLOW ====== -->
+<line x1="30" y1="1332" x2="770" y2="1332" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1324" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— catalog search flow —</text>
+
+<rect x="160" y="1340" width="480" height="112" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="1362" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Search Service</text>
+<text x="400" y="1380" text-anchor="middle" font-size="11" fill="#0f6e56">Member searches: title / author / ISBN / category / tag</text>
+<text x="400" y="1396" text-anchor="middle" font-size="11" fill="#0f6e56">Redis cache: popular searches cached 5 min (TTL)</text>
+<text x="400" y="1412" text-anchor="middle" font-size="11" fill="#0f6e56">Cache miss → Elasticsearch full-text search</text>
+<text x="400" y="1428" text-anchor="middle" font-size="11" fill="#0f6e56">Results include: availability count per book</text>
+<text x="400" y="1444" text-anchor="middle" font-size="11" fill="#0f6e56">Sorted: relevance → rating → availability → publish year</text>
+<text x="400" y="1452" text-anchor="middle" font-size="11" fill="#0f6e56">Paginated: 20 results per page (cursor-based)</text>
+
+<line x1="300" y1="1452" x2="160" y2="1496" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="500" y1="1452" x2="640" y2="1496" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1496" width="240" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="140" y="1518" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis Cache Hit</text>
+<text x="140" y="1536" text-anchor="middle" font-size="11" fill="#3b6d11">Return in &lt;2ms</text>
+<text x="140" y="1552" text-anchor="middle" font-size="11" fill="#3b6d11">TTL 5 min for popular queries</text>
+
+<rect x="540" y="1496" width="240" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="660" y="1518" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Elasticsearch Miss</text>
+<text x="660" y="1536" text-anchor="middle" font-size="11" fill="#534ab7">Full-text inverted index search</text>
+<text x="660" y="1552" text-anchor="middle" font-size="11" fill="#534ab7">Populate Redis on return</text>
+
+<!-- ====== SECTION 6: NOTIFICATION FLOW ====== -->
+<line x1="30" y1="1624" x2="770" y2="1624" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1616" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— notification + reminder flow —</text>
+
+<rect x="160" y="1632" width="480" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1654" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Notification Service (Kafka Consumer)</text>
+<text x="400" y="1672" text-anchor="middle" font-size="11" fill="#534ab7">Borrow confirmation: email with due date</text>
+<text x="400" y="1688" text-anchor="middle" font-size="11" fill="#534ab7">Due-soon reminder: 3 days before + 1 day before (email + SMS)</text>
+<text x="400" y="1704" text-anchor="middle" font-size="11" fill="#534ab7">Overdue notice: daily until returned (escalating tone)</text>
+<text x="400" y="1720" text-anchor="middle" font-size="11" fill="#534ab7">Reservation ready: SMS + push (collect within 3 days)</text>
+<text x="400" y="1732" text-anchor="middle" font-size="11" fill="#534ab7">New arrivals: email to members who follow that author/category</text>
+
+<!-- ====== SECTION 7: DATA STORES ====== -->
+<line x1="30" y1="1804" x2="770" y2="1804" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1796" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1812" width="175" height="148" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="107" y="1834" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="107" y="1852" text-anchor="middle" font-size="10" fill="#3b6d11">Book availability cache</text>
+<text x="107" y="1868" text-anchor="middle" font-size="10" fill="#3b6d11">isbn → availableCount</text>
+<text x="107" y="1884" text-anchor="middle" font-size="10" fill="#3b6d11">Popular search cache</text>
+<text x="107" y="1900" text-anchor="middle" font-size="10" fill="#3b6d11">Member session tokens</text>
+<text x="107" y="1916" text-anchor="middle" font-size="10" fill="#3b6d11">Reservation queue</text>
+<text x="107" y="1932" text-anchor="middle" font-size="10" fill="#3b6d11">Overdue flag per loan</text>
+<text x="107" y="1948" text-anchor="middle" font-size="10" fill="#3b6d11">Rate limit for API</text>
+
+<rect x="211" y="1812" width="175" height="148" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="298" y="1834" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="298" y="1852" text-anchor="middle" font-size="10" fill="#185fa5">books + book_copies</text>
+<text x="298" y="1868" text-anchor="middle" font-size="10" fill="#185fa5">members</text>
+<text x="298" y="1884" text-anchor="middle" font-size="10" fill="#185fa5">loans</text>
+<text x="298" y="1900" text-anchor="middle" font-size="10" fill="#185fa5">reservations</text>
+<text x="298" y="1916" text-anchor="middle" font-size="10" fill="#185fa5">fines</text>
+<text x="298" y="1932" text-anchor="middle" font-size="10" fill="#185fa5">fine_payments</text>
+<text x="298" y="1948" text-anchor="middle" font-size="10" fill="#185fa5">ratings + reviews</text>
+
+<rect x="402" y="1812" width="175" height="148" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="489" y="1834" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="489" y="1852" text-anchor="middle" font-size="10" fill="#534ab7">loan-events</text>
+<text x="489" y="1868" text-anchor="middle" font-size="10" fill="#534ab7">return-events</text>
+<text x="489" y="1884" text-anchor="middle" font-size="10" fill="#534ab7">overdue-events</text>
+<text x="489" y="1900" text-anchor="middle" font-size="10" fill="#534ab7">reservation-events</text>
+<text x="489" y="1916" text-anchor="middle" font-size="10" fill="#534ab7">fine-events</text>
+<text x="489" y="1932" text-anchor="middle" font-size="10" fill="#534ab7">new-arrival-events</text>
+<text x="489" y="1948" text-anchor="middle" font-size="10" fill="#534ab7">Async notifications</text>
+
+<rect x="593" y="1812" width="187" height="148" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="686" y="1834" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Elasticsearch</text>
+<text x="686" y="1852" text-anchor="middle" font-size="10" fill="#854f0b">Full-text book search</text>
+<text x="686" y="1868" text-anchor="middle" font-size="10" fill="#854f0b">title, author, tags</text>
+<text x="686" y="1884" text-anchor="middle" font-size="10" fill="#854f0b">ISBN + Dewey code</text>
+<text x="686" y="1900" text-anchor="middle" font-size="10" fill="#854f0b">Availability filter</text>
+<text x="686" y="1916" text-anchor="middle" font-size="10" fill="#854f0b">Category facets</text>
+<text x="686" y="1932" text-anchor="middle" font-size="10" fill="#854f0b">Relevance ranking</text>
+<text x="686" y="1948" text-anchor="middle" font-size="10" fill="#854f0b">Analytics on searches</text>
+
+<!-- ====== SECTION 8: KEY DECISIONS ====== -->
+<line x1="30" y1="2024" x2="770" y2="2024" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2016" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 5 hardest design decisions —</text>
+
+<rect x="30" y="2032" width="740" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2052" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">1. Book vs BookCopy — two separate entities</text>
+<text x="400" y="2070" text-anchor="middle" font-size="11" fill="#0f6e56">Book = logical entity (title, ISBN, authors). BookCopy = physical instance (barcode, condition, location). One Book can have N copies. Availability is tracked at the copy level, not the book level.</text>
+
+<rect x="30" y="2096" width="740" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2116" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">2. Reservation queue — FIFO per bookId, not per copyId</text>
+<text x="400" y="2134" text-anchor="middle" font-size="11" fill="#185fa5">Queue is for the book title, not a specific copy. When ANY copy of that book is returned, the head of the queue is assigned that copy. Copy is then reserved for 3 days — if not collected, it goes to the next in queue.</text>
+
+<rect x="30" y="2160" width="740" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="2180" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">3. Fine accumulates on member, not on loan</text>
+<text x="400" y="2198" text-anchor="middle" font-size="11" fill="#854f0b">Each loan computes fine on return. Fine added to member.outstandingFine. Loan records its own fineCharged for audit. Borrowing blocked if total outstanding &gt; threshold. Members can pay partially.</text>
+
+<rect x="30" y="2224" width="740" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2244" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">4. Renewal blocked if reservation queue exists for that book</text>
+<text x="400" y="2262" text-anchor="middle" font-size="11" fill="#534ab7">Before renewing, check if any reservation exists for the same book. If yes — member cannot renew, must return so queued member can get it. This ensures fair access across all members.</text>
+
+<rect x="30" y="2288" width="740" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2308" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">5. Atomic copy availability update (prevent double-borrow)</text>
+<text x="400" y="2326" text-anchor="middle" font-size="11" fill="#993c1d">Use DB-level optimistic lock (version column on book_copies) or SELECT FOR UPDATE. Two concurrent checkouts for the same copy → only one succeeds. Redis availability cache invalidated immediately after borrow.</text>
+
+<!-- LLD vs HLD COMPARISON -->
+<line x1="30" y1="2404" x2="770" y2="2404" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2396" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— LLD vs HLD comparison —</text>
+
+<rect x="30"  y="2412" width="355" height="176" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="207" y="2434" text-anchor="middle" font-size="12" font-weight="700" fill="#2c2c2a">LLD (In-Process)</text>
+<text x="207" y="2454" text-anchor="middle" font-size="11" fill="#5f5e5a">Copy lock: synchronized(copyObj)</text>
+<text x="207" y="2470" text-anchor="middle" font-size="11" fill="#5f5e5a">Availability: BookCopy.isAvailable field</text>
+<text x="207" y="2486" text-anchor="middle" font-size="11" fill="#5f5e5a">Reservation queue: LinkedList in memory</text>
+<text x="207" y="2502" text-anchor="middle" font-size="11" fill="#5f5e5a">Search: stream filter on in-memory map</text>
+<text x="207" y="2518" text-anchor="middle" font-size="11" fill="#5f5e5a">Fine: computed at return time (Strategy)</text>
+<text x="207" y="2534" text-anchor="middle" font-size="11" fill="#5f5e5a">Overdue: checked on each return call</text>
+<text x="207" y="2550" text-anchor="middle" font-size="11" fill="#5f5e5a">Notifications: synchronous observer</text>
+<text x="207" y="2570" text-anchor="middle" font-size="11" fill="#5f5e5a">Validation: CoR chain (in-process)</text>
+
+<rect x="415" y="2412" width="355" height="176" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="592" y="2434" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">HLD (Distributed)</text>
+<text x="592" y="2454" text-anchor="middle" font-size="11" fill="#0f6e56">Copy lock: SELECT FOR UPDATE / Redis NX</text>
+<text x="592" y="2470" text-anchor="middle" font-size="11" fill="#0f6e56">Availability: Redis cache + PostgreSQL</text>
+<text x="592" y="2486" text-anchor="middle" font-size="11" fill="#0f6e56">Reservation queue: Redis list per bookId</text>
+<text x="592" y="2502" text-anchor="middle" font-size="11" fill="#0f6e56">Search: Elasticsearch + Redis cache</text>
+<text x="592" y="2518" text-anchor="middle" font-size="11" fill="#0f6e56">Fine: cron job + Kafka overdue-events</text>
+<text x="592" y="2534" text-anchor="middle" font-size="11" fill="#0f6e56">Overdue: nightly batch job scans DB</text>
+<text x="592" y="2550" text-anchor="middle" font-size="11" fill="#0f6e56">Notifications: Kafka → Notif Service</text>
+<text x="592" y="2570" text-anchor="middle" font-size="11" fill="#0f6e56">Validation: microservice API calls</text>
+
+<!-- FINAL BOX -->
+<rect x="30" y="2608" width="740" height="60" rx="8" fill="#2c2c2a"/>
+<text x="400" y="2630" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Core principle: Book availability = (totalCopies − borrowedCopies − reservedCopies).</text>
+<text x="400" y="2650" text-anchor="middle" font-size="11" fill="#aaa">Every borrow decrements it atomically. Every return increments it — unless a reservation queue exists, in which case the copy goes to the next member.</text>
+
+</svg>
+</body></html>
