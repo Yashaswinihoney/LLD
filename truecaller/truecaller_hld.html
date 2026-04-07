@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 2800" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#2c2c2a"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">TRUECALLER — HLD APPLICATION FLOW</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">Caller ID lookup · Spam detection · Contact sync · Search · Privacy</text>
+
+<!-- ====== SECTION 1: INCOMING CALL LOOKUP ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— incoming call lookup flow (must complete in &lt; 200ms) —</text>
+
+<!-- INCOMING CALL -->
+<rect x="240" y="80" width="320" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="100" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">Incoming call on Alice's phone</text>
+<text x="400" y="116" text-anchor="middle" font-size="11" fill="#5f5e5a">OS intercepts → Truecaller app triggered with callerNumber</text>
+
+<line x1="400" y1="132" x2="400" y2="164" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- LOCAL LOOKUP FIRST -->
+<rect x="160" y="164" width="480" height="88" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="186" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Step 1: Local Cache Lookup (on-device, &lt;5ms)</text>
+<text x="400" y="204" text-anchor="middle" font-size="11" fill="#0f6e56">Check Alice's own contacts — personal name takes priority</text>
+<text x="400" y="220" text-anchor="middle" font-size="11" fill="#0f6e56">Check Alice's local blocked list → show "Blocked" banner instantly</text>
+<text x="400" y="236" text-anchor="middle" font-size="11" fill="#0f6e56">Check on-device spam cache (last sync'd from server)</text>
+
+<!-- local hit -->
+<line x1="160" y1="204" x2="80" y2="268" stroke="#0f6e56" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-g)"/>
+<text x="68" y="252" font-size="10" text-anchor="end" fill="#0f6e56">local hit</text>
+<rect x="16" y="268" width="148" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="90" y="286" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Show caller ID</text>
+<text x="90" y="302" text-anchor="middle" font-size="10" fill="#3b6d11">instantly, no network</text>
+
+<line x1="400" y1="252" x2="400" y2="300" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="416" y="280" font-size="10" fill="#888">not in local cache</text>
+
+<!-- API GATEWAY -->
+<rect x="240" y="300" width="320" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="322" text-anchor="middle" font-size="13" font-weight="700" fill="#2c2c2a">API Gateway</text>
+<text x="400" y="338" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth (device token), rate limit, route</text>
+
+<line x1="400" y1="352" x2="400" y2="388" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CALLER ID SERVICE -->
+<rect x="160" y="388" width="480" height="124" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="410" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Caller ID Service — Lookup Chain</text>
+<text x="400" y="428" text-anchor="middle" font-size="11" fill="#534ab7">1. Block check: is caller in Alice's block list?</text>
+<text x="400" y="444" text-anchor="middle" font-size="11" fill="#534ab7">2. Spam check: Redis → spam score + status</text>
+<text x="400" y="460" text-anchor="middle" font-size="11" fill="#534ab7">3. Business profile lookup (HDFC, Swiggy etc.)</text>
+<text x="400" y="476" text-anchor="middle" font-size="11" fill="#534ab7">4. Registered user lookup → privacy check</text>
+<text x="400" y="492" text-anchor="middle" font-size="11" fill="#534ab7">5. Crowdsourced name (majority vote from synced contacts)</text>
+<text x="400" y="512" text-anchor="middle" font-size="11" fill="#534ab7">Return: displayName, spamStatus, profileType, callPurpose</text>
+
+<!-- privacy reject -->
+<line x1="640" y1="476" x2="700" y2="540" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="620" y="540" width="166" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="703" y="558" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Opted out /</text>
+<text x="703" y="572" text-anchor="middle" font-size="10" fill="#993c1d">Private — show number</text>
+
+<line x1="400" y1="512" x2="400" y2="572" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- RESPONSE -->
+<rect x="220" y="572" width="360" height="44" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="594" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Caller ID shown on Alice's screen (&lt;200ms)</text>
+
+<!-- ====== SECTION 2: CONTACT SYNC + CROWDSOURCING ====== -->
+<line x1="30" y1="676" x2="770" y2="676" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="668" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— contact sync + crowdsourced name building (the core Truecaller insight) —</text>
+
+<rect x="160" y="684" width="480" height="112" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="706" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">Contact Sync Service</text>
+<text x="400" y="724" text-anchor="middle" font-size="11" fill="#854f0b">User installs Truecaller → app uploads contact book (name → number) to server</text>
+<text x="400" y="740" text-anchor="middle" font-size="11" fill="#854f0b">For each number not yet registered: add (name, reporter) to crowdsource pool</text>
+<text x="400" y="756" text-anchor="middle" font-size="11" fill="#854f0b">Majority vote: if 5 people saved +91-9000-000-001 as "Ravi Kumar" → that becomes</text>
+<text x="400" y="772" text-anchor="middle" font-size="11" fill="#854f0b">the displayed name for that unregistered number</text>
+<text x="400" y="788" text-anchor="middle" font-size="11" fill="#854f0b">Periodic re-sync: contacts delta upload every 24hrs</text>
+<text x="400" y="796" text-anchor="middle" font-size="11" fill="#854f0b">Privacy: contacts encrypted in transit (TLS) + hashed on server</text>
+
+<line x1="300" y1="796" x2="160" y2="840" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="500" y1="796" x2="640" y2="840" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="840" width="240" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="140" y="862" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Cassandra — Name Pool</text>
+<text x="140" y="880" text-anchor="middle" font-size="11" fill="#3b6d11">number → [(name, reporterId, ts)]</text>
+<text x="140" y="896" text-anchor="middle" font-size="11" fill="#3b6d11">Majority vote computed by batch job</text>
+
+<rect x="540" y="840" width="240" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="660" y="862" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis — Name Cache</text>
+<text x="660" y="880" text-anchor="middle" font-size="11" fill="#3b6d11">number → bestName (TTL 1hr)</text>
+<text x="660" y="896" text-anchor="middle" font-size="11" fill="#3b6d11">Fast lookup at query time</text>
+
+<!-- ====== SECTION 3: SPAM DETECTION ====== -->
+<line x1="30" y1="964" x2="770" y2="964" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="956" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— spam detection pipeline —</text>
+
+<rect x="160" y="972" width="480" height="124" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="994" text-anchor="middle" font-size="13" font-weight="700" fill="#712b13">Spam Detection Engine</text>
+<text x="400" y="1012" text-anchor="middle" font-size="11" fill="#993c1d">Signal 1: Community reports — N users reported this number</text>
+<text x="400" y="1028" text-anchor="middle" font-size="11" fill="#993c1d">Signal 2: Call pattern — 150 unique callees in 24hrs, avg 8s call duration</text>
+<text x="400" y="1044" text-anchor="middle" font-size="11" fill="#993c1d">Signal 3: Rejection rate — 85% calls rejected without answer</text>
+<text x="400" y="1060" text-anchor="middle" font-size="11" fill="#993c1d">Signal 4: Number range analysis — telemarketer DID blocks (+91-140x-xxxxxx)</text>
+<text x="400" y="1076" text-anchor="middle" font-size="11" fill="#993c1d">Composite score → CLEAN / SUSPICIOUS / LIKELY_SPAM / CONFIRMED_SPAM</text>
+<text x="400" y="1096" text-anchor="middle" font-size="11" fill="#993c1d">Score cached in Redis → served on every lookup with &lt;2ms latency</text>
+
+<line x1="280" y1="1096" x2="140" y2="1144" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="520" y1="1096" x2="660" y2="1144" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1144" width="230" height="64" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="135" y="1166" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">Spam Report Flow</text>
+<text x="135" y="1184" text-anchor="middle" font-size="11" fill="#993c1d">User marks call as spam</text>
+<text x="135" y="1200" text-anchor="middle" font-size="11" fill="#993c1d">Kafka → score recomputed</text>
+
+<rect x="550" y="1144" width="230" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="665" y="1166" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Auto-block Trigger</text>
+<text x="665" y="1184" text-anchor="middle" font-size="11" fill="#534ab7">CONFIRMED_SPAM → push alert</text>
+<text x="665" y="1200" text-anchor="middle" font-size="11" fill="#534ab7">to all users in same city</text>
+
+<!-- ====== SECTION 4: SEARCH FLOW ====== -->
+<line x1="30" y1="1268" x2="770" y2="1268" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1260" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— search by name / number —</text>
+
+<rect x="160" y="1276" width="480" height="100" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="1298" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">Search Service</text>
+<text x="400" y="1316" text-anchor="middle" font-size="11" fill="#185fa5">Search by name → Elasticsearch full-text (public profiles only)</text>
+<text x="400" y="1332" text-anchor="middle" font-size="11" fill="#185fa5">Search by number → direct Redis/DB lookup → privacy filter</text>
+<text x="400" y="1348" text-anchor="middle" font-size="11" fill="#185fa5">Opted-out users excluded entirely from name search</text>
+<text x="400" y="1364" text-anchor="middle" font-size="11" fill="#185fa5">Rate limited: max 10 searches/min (prevent number harvesting)</text>
+<text x="400" y="1376" text-anchor="middle" font-size="11" fill="#185fa5">CONTACTS_ONLY: only visible to people who have your number saved</text>
+
+<!-- ====== SECTION 5: PRIVACY ARCHITECTURE ====== -->
+<line x1="30" y1="1444" x2="770" y2="1444" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1436" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— privacy architecture —</text>
+
+<rect x="30"  y="1452" width="350" height="136" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="205" y="1474" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Privacy Levels</text>
+<text x="205" y="1494" text-anchor="middle" font-size="11" fill="#3b6d11">PUBLIC: anyone can see your name</text>
+<text x="205" y="1510" text-anchor="middle" font-size="11" fill="#3b6d11">CONTACTS_ONLY: only people who have</text>
+<text x="205" y="1526" text-anchor="middle" font-size="11" fill="#3b6d11">your number saved can see your name</text>
+<text x="205" y="1542" text-anchor="middle" font-size="11" fill="#3b6d11">PRIVATE: name never shown</text>
+<text x="205" y="1558" text-anchor="middle" font-size="11" fill="#3b6d11">OPT-OUT: remove from caller ID entirely</text>
+<text x="205" y="1574" text-anchor="middle" font-size="11" fill="#3b6d11">GDPR/right to erasure: delete all data</text>
+
+<rect x="420" y="1452" width="350" height="136" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="595" y="1474" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Data Protection</text>
+<text x="595" y="1494" text-anchor="middle" font-size="11" fill="#854f0b">Contacts hashed (SHA-256) before upload</text>
+<text x="595" y="1510" text-anchor="middle" font-size="11" fill="#854f0b">Phone numbers stored as hashed tokens</text>
+<text x="595" y="1526" text-anchor="middle" font-size="11" fill="#854f0b">Who-viewed-me: premium only feature</text>
+<text x="595" y="1542" text-anchor="middle" font-size="11" fill="#854f0b">SOC2 compliant data storage</text>
+<text x="595" y="1558" text-anchor="middle" font-size="11" fill="#854f0b">No contacts stored in plaintext</text>
+<text x="595" y="1574" text-anchor="middle" font-size="11" fill="#854f0b">TLS 1.3 for all transit</text>
+
+<!-- ====== SECTION 6: DATA STORES ====== -->
+<line x1="30" y1="1652" x2="770" y2="1652" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1644" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1660" width="175" height="160" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="107" y="1682" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="107" y="1700" text-anchor="middle" font-size="10" fill="#3b6d11">Spam score per number</text>
+<text x="107" y="1716" text-anchor="middle" font-size="10" fill="#3b6d11">(TTL 1hr, recomputed)</text>
+<text x="107" y="1732" text-anchor="middle" font-size="10" fill="#3b6d11">Crowdsourced name cache</text>
+<text x="107" y="1748" text-anchor="middle" font-size="10" fill="#3b6d11">Block list per user</text>
+<text x="107" y="1764" text-anchor="middle" font-size="10" fill="#3b6d11">Session tokens</text>
+<text x="107" y="1780" text-anchor="middle" font-size="10" fill="#3b6d11">Search rate limit</text>
+<text x="107" y="1796" text-anchor="middle" font-size="10" fill="#3b6d11">On-device sync'd spam</text>
+<text x="107" y="1812" text-anchor="middle" font-size="10" fill="#3b6d11">Business profile cache</text>
+
+<rect x="211" y="1660" width="175" height="160" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="298" y="1682" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="298" y="1700" text-anchor="middle" font-size="10" fill="#185fa5">User profiles</text>
+<text x="298" y="1716" text-anchor="middle" font-size="10" fill="#185fa5">Business profiles</text>
+<text x="298" y="1732" text-anchor="middle" font-size="10" fill="#185fa5">Privacy settings</text>
+<text x="298" y="1748" text-anchor="middle" font-size="10" fill="#185fa5">Block lists</text>
+<text x="298" y="1764" text-anchor="middle" font-size="10" fill="#185fa5">Spam reports</text>
+<text x="298" y="1780" text-anchor="middle" font-size="10" fill="#185fa5">Fine paid / audit log</text>
+<text x="298" y="1796" text-anchor="middle" font-size="10" fill="#185fa5">User preferences</text>
+<text x="298" y="1812" text-anchor="middle" font-size="10" fill="#185fa5">Subscription plans</text>
+
+<rect x="402" y="1660" width="175" height="160" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="489" y="1682" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="489" y="1700" text-anchor="middle" font-size="10" fill="#854f0b">Crowdsource name pool</text>
+<text x="489" y="1716" text-anchor="middle" font-size="10" fill="#854f0b">(number → name votes)</text>
+<text x="489" y="1732" text-anchor="middle" font-size="10" fill="#854f0b">Spam report history</text>
+<text x="489" y="1748" text-anchor="middle" font-size="10" fill="#854f0b">Call event logs (CDR)</text>
+<text x="489" y="1764" text-anchor="middle" font-size="10" fill="#854f0b">Lookup history per user</text>
+<text x="489" y="1780" text-anchor="middle" font-size="10" fill="#854f0b">Analytics time-series</text>
+<text x="489" y="1796" text-anchor="middle" font-size="10" fill="#854f0b">Hashed contact pool</text>
+<text x="489" y="1812" text-anchor="middle" font-size="10" fill="#854f0b">Write-heavy, fast</text>
+
+<rect x="593" y="1660" width="187" height="160" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="686" y="1682" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Elasticsearch</text>
+<text x="686" y="1700" text-anchor="middle" font-size="10" fill="#534ab7">Full-text name search</text>
+<text x="686" y="1716" text-anchor="middle" font-size="10" fill="#534ab7">Business directory</text>
+<text x="686" y="1732" text-anchor="middle" font-size="10" fill="#534ab7">Location-aware search</text>
+<text x="686" y="1748" text-anchor="middle" font-size="10" fill="#534ab7">Category facets</text>
+<text x="686" y="1764" text-anchor="middle" font-size="10" fill="#534ab7">Trending spam numbers</text>
+<text x="686" y="1780" text-anchor="middle" font-size="10" fill="#534ab7">Search analytics</text>
+<text x="686" y="1796" text-anchor="middle" font-size="10" fill="#534ab7">Relevance ranking</text>
+<text x="686" y="1812" text-anchor="middle" font-size="10" fill="#534ab7">Privacy-filtered index</text>
+
+<!-- ====== SECTION 7: 5 HARDEST DECISIONS ====== -->
+<line x1="30" y1="1884" x2="770" y2="1884" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1876" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 5 hardest design decisions —</text>
+
+<rect x="30" y="1892" width="740" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="1912" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">1. Crowdsourced name — majority vote algorithm</text>
+<text x="400" y="1930" text-anchor="middle" font-size="11" fill="#0f6e56">When N people save +91-9000-0001 as "Ravi Kumar" and M save it as "Ravi", the name with the most votes wins. Weighted by verifier trust score — new accounts count less. Batch Spark job recomputes names nightly.</text>
+
+<rect x="30" y="1956" width="740" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="1976" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">2. Lookup chain priority: personal contact &gt; business &gt; registered &gt; crowdsourced</text>
+<text x="400" y="1994" text-anchor="middle" font-size="11" fill="#185fa5">Alice saved +91-XXX as "Swiggy Delivery" — that name overrides even Swiggy's official business profile. Personal context always wins. Implemented as Chain of Responsibility — first match stops the chain.</text>
+
+<rect x="30" y="2020" width="740" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="2040" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">3. Spam score must be fast — Redis cache, recompute async on report</text>
+<text x="400" y="2058" text-anchor="middle" font-size="11" fill="#854f0b">Spam score in Redis (sub-2ms). On new spam report: Kafka event → Spam Engine recomputes async → updates Redis. Caller ID lookup never waits for recomputation. Eventual consistency acceptable here.</text>
+
+<rect x="30" y="2084" width="740" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2104" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">4. Privacy by design — opt-out must propagate everywhere</text>
+<text x="400" y="2122" text-anchor="middle" font-size="11" fill="#534ab7">When Alice opts out: remove from Elasticsearch index, set Redis flag, mark DB row. All three must be consistent. Kafka event drives fan-out. Future lookups serve number-only until cache TTL expires.</text>
+
+<rect x="30" y="2148" width="740" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2168" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">5. Contact sync privacy — numbers cannot be stored as plaintext</text>
+<text x="400" y="2186" text-anchor="middle" font-size="11" fill="#993c1d">Contact book is uploaded as SHA-256(normalized_number). Only used for name crowdsourcing. The server cannot reverse the hash. If Alice's contacts are breached, attackers get hashes, not numbers.</text>
+
+<!-- LLD vs HLD -->
+<line x1="30" y1="2264" x2="770" y2="2264" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2256" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— LLD vs HLD comparison —</text>
+
+<rect x="30"  y="2272" width="355" height="196" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="207" y="2294" text-anchor="middle" font-size="12" font-weight="700" fill="#2c2c2a">LLD (In-Process)</text>
+<text x="207" y="2314" text-anchor="middle" font-size="11" fill="#5f5e5a">Lookup chain: CoR method calls</text>
+<text x="207" y="2330" text-anchor="middle" font-size="11" fill="#5f5e5a">Spam score: ConcurrentHashMap</text>
+<text x="207" y="2346" text-anchor="middle" font-size="11" fill="#5f5e5a">Name pool: HashMap in memory</text>
+<text x="207" y="2362" text-anchor="middle" font-size="11" fill="#5f5e5a">Crowdsource: merge() on Map</text>
+<text x="207" y="2378" text-anchor="middle" font-size="11" fill="#5f5e5a">Block list: Set&lt;String&gt; on user</text>
+<text x="207" y="2394" text-anchor="middle" font-size="11" fill="#5f5e5a">Observers: sync method calls</text>
+<text x="207" y="2410" text-anchor="middle" font-size="11" fill="#5f5e5a">Strategy: interface swap at runtime</text>
+<text x="207" y="2426" text-anchor="middle" font-size="11" fill="#5f5e5a">Search: stream filter on profiles map</text>
+<text x="207" y="2458" text-anchor="middle" font-size="11" fill="#5f5e5a">Privacy: boolean flag on UserProfile</text>
+
+<rect x="415" y="2272" width="355" height="196" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="592" y="2294" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">HLD (Distributed)</text>
+<text x="592" y="2314" text-anchor="middle" font-size="11" fill="#0f6e56">Lookup: API call chain across services</text>
+<text x="592" y="2330" text-anchor="middle" font-size="11" fill="#0f6e56">Spam score: Redis (sub-2ms)</text>
+<text x="592" y="2346" text-anchor="middle" font-size="11" fill="#0f6e56">Name pool: Cassandra + Spark batch</text>
+<text x="592" y="2362" text-anchor="middle" font-size="11" fill="#0f6e56">Crowdsource: majority vote nightly job</text>
+<text x="592" y="2378" text-anchor="middle" font-size="11" fill="#0f6e56">Block list: Redis set per userId</text>
+<text x="592" y="2394" text-anchor="middle" font-size="11" fill="#0f6e56">Observers: Kafka async fan-out</text>
+<text x="592" y="2410" text-anchor="middle" font-size="11" fill="#0f6e56">Strategy: config-driven, hot-swap</text>
+<text x="592" y="2426" text-anchor="middle" font-size="11" fill="#0f6e56">Search: Elasticsearch + Redis cache</text>
+<text x="592" y="2458" text-anchor="middle" font-size="11" fill="#0f6e56">Privacy: ES exclusion + Redis flag + DB</text>
+
+<!-- FINAL -->
+<rect x="30" y="2488" width="740" height="60" rx="8" fill="#2c2c2a"/>
+<text x="400" y="2510" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Truecaller has 350 million active users. Every second it identifies 20 million callers across the world.</text>
+<text x="400" y="2530" text-anchor="middle" font-size="11" fill="#aaa">The entire system works on ONE insight: aggregate contact book name contributions from 350M users to build the world's largest phone-number-to-name database.</text>
+
+<!-- SCALE NUMBERS -->
+<line x1="30" y1="2568" x2="770" y2="2568" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2560" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— scale numbers and design implications —</text>
+
+<rect x="30"  y="2576" width="222" height="112" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="141" y="2598" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Lookup Scale</text>
+<text x="141" y="2616" text-anchor="middle" font-size="11" fill="#3b6d11">20M lookups/second</text>
+<text x="141" y="2632" text-anchor="middle" font-size="11" fill="#3b6d11">Must be &lt;200ms</text>
+<text x="141" y="2648" text-anchor="middle" font-size="11" fill="#3b6d11">Redis first (sub-ms)</text>
+<text x="141" y="2664" text-anchor="middle" font-size="11" fill="#3b6d11">CDN edge for static profiles</text>
+<text x="141" y="2680" text-anchor="middle" font-size="11" fill="#3b6d11">DB as last resort only</text>
+
+<rect x="276" y="2576" width="222" height="112" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="387" y="2598" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">Number Database</text>
+<text x="387" y="2616" text-anchor="middle" font-size="11" fill="#185fa5">10 billion phone numbers</text>
+<text x="387" y="2632" text-anchor="middle" font-size="11" fill="#185fa5">Sharded by country code</text>
+<text x="387" y="2648" text-anchor="middle" font-size="11" fill="#185fa5">+91 shard gets 70% traffic</text>
+<text x="387" y="2664" text-anchor="middle" font-size="11" fill="#185fa5">Consistent hashing ring</text>
+<text x="387" y="2680" text-anchor="middle" font-size="11" fill="#185fa5">per-region Redis clusters</text>
+
+<rect x="522" y="2576" width="248" height="112" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="646" y="2598" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Spam Reports Scale</text>
+<text x="646" y="2616" text-anchor="middle" font-size="11" fill="#534ab7">500K spam reports/day</text>
+<text x="646" y="2632" text-anchor="middle" font-size="11" fill="#534ab7">Kafka ingestion → async</text>
+<text x="646" y="2648" text-anchor="middle" font-size="11" fill="#534ab7">Batch recompute every 5 min</text>
+<text x="646" y="2664" text-anchor="middle" font-size="11" fill="#534ab7">Real-time for FRAUD category</text>
+<text x="646" y="2680" text-anchor="middle" font-size="11" fill="#534ab7">ML model for anomaly detect</text>
+
+</svg>
+</body></html>
