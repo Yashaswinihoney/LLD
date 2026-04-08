@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 3300" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#ba7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ===================== TITLE ===================== -->
+<rect x="0" y="0" width="800" height="48" fill="#1a1a18"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">TRAFFIC LIGHT CONTROL SYSTEM — SMART INTERSECTION</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">Sensor input → Controller → Phase State Machine → Signal output → Observer fan-out</text>
+
+<!-- ====== SECTION 1: HARDWARE / SENSOR LAYER ====== -->
+<line x1="30" y1="88" x2="770" y2="88" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="80" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— physical hardware &amp; sensor layer —</text>
+
+<!-- Sensor boxes -->
+<rect x="20"  y="96" width="165" height="80" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="102" y="116" text-anchor="middle" font-size="11" font-weight="700" fill="#2c2c2a">Inductive Loop</text>
+<text x="102" y="132" text-anchor="middle" font-size="10" fill="#5f5e5a">Embedded in road</text>
+<text x="102" y="146" text-anchor="middle" font-size="10" fill="#5f5e5a">Vehicle count + presence</text>
+<text x="102" y="160" text-anchor="middle" font-size="10" fill="#5f5e5a">Triggers adaptive timing</text>
+
+<rect x="205" y="96" width="165" height="80" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="287" y="116" text-anchor="middle" font-size="11" font-weight="700" fill="#2c2c2a">Ped. Button</text>
+<text x="287" y="132" text-anchor="middle" font-size="10" fill="#5f5e5a">Push to cross</text>
+<text x="287" y="146" text-anchor="middle" font-size="10" fill="#5f5e5a">Queues pedestrian phase</text>
+<text x="287" y="160" text-anchor="middle" font-size="10" fill="#5f5e5a">Accessible + audio chirp</text>
+
+<rect x="390" y="96" width="165" height="80" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="472" y="116" text-anchor="middle" font-size="11" font-weight="700" fill="#2c2c2a">Emergency Beacon</text>
+<text x="472" y="132" text-anchor="middle" font-size="10" fill="#5f5e5a">IR/GPS strobe detector</text>
+<text x="472" y="146" text-anchor="middle" font-size="10" fill="#5f5e5a">Police / Fire / Ambulance</text>
+<text x="472" y="160" text-anchor="middle" font-size="10" fill="#5f5e5a">Highest priority override</text>
+
+<rect x="575" y="96" width="205" height="80" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="677" y="116" text-anchor="middle" font-size="11" font-weight="700" fill="#2c2c2a">Camera Vision (AI)</text>
+<text x="677" y="132" text-anchor="middle" font-size="10" fill="#5f5e5a">Queue length estimation</text>
+<text x="677" y="146" text-anchor="middle" font-size="10" fill="#5f5e5a">Wrong-way detection</text>
+<text x="677" y="160" text-anchor="middle" font-size="10" fill="#5f5e5a">Red-light violation log</text>
+
+<!-- Sensor arrows down to controller -->
+<line x1="102" y1="176" x2="300" y2="224" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="287" y1="176" x2="340" y2="224" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="472" y1="176" x2="460" y2="224" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<line x1="677" y1="176" x2="500" y2="224" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 2: INTERSECTION CONTROLLER ====== -->
+<line x1="30" y1="280" x2="770" y2="280" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="272" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— intersection controller (the brain) —</text>
+
+<rect x="120" y="228" width="560" height="108" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="250" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">AbstractIntersectionController (Template Method)</text>
+<text x="400" y="268" text-anchor="middle" font-size="11" fill="#0f6e56">1. runOneCycle() — skeleton: validates mode, delegates to runNormalCycle()</text>
+<text x="400" y="284" text-anchor="middle" font-size="11" fill="#0f6e56">2. Idempotency: skips cycle if MAINTENANCE or EMERGENCY mode active</text>
+<text x="400" y="300" text-anchor="middle" font-size="11" fill="#0f6e56">3. applyCommand(TrafficCommand) — executes phase, pushes to commandHistory</text>
+<text x="400" y="316" text-anchor="middle" font-size="11" fill="#0f6e56">4. Notifies all SignalObservers on every phase transition, fault, emergency</text>
+
+<!-- risk rejection (mode gate) -->
+<line x1="120" y1="280" x2="50" y2="336" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="42" y="320" font-size="9" text-anchor="end" fill="#d85a30">mode gate</text>
+<rect x="16" y="336" width="128" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="80" y="356" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">MAINTENANCE</text>
+<text x="80" y="370" text-anchor="middle" font-size="10" fill="#993c1d">Skip cycle</text>
+<text x="80" y="382" text-anchor="middle" font-size="10" fill="#993c1d">Manual override</text>
+
+<line x1="400" y1="336" x2="400" y2="384" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Timing Strategy selection -->
+<rect x="160" y="384" width="480" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="406" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">TimingStrategy (Strategy Pattern)</text>
+<text x="400" y="424" text-anchor="middle" font-size="11" fill="#854f0b">FixedTimingStrategy: use configured greenSeconds as-is    |    AdaptiveTimingStrategy: vehicleCount / 3 = bonus seconds, clamped [min, max]</text>
+
+<line x1="400" y1="436" x2="400" y2="472" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 3: PHASE STATE MACHINE ====== -->
+<line x1="30" y1="528" x2="770" y2="528" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="520" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— phase state machine (State Pattern — one thread per intersection) —</text>
+
+<!-- Normal cycle states in a horizontal chain -->
+<rect x="20"  y="472" width="110" height="44" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="75"  y="490" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">NS_GREEN</text>
+<text x="75"  y="506" text-anchor="middle" font-size="9"  fill="#3b6d11">N+S=🟢 E+W=🔴</text>
+
+<line x1="130" y1="494" x2="158" y2="494" stroke="#0f6e56" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+
+<rect x="158" y="472" width="110" height="44" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="213" y="490" text-anchor="middle" font-size="10" font-weight="700" fill="#633806">NS_YELLOW</text>
+<text x="213" y="506" text-anchor="middle" font-size="9"  fill="#854f0b">N+S=🟡 E+W=🔴</text>
+
+<line x1="268" y1="494" x2="296" y2="494" stroke="#ba7517" stroke-width="1.5" marker-end="url(#arrow-o)"/>
+
+<rect x="296" y="472" width="110" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="351" y="490" text-anchor="middle" font-size="10" font-weight="700" fill="#712b13">ALL_RED</text>
+<text x="351" y="506" text-anchor="middle" font-size="9"  fill="#993c1d">All=🔴 (2s buffer)</text>
+
+<line x1="406" y1="494" x2="434" y2="494" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="434" y="472" width="110" height="44" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="489" y="490" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">EW_GREEN</text>
+<text x="489" y="506" text-anchor="middle" font-size="9"  fill="#3b6d11">E+W=🟢 N+S=🔴</text>
+
+<line x1="544" y1="494" x2="572" y2="494" stroke="#0f6e56" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+
+<rect x="572" y="472" width="110" height="44" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="627" y="490" text-anchor="middle" font-size="10" font-weight="700" fill="#633806">EW_YELLOW</text>
+<text x="627" y="506" text-anchor="middle" font-size="9"  fill="#854f0b">E+W=🟡 N+S=🔴</text>
+
+<line x1="682" y1="494" x2="710" y2="494" stroke="#ba7517" stroke-width="1.5" marker-end="url(#arrow-o)"/>
+
+<rect x="710" y="472" width="70" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="745" y="490" text-anchor="middle" font-size="10" font-weight="700" fill="#712b13">ALL_RED</text>
+<text x="745" y="506" text-anchor="middle" font-size="9"  fill="#993c1d">2s buffer</text>
+
+<!-- loop back arrow -->
+<path d="M745 516 Q745 560 400 560 Q55 560 75 516" fill="none" stroke="#888" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arrow)"/>
+<text x="400" y="575" text-anchor="middle" font-size="10" fill="#888">↺ repeating cycle</text>
+
+<!-- Interrupt states (below, with dashed arrows) -->
+<rect x="160" y="600" width="165" height="56" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="242" y="620" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">PEDESTRIAN</text>
+<text x="242" y="636" text-anchor="middle" font-size="10" fill="#534ab7">All vehicles 🔴</text>
+<text x="242" y="650" text-anchor="middle" font-size="10" fill="#534ab7">Ped WALK signal 🟢</text>
+
+<rect x="475" y="600" width="165" height="56" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="557" y="620" text-anchor="middle" font-size="11" font-weight="700" fill="#712b13">EMERGENCY 🚨</text>
+<text x="557" y="636" text-anchor="middle" font-size="10" fill="#993c1d">All 🔴 → approach axis 🟢</text>
+<text x="557" y="650" text-anchor="middle" font-size="10" fill="#993c1d">Preempts any phase</text>
+
+<!-- Interrupt trigger arrows (dashed) -->
+<line x1="242" y1="534" x2="242" y2="600" stroke="#534ab7" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-p)"/>
+<text x="222" y="570" font-size="9" fill="#534ab7">button pressed</text>
+<line x1="557" y1="534" x2="557" y2="600" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="3 2" marker-end="url(#arrow-r)"/>
+<text x="600" y="570" font-size="9" fill="#d85a30">beacon detected</text>
+
+<!-- Off-peak and power failure -->
+<rect x="30"  y="600" width="115" height="56" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="87" y="620" text-anchor="middle" font-size="10" font-weight="700" fill="#633806">OFF_PEAK</text>
+<text x="87" y="636" text-anchor="middle" font-size="10" fill="#854f0b">NS=🟡 flashing</text>
+<text x="87" y="650" text-anchor="middle" font-size="10" fill="#854f0b">EW=🔴 flashing</text>
+
+<rect x="655" y="600" width="115" height="56" rx="8" fill="#2c2c2a" stroke="#555"/>
+<text x="712" y="620" text-anchor="middle" font-size="10" font-weight="700" fill="#eee">POWER_FAILURE</text>
+<text x="712" y="636" text-anchor="middle" font-size="10" fill="#aaa">All signals OFF</text>
+<text x="712" y="650" text-anchor="middle" font-size="10" fill="#aaa">→ fail-safe flashing</text>
+
+<!-- ====== SECTION 4: COMMAND EXECUTION ====== -->
+<line x1="30" y1="720" x2="770" y2="720" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="712" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— command execution (Command Pattern) → signal heads —</text>
+
+<line x1="400" y1="656" x2="400" y2="728" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="120" y="728" width="560" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="750" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">TrafficCommand (Command Pattern)</text>
+<text x="400" y="768" text-anchor="middle" font-size="11" fill="#185fa5">NSGreenCmd | NSYellowCmd | EWGreenCmd | EWYellowCmd | AllRedCmd | PedestrianCrossCmd | EmergencyPreemptCmd | OffPeakFlashCmd</text>
+<text x="400" y="784" text-anchor="middle" font-size="11" fill="#185fa5">Each command: execute(signals) → sets LightColor per direction | undo() → reverts to AllRed</text>
+
+<line x1="400" y1="792" x2="400" y2="828" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Signal heads output row -->
+<rect x="20"  y="828" width="130" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="85" y="850" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">NORTH Signal</text>
+<text x="85" y="866" text-anchor="middle" font-size="10" fill="#3b6d11">Vehicle light</text>
+<text x="85" y="882" text-anchor="middle" font-size="10" fill="#3b6d11">Pedestrian light</text>
+
+<rect x="170" y="828" width="130" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="235" y="850" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">SOUTH Signal</text>
+<text x="235" y="866" text-anchor="middle" font-size="10" fill="#3b6d11">Vehicle light</text>
+<text x="235" y="882" text-anchor="middle" font-size="10" fill="#3b6d11">Pedestrian light</text>
+
+<rect x="320" y="828" width="130" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="385" y="850" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">EAST Signal</text>
+<text x="385" y="866" text-anchor="middle" font-size="10" fill="#3b6d11">Vehicle light</text>
+<text x="385" y="882" text-anchor="middle" font-size="10" fill="#3b6d11">Pedestrian light</text>
+
+<rect x="470" y="828" width="130" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="535" y="850" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">WEST Signal</text>
+<text x="535" y="866" text-anchor="middle" font-size="10" fill="#3b6d11">Vehicle light</text>
+<text x="535" y="882" text-anchor="middle" font-size="10" fill="#3b6d11">Pedestrian light</text>
+
+<rect x="620" y="828" width="160" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="700" y="850" text-anchor="middle" font-size="10" font-weight="700" fill="#3c3489">commandHistory</text>
+<text x="700" y="866" text-anchor="middle" font-size="10" fill="#534ab7">Deque of applied</text>
+<text x="700" y="882" text-anchor="middle" font-size="10" fill="#534ab7">commands (undo)</text>
+
+<!-- ====== SECTION 5: OBSERVER FAN-OUT ====== -->
+<line x1="30" y1="960" x2="770" y2="960" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="952" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— observer fan-out (Observer Pattern — all async) —</text>
+
+<line x1="400" y1="892" x2="400" y2="968" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="220" y="968" width="360" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="986" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">SignalObserver — onPhaseChange / onFault / onEmergency / onModeChange</text>
+<text x="400" y="1004" text-anchor="middle" font-size="11" fill="#534ab7">All observers called synchronously in the single-threaded executor — no race conditions</text>
+
+<line x1="240" y1="1012" x2="100"  y2="1056" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="350" y1="1012" x2="320"  y2="1056" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="450" y1="1012" x2="480"  y2="1056" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="560" y1="1012" x2="680"  y2="1056" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1056" width="160" height="72" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="100" y="1076" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">MonitoringService</text>
+<text x="100" y="1092" text-anchor="middle" font-size="10" fill="#3b6d11">Audit log every event</text>
+<text x="100" y="1108" text-anchor="middle" font-size="10" fill="#3b6d11">Page technician on fault</text>
+<text x="100" y="1120" text-anchor="middle" font-size="10" fill="#3b6d11">Open incident ticket</text>
+
+<rect x="200" y="1056" width="160" height="72" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="280" y="1076" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">EmergencyService</text>
+<text x="280" y="1092" text-anchor="middle" font-size="10" fill="#3b6d11">Track preempted junctions</text>
+<text x="280" y="1108" text-anchor="middle" font-size="10" fill="#3b6d11">Coordinate multi-intersection</text>
+<text x="280" y="1120" text-anchor="middle" font-size="10" fill="#3b6d11">green wave for route</text>
+
+<rect x="380" y="1056" width="160" height="72" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="460" y="1076" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">DataLogger</text>
+<text x="460" y="1092" text-anchor="middle" font-size="10" fill="#3b6d11">Append-only phase log</text>
+<text x="460" y="1108" text-anchor="middle" font-size="10" fill="#3b6d11">Timing analytics</text>
+<text x="460" y="1120" text-anchor="middle" font-size="10" fill="#3b6d11">Compliance audit trail</text>
+
+<rect x="560" y="1056" width="220" height="72" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="670" y="1076" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">NotificationBroadcast</text>
+<text x="670" y="1092" text-anchor="middle" font-size="10" fill="#3b6d11">Push to connected vehicles</text>
+<text x="670" y="1108" text-anchor="middle" font-size="10" fill="#3b6d11">(V2I — Vehicle to Infra)</text>
+<text x="670" y="1120" text-anchor="middle" font-size="10" fill="#3b6d11">Traffic management centre</text>
+
+<!-- ====== SECTION 6: EMERGENCY PREEMPTION FLOW ====== -->
+<line x1="30" y1="1196" x2="770" y2="1196" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1188" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— emergency preemption flow (highest priority interrupt) —</text>
+
+<rect x="20" y="1204" width="170" height="64" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="105" y="1224" text-anchor="middle" font-size="11" font-weight="700" fill="#712b13">Emergency Beacon</text>
+<text x="105" y="1240" text-anchor="middle" font-size="10" fill="#993c1d">IR strobe / GPS ping</text>
+<text x="105" y="1256" text-anchor="middle" font-size="10" fill="#993c1d">direction identified</text>
+
+<line x1="190" y1="1236" x2="228" y2="1236" stroke="#d85a30" stroke-width="1.5" marker-end="url(#arrow-r)"/>
+
+<rect x="228" y="1204" width="170" height="64" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="313" y="1224" text-anchor="middle" font-size="11" font-weight="700" fill="#712b13">triggerEmergency()</text>
+<text x="313" y="1240" text-anchor="middle" font-size="10" fill="#993c1d">mode → EMERGENCY</text>
+<text x="313" y="1256" text-anchor="middle" font-size="10" fill="#993c1d">notifyEmergency(dir)</text>
+
+<line x1="398" y1="1236" x2="436" y2="1236" stroke="#d85a30" stroke-width="1.5" marker-end="url(#arrow-r)"/>
+
+<rect x="436" y="1204" width="170" height="64" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="521" y="1224" text-anchor="middle" font-size="11" font-weight="700" fill="#712b13">EmergencyPreemptCmd</text>
+<text x="521" y="1240" text-anchor="middle" font-size="10" fill="#993c1d">All signals → RED (safety)</text>
+<text x="521" y="1256" text-anchor="middle" font-size="10" fill="#993c1d">Approach axis → GREEN</text>
+
+<line x1="606" y1="1236" x2="644" y2="1236" stroke="#d85a30" stroke-width="1.5" marker-end="url(#arrow-r)"/>
+
+<rect x="644" y="1204" width="136" height="64" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="712" y="1224" text-anchor="middle" font-size="11" font-weight="700" fill="#712b13">Vehicle clears</text>
+<text x="712" y="1240" text-anchor="middle" font-size="10" fill="#993c1d">clearEmergency()</text>
+<text x="712" y="1256" text-anchor="middle" font-size="10" fill="#993c1d">→ AllRed → resume</text>
+
+<!-- Multi-intersection green wave note -->
+<rect x="120" y="1284" width="560" height="36" rx="6" fill="#fff3cd" stroke="#cc9900"/>
+<text x="400" y="1300" text-anchor="middle" font-size="10" font-weight="600" fill="#664400">⚡ Green Wave: EmergencyService coordinates preemption across consecutive intersections</text>
+<text x="400" y="1314" text-anchor="middle" font-size="10" fill="#664400">INT-01 preempts 4s before vehicle arrives → INT-02 queued → INT-03 queued — vehicle gets uninterrupted path</text>
+
+<!-- ====== SECTION 7: PEDESTRIAN CROSSING FLOW ====== -->
+<line x1="30" y1="1388" x2="770" y2="1388" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1380" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— pedestrian crossing flow —</text>
+
+<rect x="20"  y="1396" width="148" height="72" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="94"  y="1416" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">Button Press</text>
+<text x="94"  y="1432" text-anchor="middle" font-size="10" fill="#534ab7">Sensor queues</text>
+<text x="94"  y="1448" text-anchor="middle" font-size="10" fill="#534ab7">pedestrian request</text>
+<text x="94"  y="1464" text-anchor="middle" font-size="10" fill="#534ab7">during current green</text>
+
+<line x1="168" y1="1432" x2="196" y2="1432" stroke="#534ab7" stroke-width="1" marker-end="url(#arrow-p)"/>
+
+<rect x="196" y="1396" width="148" height="72" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="270" y="1416" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">Current green</text>
+<text x="270" y="1432" text-anchor="middle" font-size="10" fill="#534ab7">completes normally</text>
+<text x="270" y="1448" text-anchor="middle" font-size="10" fill="#534ab7">(minimum green</text>
+<text x="270" y="1464" text-anchor="middle" font-size="10" fill="#534ab7">guaranteed)</text>
+
+<line x1="344" y1="1432" x2="372" y2="1432" stroke="#534ab7" stroke-width="1" marker-end="url(#arrow-p)"/>
+
+<rect x="372" y="1396" width="148" height="72" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="446" y="1416" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">AllRed flush</text>
+<text x="446" y="1432" text-anchor="middle" font-size="10" fill="#534ab7">All vehicles red</text>
+<text x="446" y="1448" text-anchor="middle" font-size="10" fill="#534ab7">2s safety buffer</text>
+<text x="446" y="1464" text-anchor="middle" font-size="10" fill="#534ab7">before walk signal</text>
+
+<line x1="520" y1="1432" x2="548" y2="1432" stroke="#534ab7" stroke-width="1" marker-end="url(#arrow-p)"/>
+
+<rect x="548" y="1396" width="148" height="72" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="622" y="1416" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">WALK (20s)</text>
+<text x="622" y="1432" text-anchor="middle" font-size="10" fill="#534ab7">🚶 WALK signal</text>
+<text x="622" y="1448" text-anchor="middle" font-size="10" fill="#534ab7">countdown display</text>
+<text x="622" y="1464" text-anchor="middle" font-size="10" fill="#534ab7">→ DON'T WALK → resume</text>
+
+<!-- ====== SECTION 8: FAULT DETECTION & RECOVERY ====== -->
+<line x1="30" y1="1540" x2="770" y2="1540" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1532" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— fault detection &amp; recovery —</text>
+
+<rect x="20"  y="1548" width="232" height="100" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="136" y="1568" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Fault Types</text>
+<text x="136" y="1586" text-anchor="middle" font-size="10" fill="#993c1d">BULB_FAILURE: signal head dark</text>
+<text x="136" y="1602" text-anchor="middle" font-size="10" fill="#993c1d">SENSOR_FAILURE: bad/frozen reading</text>
+<text x="136" y="1618" text-anchor="middle" font-size="10" fill="#993c1d">POWER_FAILURE: UPS / grid loss</text>
+<text x="136" y="1634" text-anchor="middle" font-size="10" fill="#993c1d">COMM_FAILURE: lost to TMC</text>
+
+<rect x="272" y="1548" width="256" height="100" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="1568" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Fail-Safe Response</text>
+<text x="400" y="1586" text-anchor="middle" font-size="10" fill="#993c1d">Bulb fail → that head: FLASHING_RED</text>
+<text x="400" y="1602" text-anchor="middle" font-size="10" fill="#993c1d">Sensor fail → switch to Fixed timing</text>
+<text x="400" y="1618" text-anchor="middle" font-size="10" fill="#993c1d">Power fail → all heads: FLASHING_RED</text>
+<text x="400" y="1634" text-anchor="middle" font-size="10" fill="#993c1d">Comm fail → last known timing</text>
+
+<rect x="548" y="1548" width="232" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="664" y="1568" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Recovery</text>
+<text x="664" y="1586" text-anchor="middle" font-size="10" fill="#3b6d11">MonitoringService pages technician</text>
+<text x="664" y="1602" text-anchor="middle" font-size="10" fill="#3b6d11">FaultDetector.clearFault(signalId)</text>
+<text x="664" y="1618" text-anchor="middle" font-size="10" fill="#3b6d11">Controller resumes from ALL_RED</text>
+<text x="664" y="1634" text-anchor="middle" font-size="10" fill="#3b6d11">Self-test cycle before resuming</text>
+
+<!-- ====== SECTION 9: REMOTE MANAGEMENT ====== -->
+<line x1="30" y1="1716" x2="770" y2="1716" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1708" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— remote traffic management centre —</text>
+
+<rect x="160" y="1724" width="480" height="88" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="1746" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">Traffic Management Centre (TMC)</text>
+<text x="400" y="1764" text-anchor="middle" font-size="11" fill="#185fa5">Live dashboard: phase, timing, vehicle queue depth per intersection</text>
+<text x="400" y="1780" text-anchor="middle" font-size="11" fill="#185fa5">Remote commands: mode change, timing override, emergency preemption, shutdown</text>
+<text x="400" y="1796" text-anchor="middle" font-size="11" fill="#185fa5">Heartbeat ping every 5s → COMM_FAILURE alert if missed × 3</text>
+
+<line x1="250" y1="1812" x2="130" y2="1856" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="1812" x2="400" y2="1856" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="550" y1="1812" x2="670" y2="1856" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1856" width="220" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="130" y="1876" text-anchor="middle" font-size="10" font-weight="700" fill="#633806">Adaptive Timing Tuning</text>
+<text x="130" y="1892" text-anchor="middle" font-size="10" fill="#854f0b">Update minGreen / maxGreen</text>
+<text x="130" y="1908" text-anchor="middle" font-size="10" fill="#854f0b">Push new PhaseConfig via API</text>
+
+<rect x="290" y="1856" width="220" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="1876" text-anchor="middle" font-size="10" font-weight="700" fill="#633806">Mode Override</text>
+<text x="400" y="1892" text-anchor="middle" font-size="10" fill="#854f0b">Set OFF_PEAK at 11PM</text>
+<text x="400" y="1908" text-anchor="middle" font-size="10" fill="#854f0b">MAINTENANCE for roadwork</text>
+
+<rect x="560" y="1856" width="220" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="670" y="1876" text-anchor="middle" font-size="10" font-weight="700" fill="#633806">Multi-Intersection Coord.</text>
+<text x="670" y="1892" text-anchor="middle" font-size="10" fill="#854f0b">Green wave corridors</text>
+<text x="670" y="1908" text-anchor="middle" font-size="10" fill="#854f0b">Event-based timing plans</text>
+
+<!-- ====== SECTION 10: DATA STORES ====== -->
+<line x1="30" y1="1988" x2="770" y2="1988" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1980" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1996" width="175" height="128" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="107" y="2018" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">In-Memory (Controller)</text>
+<text x="107" y="2036" text-anchor="middle" font-size="10" fill="#3b6d11">currentPhase</text>
+<text x="107" y="2052" text-anchor="middle" font-size="10" fill="#3b6d11">signal states (per dir)</text>
+<text x="107" y="2068" text-anchor="middle" font-size="10" fill="#3b6d11">commandHistory (undo)</text>
+<text x="107" y="2084" text-anchor="middle" font-size="10" fill="#3b6d11">mode</text>
+<text x="107" y="2100" text-anchor="middle" font-size="10" fill="#3b6d11">active faults</text>
+<text x="107" y="2116" text-anchor="middle" font-size="10" fill="#3b6d11">pending ped request</text>
+
+<rect x="211" y="1996" width="175" height="128" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="298" y="2018" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL (TMC)</text>
+<text x="298" y="2036" text-anchor="middle" font-size="10" fill="#185fa5">Intersection configs</text>
+<text x="298" y="2052" text-anchor="middle" font-size="10" fill="#185fa5">PhaseConfig per junction</text>
+<text x="298" y="2068" text-anchor="middle" font-size="10" fill="#185fa5">Fault records</text>
+<text x="298" y="2084" text-anchor="middle" font-size="10" fill="#185fa5">Maintenance logs</text>
+<text x="298" y="2100" text-anchor="middle" font-size="10" fill="#185fa5">User / tech accounts</text>
+<text x="298" y="2116" text-anchor="middle" font-size="10" fill="#185fa5">Compliance audit</text>
+
+<rect x="402" y="1996" width="175" height="128" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="489" y="2018" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">TimescaleDB</text>
+<text x="489" y="2036" text-anchor="middle" font-size="10" fill="#854f0b">Phase duration history</text>
+<text x="489" y="2052" text-anchor="middle" font-size="10" fill="#854f0b">Vehicle counts per hour</text>
+<text x="489" y="2068" text-anchor="middle" font-size="10" fill="#854f0b">Queue length time-series</text>
+<text x="489" y="2084" text-anchor="middle" font-size="10" fill="#854f0b">Cycle time analytics</text>
+<text x="489" y="2100" text-anchor="middle" font-size="10" fill="#854f0b">ML training input</text>
+<text x="489" y="2116" text-anchor="middle" font-size="10" fill="#854f0b">1yr+ history</text>
+
+<rect x="593" y="1996" width="187" height="128" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="686" y="2018" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Redis (Edge Cache)</text>
+<text x="686" y="2036" text-anchor="middle" font-size="10" fill="#534ab7">Live phase per junction</text>
+<text x="686" y="2052" text-anchor="middle" font-size="10" fill="#534ab7">Active fault flags</text>
+<text x="686" y="2068" text-anchor="middle" font-size="10" fill="#534ab7">Emergency active flag</text>
+<text x="686" y="2084" text-anchor="middle" font-size="10" fill="#534ab7">V2I broadcast cache</text>
+<text x="686" y="2100" text-anchor="middle" font-size="10" fill="#534ab7">Pub/sub for live UI</text>
+<text x="686" y="2116" text-anchor="middle" font-size="10" fill="#534ab7">TTL-expired = TMC sync</text>
+
+<!-- ====== SECTION 11: SIGNAL HEAD OUTPUT TABLE ====== -->
+<line x1="30" y1="2192" x2="770" y2="2192" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2184" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— signal head output per phase —</text>
+
+<!-- Table header -->
+<rect x="20" y="2200" width="760" height="24" rx="4" fill="#2c2c2a"/>
+<text x="120" y="2217" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">PHASE</text>
+<text x="255" y="2217" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">NORTH</text>
+<text x="355" y="2217" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">SOUTH</text>
+<text x="455" y="2217" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">EAST</text>
+<text x="555" y="2217" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">WEST</text>
+<text x="675" y="2217" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">PEDESTRIAN</text>
+
+<!-- Table rows -->
+<rect x="20" y="2224" width="760" height="24" rx="0" fill="#eaf3de"/>
+<text x="120" y="2241" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">NS_GREEN</text>
+<text x="255" y="2241" text-anchor="middle" font-size="10" fill="#0a6e10">🟢 GREEN</text>
+<text x="355" y="2241" text-anchor="middle" font-size="10" fill="#0a6e10">🟢 GREEN</text>
+<text x="455" y="2241" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="555" y="2241" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="675" y="2241" text-anchor="middle" font-size="10" fill="#cc0000">🔴 DON'T WALK</text>
+
+<rect x="20" y="2248" width="760" height="24" rx="0" fill="#faeeda"/>
+<text x="120" y="2265" text-anchor="middle" font-size="10" font-weight="600" fill="#633806">NS_YELLOW</text>
+<text x="255" y="2265" text-anchor="middle" font-size="10" fill="#cc8800">🟡 YELLOW</text>
+<text x="355" y="2265" text-anchor="middle" font-size="10" fill="#cc8800">🟡 YELLOW</text>
+<text x="455" y="2265" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="555" y="2265" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="675" y="2265" text-anchor="middle" font-size="10" fill="#cc0000">🔴 DON'T WALK</text>
+
+<rect x="20" y="2272" width="760" height="24" rx="0" fill="#faece7"/>
+<text x="120" y="2289" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">ALL_RED_CLEARANCE</text>
+<text x="255" y="2289" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="355" y="2289" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="455" y="2289" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="555" y="2289" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="675" y="2289" text-anchor="middle" font-size="10" fill="#cc0000">🔴 DON'T WALK</text>
+
+<rect x="20" y="2296" width="760" height="24" rx="0" fill="#eaf3de"/>
+<text x="120" y="2313" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">EW_GREEN</text>
+<text x="255" y="2313" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="355" y="2313" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="455" y="2313" text-anchor="middle" font-size="10" fill="#0a6e10">🟢 GREEN</text>
+<text x="555" y="2313" text-anchor="middle" font-size="10" fill="#0a6e10">🟢 GREEN</text>
+<text x="675" y="2313" text-anchor="middle" font-size="10" fill="#cc0000">🔴 DON'T WALK</text>
+
+<rect x="20" y="2320" width="760" height="24" rx="0" fill="#faeeda"/>
+<text x="120" y="2337" text-anchor="middle" font-size="10" font-weight="600" fill="#633806">EW_YELLOW</text>
+<text x="255" y="2337" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="355" y="2337" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="455" y="2337" text-anchor="middle" font-size="10" fill="#cc8800">🟡 YELLOW</text>
+<text x="555" y="2337" text-anchor="middle" font-size="10" fill="#cc8800">🟡 YELLOW</text>
+<text x="675" y="2337" text-anchor="middle" font-size="10" fill="#cc0000">🔴 DON'T WALK</text>
+
+<rect x="20" y="2344" width="760" height="24" rx="0" fill="#eedefe"/>
+<text x="120" y="2361" text-anchor="middle" font-size="10" font-weight="600" fill="#3c3489">PEDESTRIAN_CROSSING</text>
+<text x="255" y="2361" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="355" y="2361" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="455" y="2361" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="555" y="2361" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="675" y="2361" text-anchor="middle" font-size="10" fill="#0a6e10">🚶 WALK (all)</text>
+
+<rect x="20" y="2368" width="760" height="24" rx="0" fill="#faece7"/>
+<text x="120" y="2385" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">EMERGENCY_PREEMPTION</text>
+<text x="255" y="2385" text-anchor="middle" font-size="10" fill="#0a6e10">🟢* approach axis</text>
+<text x="355" y="2385" text-anchor="middle" font-size="10" fill="#0a6e10">🟢* approach axis</text>
+<text x="455" y="2385" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="555" y="2385" text-anchor="middle" font-size="10" fill="#cc0000">🔴 RED</text>
+<text x="675" y="2385" text-anchor="middle" font-size="10" fill="#cc0000">🔴 DON'T WALK</text>
+
+<rect x="20" y="2392" width="760" height="24" rx="0" fill="#faeeda"/>
+<text x="120" y="2409" text-anchor="middle" font-size="10" font-weight="600" fill="#633806">OFF_PEAK_FLASH</text>
+<text x="255" y="2409" text-anchor="middle" font-size="10" fill="#cc8800">🟡 FLASHING</text>
+<text x="355" y="2409" text-anchor="middle" font-size="10" fill="#cc8800">🟡 FLASHING</text>
+<text x="455" y="2409" text-anchor="middle" font-size="10" fill="#cc0000">🔴 FLASHING</text>
+<text x="555" y="2409" text-anchor="middle" font-size="10" fill="#cc0000">🔴 FLASHING</text>
+<text x="675" y="2409" text-anchor="middle" font-size="10" fill="#555">— OFF —</text>
+
+<rect x="20" y="2416" width="760" height="24" rx="0" fill="#2c2c2a"/>
+<text x="120" y="2433" text-anchor="middle" font-size="10" font-weight="600" fill="#eee">POWER_FAILURE</text>
+<text x="255" y="2433" text-anchor="middle" font-size="10" fill="#aaa">— ALL OFF —</text>
+<text x="355" y="2433" text-anchor="middle" font-size="10" fill="#aaa">— ALL OFF —</text>
+<text x="455" y="2433" text-anchor="middle" font-size="10" fill="#aaa">— ALL OFF —</text>
+<text x="555" y="2433" text-anchor="middle" font-size="10" fill="#aaa">— ALL OFF —</text>
+<text x="675" y="2433" text-anchor="middle" font-size="10" fill="#aaa">— ALL OFF —</text>
+
+<!-- ====== SECTION 12: 5 HARDEST DESIGN DECISIONS ====== -->
+<line x1="30" y1="2504" x2="770" y2="2504" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2496" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— the 5 hardest design decisions —</text>
+
+<rect x="30" y="2512" width="740" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2532" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">1. Single-threaded executor per intersection (not one global thread)</text>
+<text x="400" y="2550" text-anchor="middle" font-size="11" fill="#0f6e56">Each intersection has its own single-threaded executor. Commands queue up and execute serially — no locks needed. Global thread = cross-intersection contention = timing errors.</text>
+
+<rect x="30" y="2576" width="740" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2596" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">2. Emergency preemption preempts the executor queue, not just the phase</text>
+<text x="400" y="2614" text-anchor="middle" font-size="11" fill="#185fa5">triggerEmergency() submits to front of queue. If submitted normally it would wait behind a 30s green. Priority task injection ensures &lt;200ms response time to beacon detection.</text>
+
+<rect x="30" y="2640" width="740" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="2660" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">3. Yellow duration is fixed — NEVER adaptive</text>
+<text x="400" y="2678" text-anchor="middle" font-size="11" fill="#854f0b">Adaptive timing only applies to green. Yellow is always 3–5s (traffic engineering law — reaction time + braking distance). Shortening yellow causes red-light running. Lengthening wastes cycle time.</text>
+
+<rect x="30" y="2704" width="740" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2724" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">4. Fail-safe: any bulb fault → FLASHING_RED (not OFF, not frozen GREEN)</text>
+<text x="400" y="2742" text-anchor="middle" font-size="11" fill="#534ab7">Frozen green = head-on collisions. Off = ambiguous. Flashing red = treat as stop sign = universally understood. FaultDetector blocks any non-FLASHING_RED setColor() on a faulted head.</text>
+
+<rect x="30" y="2768" width="740" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2788" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">5. ALL_RED clearance between every phase — mandatory 2-second buffer</text>
+<text x="400" y="2806" text-anchor="middle" font-size="11" fill="#993c1d">Direct NS_GREEN → EW_GREEN risks a slow NS vehicle still clearing the intersection when EW goes green. 2s all-red is the standard inter-green buffer (ITE guidelines). Never skip it.</text>
+
+<!-- FINAL BOX -->
+<rect x="30" y="2836" width="740" height="56" rx="8" fill="#1a1a18"/>
+<text x="400" y="2858" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">A standard 4-way intersection completes a full cycle in ~72s. Emergency preemption responds in &lt;200ms. Adaptive timing reduces avg wait by 15–25%.</text>
+<text x="400" y="2878" text-anchor="middle" font-size="11" fill="#aaa">Controller is single-threaded per intersection. Sensors, observers, TMC sync, and data logging are all on separate threads — only phase execution is serialised.</text>
+
+</svg>
+</body></html>
