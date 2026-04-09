@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f5f4f0; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 3480" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ===================== TITLE ===================== -->
+<rect x="0" y="0" width="800" height="48" fill="#1c1a2e"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">SECURE VOTING SYSTEM</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">Registration → Authentication → Vote Casting → Anonymisation → Tallying → Audit Chain</text>
+
+<!-- ====== SECTION 1: ELECTION LIFECYCLE (STATE MACHINE) ====== -->
+<line x1="30" y1="88" x2="770" y2="88" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="80" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— election lifecycle (State Pattern) —</text>
+
+<!-- State boxes in a chain -->
+<rect x="14"  y="96" width="96"  height="44" rx="6" fill="#f1efe8" stroke="#888780"/>
+<text x="62"  y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#2c2c2a">DRAFT</text>
+<text x="62"  y="130" text-anchor="middle" font-size="9"  fill="#5f5e5a">Config only</text>
+
+<line x1="110" y1="118" x2="134" y2="118" stroke="#888" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+<rect x="134" y="96" width="108" height="44" rx="6" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="188" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#0c447c">REGISTRATION</text>
+<text x="188" y="130" text-anchor="middle" font-size="9"  fill="#185fa5">Voters enroll</text>
+
+<line x1="242" y1="118" x2="266" y2="118" stroke="#888" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+<rect x="266" y="96" width="102" height="44" rx="6" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="317" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">VOTING OPEN</text>
+<text x="317" y="130" text-anchor="middle" font-size="9"  fill="#3b6d11">Active window</text>
+
+<line x1="368" y1="118" x2="392" y2="118" stroke="#888" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+<rect x="392" y="96" width="108" height="44" rx="6" fill="#faeeda" stroke="#ba7517"/>
+<text x="446" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#633806">VOTING CLOSED</text>
+<text x="446" y="130" text-anchor="middle" font-size="9"  fill="#854f0b">Tallying begins</text>
+
+<line x1="500" y1="118" x2="524" y2="118" stroke="#888" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+<rect x="524" y="96" width="110" height="44" rx="6" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="579" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#085041">RESULTS</text>
+<text x="579" y="130" text-anchor="middle" font-size="9"  fill="#0f6e56">Winner declared</text>
+
+<line x1="634" y1="118" x2="658" y2="118" stroke="#888" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+<rect x="658" y="96" width="128" height="44" rx="6" fill="#2c2c2a" stroke="#555"/>
+<text x="722" y="114" text-anchor="middle" font-size="10" font-weight="700" fill="#eee">ARCHIVED</text>
+<text x="722" y="130" text-anchor="middle" font-size="9"  fill="#aaa">Immutable record</text>
+
+<!-- invalid transition arrows (rejection) -->
+<line x1="317" y1="140" x2="317" y2="164" stroke="#c0392b" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow-r)"/>
+<rect x="240" y="164" width="154" height="28" rx="6" fill="#faece7" stroke="#993c1d"/>
+<text x="317" y="183" text-anchor="middle" font-size="9" font-weight="600" fill="#712b13">votes after close → REJECTED</text>
+
+<!-- ====== SECTION 2: VOTER REGISTRATION & AUTH ====== -->
+<line x1="30" y1="258" x2="770" y2="258" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="250" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— voter registration &amp; authentication —</text>
+
+<!-- Voter channels -->
+<rect x="20"  y="266" width="168" height="72" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="104" y="286" text-anchor="middle" font-size="11" font-weight="700" fill="#2c2c2a">In-Person / Kiosk</text>
+<text x="104" y="302" text-anchor="middle" font-size="10" fill="#5f5e5a">Voter ID card scan</text>
+<text x="104" y="318" text-anchor="middle" font-size="10" fill="#5f5e5a">Biometric check</text>
+<text x="104" y="330" text-anchor="middle" font-size="10" fill="#5f5e5a">Constituency assigned</text>
+
+<rect x="316" y="266" width="168" height="72" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="286" text-anchor="middle" font-size="11" font-weight="700" fill="#2c2c2a">Online Portal</text>
+<text x="400" y="302" text-anchor="middle" font-size="10" fill="#5f5e5a">National ID + OTP</text>
+<text x="400" y="318" text-anchor="middle" font-size="10" fill="#5f5e5a">Address verification</text>
+<text x="400" y="330" text-anchor="middle" font-size="10" fill="#5f5e5a">Roll-number lookup</text>
+
+<rect x="612" y="266" width="168" height="72" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="696" y="286" text-anchor="middle" font-size="11" font-weight="700" fill="#2c2c2a">Postal / Mail-in</text>
+<text x="696" y="302" text-anchor="middle" font-size="10" fill="#5f5e5a">Signed declaration</text>
+<text x="696" y="318" text-anchor="middle" font-size="10" fill="#5f5e5a">Barcode tracking</text>
+<text x="696" y="330" text-anchor="middle" font-size="10" fill="#5f5e5a">Manual verification</text>
+
+<line x1="104" y1="338" x2="280" y2="380" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="338" x2="400" y2="380" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="696" y1="338" x2="520" y2="380" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Voter Registration Service -->
+<rect x="130" y="380" width="540" height="88" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="402" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">Voter Registration Service</text>
+<text x="400" y="420" text-anchor="middle" font-size="11" fill="#185fa5">1. Validate identity — national ID hashed with SHA-256 on intake (never stored plaintext)</text>
+<text x="400" y="436" text-anchor="middle" font-size="11" fill="#185fa5">2. Deduplication check — hash collision → ALREADY_REGISTERED rejection</text>
+<text x="400" y="452" text-anchor="middle" font-size="11" fill="#185fa5">3. Constituency assignment — voter rolls by address/district</text>
+<text x="400" y="464" text-anchor="middle" font-size="11" fill="#185fa5">4. Status: UNREGISTERED → REGISTERED → VERIFIED (on ID confirm)</text>
+
+<!-- rejection arrow -->
+<line x1="130" y1="430" x2="60" y2="480" stroke="#c0392b" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow-r)"/>
+<rect x="14" y="480" width="136" height="36" rx="6" fill="#faece7" stroke="#993c1d"/>
+<text x="82" y="498" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">Duplicate / Invalid ID</text>
+<text x="82" y="510" text-anchor="middle" font-size="10" fill="#993c1d">→ HTTP 422 rejected</text>
+
+<line x1="400" y1="468" x2="400" y2="508" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 3: VOTE CASTING FLOW ====== -->
+<line x1="30" y1="564" x2="770" y2="564" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="556" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— vote casting flow (Template Method) —</text>
+
+<rect x="130" y="508" width="540" height="112" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="530" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">AbstractVotingProcessor.processVote() — 6-step skeleton</text>
+<text x="400" y="548" text-anchor="middle" font-size="11" fill="#0f6e56">Step 1: authenticateVoter(voterId) — lookup in registeredVoters map</text>
+<text x="400" y="564" text-anchor="middle" font-size="11" fill="#0f6e56">Step 2: checkEligibility(voter) — election open? already voted? disqualified?</text>
+<text x="400" y="580" text-anchor="middle" font-size="11" fill="#0f6e56">Step 3: issueToken(voter) — one-time VoteToken (1hr TTL) issued</text>
+<text x="400" y="596" text-anchor="middle" font-size="11" fill="#0f6e56">Step 4: getBallot(voter) — constituency-specific ballot returned</text>
+<text x="400" y="608" text-anchor="middle" font-size="11" fill="#0f6e56">Step 5: CastVoteCommand.execute() — token consumed, vote recorded</text>
+
+<!-- rejection arrows from eligibility check -->
+<line x1="130" y1="564" x2="64" y2="620" stroke="#c0392b" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow-r)"/>
+<text x="55" y="608" font-size="9" text-anchor="end" fill="#c0392b">ineligible</text>
+<rect x="14" y="620" width="140" height="60" rx="6" fill="#faece7" stroke="#993c1d"/>
+<text x="84" y="638" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">Rejected</text>
+<text x="84" y="652" text-anchor="middle" font-size="9" fill="#993c1d">NOT_REGISTERED</text>
+<text x="84" y="664" text-anchor="middle" font-size="9" fill="#993c1d">ALREADY_VOTED</text>
+<text x="84" y="676" text-anchor="middle" font-size="9" fill="#993c1d">ELECTION_NOT_OPEN</text>
+
+<line x1="400" y1="620" x2="400" y2="660" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 4: ANONYMISATION LAYER ====== -->
+<line x1="30" y1="720" x2="770" y2="720" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="712" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— anonymisation layer (the key security boundary) —</text>
+
+<rect x="130" y="660" width="540" height="96" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="682" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">VoteToken — Cryptographic Bridge</text>
+<text x="400" y="700" text-anchor="middle" font-size="11" fill="#534ab7">Voter presents credentials → system issues random one-time VoteToken (UUID)</text>
+<text x="400" y="716" text-anchor="middle" font-size="11" fill="#534ab7">Token is consumed on vote cast — SHA-256 hash of token stored on Voter object only</text>
+<text x="400" y="732" text-anchor="middle" font-size="11" fill="#534ab7">Vote object stores only the token hash — never voter ID, name, or any PII</text>
+<text x="400" y="748" text-anchor="middle" font-size="11" fill="#534ab7">Voter gets receipt hash = SHA-256(voteId + tokenHash) — verifies vote counted without revealing choice</text>
+
+<line x1="300" y1="756" x2="220" y2="800" stroke="#185fa5" stroke-width="1" marker-end="url(#arrow-b)"/>
+<line x1="500" y1="756" x2="580" y2="800" stroke="#0f6e56" stroke-width="1" marker-end="url(#arrow-g)"/>
+
+<!-- Two separated records -->
+<rect x="40"  y="800" width="330" height="72" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="205" y="822" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Voter Record (Identity side)</text>
+<text x="205" y="840" text-anchor="middle" font-size="10" fill="#185fa5">voterId, name, constituency, status=VOTED</text>
+<text x="205" y="856" text-anchor="middle" font-size="10" fill="#185fa5">voteTokenHash — proves voted, not WHO they voted for</text>
+<text x="205" y="868" text-anchor="middle" font-size="10" fill="#185fa5">Stored in voter registry (separate DB)</text>
+
+<rect x="430" y="800" width="330" height="72" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="595" y="822" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Vote Record (Anonymous side)</text>
+<text x="595" y="840" text-anchor="middle" font-size="10" fill="#3b6d11">voteId, electionId, constituency, candidateRanking</text>
+<text x="595" y="856" text-anchor="middle" font-size="10" fill="#3b6d11">voterTokenHash — links proof of auth, NOT identity</text>
+<text x="595" y="868" text-anchor="middle" font-size="10" fill="#3b6d11">Stored in encrypted vote ledger (separate DB)</text>
+
+<!-- Firewall between them -->
+<line x1="370" y1="836" x2="430" y2="836" stroke="#c0392b" stroke-width="2" stroke-dasharray="6 3"/>
+<text x="400" y="830" text-anchor="middle" font-size="9" font-weight="700" fill="#c0392b">FIREWALL</text>
+<text x="400" y="848" text-anchor="middle" font-size="8" fill="#c0392b">no join possible</text>
+
+<line x1="400" y1="872" x2="400" y2="912" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 5: COMMAND EXECUTION + DOUBLE-VOTE GUARD ====== -->
+<line x1="30" y1="968" x2="770" y2="968" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="960" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— CastVoteCommand + double-vote guard (Command Pattern) —</text>
+
+<rect x="130" y="912" width="540" height="96" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="934" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">CastVoteCommand.execute()</text>
+<text x="400" y="952" text-anchor="middle" font-size="11" fill="#854f0b">1. Ballot.isValidSelection(candidateIds) — FPTP: exactly 1; Ranked: all candidates ranked; Approval: ≤ maxSelections</text>
+<text x="400" y="968" text-anchor="middle" font-size="11" fill="#854f0b">2. token.consume() — atomic single-use guard; returns false if already used or expired (TTL)</text>
+<text x="400" y="984" text-anchor="middle" font-size="11" fill="#854f0b">3. vote.markCast() → voteStore.add(vote) → voter.markVoted(tokenHash)</text>
+<text x="400" y="1000" text-anchor="middle" font-size="11" fill="#854f0b">4. undo() available for ADMIN recovery only — voids vote and removes from store</text>
+
+<!-- Double vote guard -->
+<line x1="670" y1="968" x2="730" y2="1020" stroke="#c0392b" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow-r)"/>
+<rect x="646" y="1020" width="140" height="44" rx="6" fill="#faece7" stroke="#993c1d"/>
+<text x="716" y="1038" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">Token already used</text>
+<text x="716" y="1052" text-anchor="middle" font-size="10" fill="#993c1d">→ ALREADY_VOTED</text>
+
+<line x1="400" y1="1008" x2="400" y2="1048" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 6: OBSERVER FAN-OUT ====== -->
+<line x1="30" y1="1104" x2="770" y2="1104" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1096" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— observer fan-out (Observer Pattern) —</text>
+
+<rect x="200" y="1048" width="400" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1066" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">VoteEventObserver</text>
+<text x="400" y="1084" text-anchor="middle" font-size="11" fill="#534ab7">onVoteCast | onVoteRejected | onElectionStatusChange | onFraudAlert | onVoterRegistered</text>
+
+<line x1="240" y1="1092" x2="100"  y2="1136" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="360" y1="1092" x2="310"  y2="1136" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="440" y1="1092" x2="490"  y2="1136" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="560" y1="1092" x2="700"  y2="1136" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1136" width="160" height="80" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="100" y="1156" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">AuditLogger</text>
+<text x="100" y="1172" text-anchor="middle" font-size="10" fill="#3b6d11">Append-only log</text>
+<text x="100" y="1188" text-anchor="middle" font-size="10" fill="#3b6d11">Hash-chained entries</text>
+<text x="100" y="1204" text-anchor="middle" font-size="10" fill="#3b6d11">Tamper detection</text>
+<text x="100" y="1212" text-anchor="middle" font-size="10" fill="#3b6d11">verifyChainIntegrity()</text>
+
+<rect x="200" y="1136" width="160" height="80" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="280" y="1156" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">FraudDetector</text>
+<text x="280" y="1172" text-anchor="middle" font-size="10" fill="#3b6d11">Rate anomaly monitor</text>
+<text x="280" y="1188" text-anchor="middle" font-size="10" fill="#3b6d11">Double-vote alert</text>
+<text x="280" y="1204" text-anchor="middle" font-size="10" fill="#3b6d11">Pattern analysis</text>
+<text x="280" y="1216" text-anchor="middle" font-size="10" fill="#3b6d11">Real-time alerts</text>
+
+<rect x="380" y="1136" width="160" height="80" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="460" y="1156" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">NotificationService</text>
+<text x="460" y="1172" text-anchor="middle" font-size="10" fill="#3b6d11">Receipt to voter</text>
+<text x="460" y="1188" text-anchor="middle" font-size="10" fill="#3b6d11">Status SMS / email</text>
+<text x="460" y="1204" text-anchor="middle" font-size="10" fill="#3b6d11">Rejection reason</text>
+<text x="460" y="1216" text-anchor="middle" font-size="10" fill="#3b6d11">Election alerts</text>
+
+<rect x="560" y="1136" width="220" height="80" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="670" y="1156" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">ResultsAggregator</text>
+<text x="670" y="1172" text-anchor="middle" font-size="10" fill="#3b6d11">Live running tally</text>
+<text x="670" y="1188" text-anchor="middle" font-size="10" fill="#3b6d11">(after polls close)</text>
+<text x="670" y="1204" text-anchor="middle" font-size="10" fill="#3b6d11">Constituency totals</text>
+<text x="670" y="1216" text-anchor="middle" font-size="10" fill="#3b6d11">Dashboard feed</text>
+
+<!-- ====== SECTION 7: TALLY STRATEGIES ====== -->
+<line x1="30" y1="1292" x2="770" y2="1292" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1284" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— tallying (Strategy Pattern) — called only after VOTING_CLOSED —</text>
+
+<!-- Three strategy lanes -->
+<rect x="20"  y="1300" width="234" height="148" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="137" y="1320" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">First Past The Post</text>
+<text x="137" y="1338" text-anchor="middle" font-size="10" fill="#0f6e56">Each voter picks exactly 1 candidate</text>
+<text x="137" y="1354" text-anchor="middle" font-size="10" fill="#0f6e56">Candidate with most votes wins</text>
+<text x="137" y="1370" text-anchor="middle" font-size="10" fill="#0f6e56">Simple majority — no threshold</text>
+<text x="137" y="1386" text-anchor="middle" font-size="10" fill="#0f6e56">O(n) counting pass</text>
+<text x="137" y="1402" text-anchor="middle" font-size="10" fill="#0f6e56">Used for: general elections</text>
+<text x="137" y="1418" text-anchor="middle" font-size="10" fill="#0f6e56">Risk: winner with minority share</text>
+<text x="137" y="1434" text-anchor="middle" font-size="10" fill="#0f6e56">if 3+ candidates split vote</text>
+
+<rect x="283" y="1300" width="234" height="148" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1320" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Ranked Choice (IRV)</text>
+<text x="400" y="1338" text-anchor="middle" font-size="10" fill="#534ab7">Voter ranks ALL candidates (1st, 2nd …)</text>
+<text x="400" y="1354" text-anchor="middle" font-size="10" fill="#534ab7">Round 1: count first-choice votes</text>
+<text x="400" y="1370" text-anchor="middle" font-size="10" fill="#534ab7">If no majority → eliminate last-place</text>
+<text x="400" y="1386" text-anchor="middle" font-size="10" fill="#534ab7">Redistribute eliminated votes to next pref</text>
+<text x="400" y="1402" text-anchor="middle" font-size="10" fill="#534ab7">Repeat until majority achieved</text>
+<text x="400" y="1418" text-anchor="middle" font-size="10" fill="#534ab7">Used for: mayoral, presidential runoffs</text>
+<text x="400" y="1434" text-anchor="middle" font-size="10" fill="#534ab7">Ensures winner has broad support</text>
+
+<rect x="546" y="1300" width="234" height="148" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="663" y="1320" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Approval Voting</text>
+<text x="663" y="1338" text-anchor="middle" font-size="10" fill="#854f0b">Voter approves any subset of candidates</text>
+<text x="663" y="1354" text-anchor="middle" font-size="10" fill="#854f0b">No ranking — just approve / don't</text>
+<text x="663" y="1370" text-anchor="middle" font-size="10" fill="#854f0b">Each approval = +1 to that candidate</text>
+<text x="663" y="1386" text-anchor="middle" font-size="10" fill="#854f0b">Candidate with most approvals wins</text>
+<text x="663" y="1402" text-anchor="middle" font-size="10" fill="#854f0b">Multi-seat: top N candidates elected</text>
+<text x="663" y="1418" text-anchor="middle" font-size="10" fill="#854f0b">Used for: board elections, polls</text>
+<text x="663" y="1434" text-anchor="middle" font-size="10" fill="#854f0b">maxSelections param enforced by Ballot</text>
+
+<!-- ====== SECTION 8: AUDIT CHAIN ====== -->
+<line x1="30" y1="1516" x2="770" y2="1516" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1508" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— audit chain — blockchain-lite tamper detection —</text>
+
+<rect x="130" y="1524" width="540" height="100" rx="8" fill="#1c1a2e" stroke="#534ab7"/>
+<text x="400" y="1546" text-anchor="middle" font-size="12" font-weight="700" fill="#c8c4ff">AuditEntry Hash Chain</text>
+<text x="400" y="1564" text-anchor="middle" font-size="11" fill="#9d99dd">Each entry: integrityHash = SHA-256(entryId + event + detail + prevHash)</text>
+<text x="400" y="1580" text-anchor="middle" font-size="11" fill="#9d99dd">Mutating any historical entry breaks all subsequent hashes</text>
+<text x="400" y="1596" text-anchor="middle" font-size="11" fill="#9d99dd">verifyChainIntegrity() re-derives every hash from GENESIS block</text>
+<text x="400" y="1612" text-anchor="middle" font-size="11" fill="#9d99dd">Events logged: VOTE_CAST, VOTE_REJECTED, FRAUD_ALERT, STATUS_CHANGE, VOTER_REGISTERED</text>
+
+<!-- Hash chain visualisation -->
+<rect x="20"  y="1640" width="100" height="48" rx="6" fill="#2c2a3e" stroke="#7f77dd"/>
+<text x="70"  y="1660" text-anchor="middle" font-size="9" font-weight="700" fill="#c8c4ff">GENESIS</text>
+<text x="70"  y="1678" text-anchor="middle" font-size="8" fill="#9d99dd">hash: 0x4a3f…</text>
+
+<line x1="120" y1="1664" x2="148" y2="1664" stroke="#7f77dd" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+
+<rect x="148" y="1640" width="132" height="48" rx="6" fill="#2c2a3e" stroke="#7f77dd"/>
+<text x="214" y="1656" text-anchor="middle" font-size="8" font-weight="700" fill="#c8c4ff">Entry #1</text>
+<text x="214" y="1668" text-anchor="middle" font-size="8" fill="#9d99dd">VOTER_REGISTERED</text>
+<text x="214" y="1680" text-anchor="middle" font-size="8" fill="#9d99dd">hash: 0x9b2c…</text>
+
+<line x1="280" y1="1664" x2="308" y2="1664" stroke="#7f77dd" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+
+<rect x="308" y="1640" width="132" height="48" rx="6" fill="#2c2a3e" stroke="#7f77dd"/>
+<text x="374" y="1656" text-anchor="middle" font-size="8" font-weight="700" fill="#c8c4ff">Entry #2</text>
+<text x="374" y="1668" text-anchor="middle" font-size="8" fill="#9d99dd">VOTE_CAST</text>
+<text x="374" y="1680" text-anchor="middle" font-size="8" fill="#9d99dd">hash: 0x1d7e…</text>
+
+<line x1="440" y1="1664" x2="468" y2="1664" stroke="#7f77dd" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+
+<rect x="468" y="1640" width="132" height="48" rx="6" fill="#2c2a3e" stroke="#7f77dd"/>
+<text x="534" y="1656" text-anchor="middle" font-size="8" font-weight="700" fill="#c8c4ff">Entry #3</text>
+<text x="534" y="1668" text-anchor="middle" font-size="8" fill="#9d99dd">FRAUD_ALERT</text>
+<text x="534" y="1680" text-anchor="middle" font-size="8" fill="#9d99dd">hash: 0xe3a1…</text>
+
+<line x1="600" y1="1664" x2="628" y2="1664" stroke="#7f77dd" stroke-width="1.5" marker-end="url(#arrow-p)"/>
+
+<rect x="628" y="1640" width="152" height="48" rx="6" fill="#2c2a3e" stroke="#7f77dd"/>
+<text x="704" y="1656" text-anchor="middle" font-size="8" font-weight="700" fill="#c8c4ff">Entry #N</text>
+<text x="704" y="1668" text-anchor="middle" font-size="8" fill="#9d99dd">RESULTS_PUBLISHED</text>
+<text x="704" y="1680" text-anchor="middle" font-size="8" fill="#9d99dd">hash: 0x77fb…</text>
+
+<!-- tamper note -->
+<rect x="130" y="1700" width="540" height="24" rx="4" fill="#fff3cd" stroke="#cc9900"/>
+<text x="400" y="1717" text-anchor="middle" font-size="10" font-weight="600" fill="#664400">⚡ Any entry tampered → hash mismatch → all downstream entries invalid → immediate detection</text>
+
+<!-- ====== SECTION 9: SECURITY MEASURES ====== -->
+<line x1="30" y1="1796" x2="770" y2="1796" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1788" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— security measures &amp; attack mitigations —</text>
+
+<rect x="20"  y="1804" width="232" height="148" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="136" y="1824" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Identity Attacks</text>
+<text x="136" y="1842" text-anchor="middle" font-size="10" fill="#993c1d">Double vote: token single-use + voter.hasVoted()</text>
+<text x="136" y="1858" text-anchor="middle" font-size="10" fill="#993c1d">Impersonation: SHA-256 national ID + biometric</text>
+<text x="136" y="1874" text-anchor="middle" font-size="10" fill="#993c1d">Ghost voter: dedup on ID hash at registration</text>
+<text x="136" y="1890" text-anchor="middle" font-size="10" fill="#993c1d">Token replay: 1hr TTL + consumed flag</text>
+<text x="136" y="1906" text-anchor="middle" font-size="10" fill="#993c1d">Voter coercion: anonymous vote (receipt</text>
+<text x="136" y="1920" text-anchor="middle" font-size="10" fill="#993c1d">proves counted, not WHO you voted for)</text>
+<text x="136" y="1936" text-anchor="middle" font-size="10" fill="#993c1d">Disqualification: admin + audit trail</text>
+
+<rect x="284" y="1804" width="232" height="148" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="1824" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Ballot Attacks</text>
+<text x="400" y="1842" text-anchor="middle" font-size="10" fill="#993c1d">Invalid candidate: Ballot.isValidSelection()</text>
+<text x="400" y="1858" text-anchor="middle" font-size="10" fill="#993c1d">Wrong format: FPTP=1, RCV=all ranked,</text>
+<text x="400" y="1874" text-anchor="middle" font-size="10" fill="#993c1d">Approval=≤maxSelections strictly enforced</text>
+<text x="400" y="1890" text-anchor="middle" font-size="10" fill="#993c1d">Cross-constituency: ballot scoped per</text>
+<text x="400" y="1906" text-anchor="middle" font-size="10" fill="#993c1d">constituency — voter only gets their ballot</text>
+<text x="400" y="1922" text-anchor="middle" font-size="10" fill="#993c1d">Null ballot: zero selections rejected</text>
+<text x="400" y="1936" text-anchor="middle" font-size="10" fill="#993c1d">Late vote: ELECTION_NOT_OPEN check</text>
+
+<rect x="548" y="1804" width="232" height="148" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="664" y="1824" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">System Attacks</text>
+<text x="664" y="1842" text-anchor="middle" font-size="10" fill="#993c1d">Audit tampering: hash-chained log</text>
+<text x="664" y="1858" text-anchor="middle" font-size="10" fill="#993c1d">Vote modification: immutable Vote object</text>
+<text x="664" y="1874" text-anchor="middle" font-size="10" fill="#993c1d">(all fields final; status only forward)</text>
+<text x="664" y="1890" text-anchor="middle" font-size="10" fill="#993c1d">Mass injection: FraudDetector rate alert</text>
+<text x="664" y="1906" text-anchor="middle" font-size="10" fill="#993c1d">Admin abuse: undo() logged + audit</text>
+<text x="664" y="1922" text-anchor="middle" font-size="10" fill="#993c1d">PII leak: national ID hashed on intake,</text>
+<text x="664" y="1936" text-anchor="middle" font-size="10" fill="#993c1d">vote record stores NO voter identity</text>
+
+<!-- ====== SECTION 10: ELECTION FACTORIES ====== -->
+<line x1="30" y1="2020" x2="770" y2="2020" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2012" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— election factory (Factory Pattern) —</text>
+
+<rect x="20"  y="2028" width="174" height="108" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="107" y="2048" text-anchor="middle" font-size="11" font-weight="700" fill="#085041">generalElection()</text>
+<text x="107" y="2064" text-anchor="middle" font-size="10" fill="#0f6e56">FPTP method</text>
+<text x="107" y="2080" text-anchor="middle" font-size="10" fill="#0f6e56">Multi-constituency</text>
+<text x="107" y="2096" text-anchor="middle" font-size="10" fill="#0f6e56">Candidate per constituency</text>
+<text x="107" y="2112" text-anchor="middle" font-size="10" fill="#0f6e56">Default 9-day window</text>
+<text x="107" y="2128" text-anchor="middle" font-size="10" fill="#0f6e56">Use: national / state polls</text>
+
+<rect x="214" y="2028" width="174" height="108" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="301" y="2048" text-anchor="middle" font-size="11" font-weight="700" fill="#0c447c">referendum()</text>
+<text x="301" y="2064" text-anchor="middle" font-size="10" fill="#185fa5">Yes / No candidates auto-created</text>
+<text x="301" y="2080" text-anchor="middle" font-size="10" fill="#185fa5">NATIONAL constituency</text>
+<text x="301" y="2096" text-anchor="middle" font-size="10" fill="#185fa5">Simple FPTP count</text>
+<text x="301" y="2112" text-anchor="middle" font-size="10" fill="#185fa5">Question stored in title</text>
+<text x="301" y="2128" text-anchor="middle" font-size="10" fill="#185fa5">Use: policy / constitutional</text>
+
+<rect x="408" y="2028" width="174" height="108" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="495" y="2048" text-anchor="middle" font-size="11" font-weight="700" fill="#633806">corporateElection()</text>
+<text x="495" y="2064" text-anchor="middle" font-size="10" fill="#854f0b">Approval Voting method</text>
+<text x="495" y="2080" text-anchor="middle" font-size="10" fill="#854f0b">seats param → top N elected</text>
+<text x="495" y="2096" text-anchor="middle" font-size="10" fill="#854f0b">BOARD constituency</text>
+<text x="495" y="2112" text-anchor="middle" font-size="10" fill="#854f0b">maxSelections = seats</text>
+<text x="495" y="2128" text-anchor="middle" font-size="10" fill="#854f0b">Use: board, committee, AGM</text>
+
+<rect x="602" y="2028" width="178" height="108" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="691" y="2048" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">rankedChoiceElection()</text>
+<text x="691" y="2064" text-anchor="middle" font-size="10" fill="#534ab7">Instant Runoff Voting</text>
+<text x="691" y="2080" text-anchor="middle" font-size="10" fill="#534ab7">Voter ranks all candidates</text>
+<text x="691" y="2096" text-anchor="middle" font-size="10" fill="#534ab7">Multi-round elimination</text>
+<text x="691" y="2112" text-anchor="middle" font-size="10" fill="#534ab7">Majority guaranteed</text>
+<text x="691" y="2128" text-anchor="middle" font-size="10" fill="#534ab7">Use: mayoral, presidential</text>
+
+<!-- ====== SECTION 11: DATA STORES ====== -->
+<line x1="30" y1="2204" x2="770" y2="2204" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2196" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores (strict separation of concern) —</text>
+
+<rect x="20"  y="2212" width="175" height="140" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="107" y="2232" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">Voter Registry DB</text>
+<text x="107" y="2248" text-anchor="middle" font-size="10" fill="#185fa5">(PostgreSQL — access-controlled)</text>
+<text x="107" y="2264" text-anchor="middle" font-size="10" fill="#185fa5">voterId, name, constituency</text>
+<text x="107" y="2280" text-anchor="middle" font-size="10" fill="#185fa5">nationalIdHash (SHA-256)</text>
+<text x="107" y="2296" text-anchor="middle" font-size="10" fill="#185fa5">status, voteTokenHash</text>
+<text x="107" y="2312" text-anchor="middle" font-size="10" fill="#185fa5">NO candidateRanking here</text>
+<text x="107" y="2328" text-anchor="middle" font-size="10" fill="#185fa5">Access: registration service only</text>
+<text x="107" y="2344" text-anchor="middle" font-size="10" fill="#185fa5">GDPR retention: post-election purge</text>
+
+<rect x="211" y="2212" width="175" height="140" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="298" y="2232" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Vote Ledger DB</text>
+<text x="298" y="2248" text-anchor="middle" font-size="10" fill="#3b6d11">(PostgreSQL — encrypted at rest)</text>
+<text x="298" y="2264" text-anchor="middle" font-size="10" fill="#3b6d11">voteId, electionId, constituency</text>
+<text x="298" y="2280" text-anchor="middle" font-size="10" fill="#3b6d11">voterTokenHash (not voter ID!)</text>
+<text x="298" y="2296" text-anchor="middle" font-size="10" fill="#3b6d11">candidateRanking, method</text>
+<text x="298" y="2312" text-anchor="middle" font-size="10" fill="#3b6d11">receiptHash, castAt</text>
+<text x="298" y="2328" text-anchor="middle" font-size="10" fill="#3b6d11">NO JOIN to voter registry</text>
+<text x="298" y="2344" text-anchor="middle" font-size="10" fill="#3b6d11">Access: tally service only</text>
+
+<rect x="402" y="2212" width="175" height="140" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="489" y="2232" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Audit Log DB</text>
+<text x="489" y="2248" text-anchor="middle" font-size="10" fill="#534ab7">(append-only — no UPDATE/DELETE)</text>
+<text x="489" y="2264" text-anchor="middle" font-size="10" fill="#534ab7">entryId, event, electionId</text>
+<text x="489" y="2280" text-anchor="middle" font-size="10" fill="#534ab7">detail, occurredAt</text>
+<text x="489" y="2296" text-anchor="middle" font-size="10" fill="#534ab7">integrityHash (chain)</text>
+<text x="489" y="2312" text-anchor="middle" font-size="10" fill="#534ab7">Legal hold: 7 years</text>
+<text x="489" y="2328" text-anchor="middle" font-size="10" fill="#534ab7">Access: audit service only</text>
+<text x="489" y="2344" text-anchor="middle" font-size="10" fill="#534ab7">Mirrored to cold storage</text>
+
+<rect x="593" y="2212" width="187" height="140" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="686" y="2232" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Election Config DB</text>
+<text x="686" y="2248" text-anchor="middle" font-size="10" fill="#854f0b">(PostgreSQL — versioned)</text>
+<text x="686" y="2264" text-anchor="middle" font-size="10" fill="#854f0b">electionId, title, method</text>
+<text x="686" y="2280" text-anchor="middle" font-size="10" fill="#854f0b">candidates, constituencies</text>
+<text x="686" y="2296" text-anchor="middle" font-size="10" fill="#854f0b">PhaseConfig, timings</text>
+<text x="686" y="2312" text-anchor="middle" font-size="10" fill="#854f0b">current status</text>
+<text x="686" y="2328" text-anchor="middle" font-size="10" fill="#854f0b">Results (post-tally)</text>
+<text x="686" y="2344" text-anchor="middle" font-size="10" fill="#854f0b">Access: admin + public (results)</text>
+
+<!-- DB separation note -->
+<rect x="130" y="2364" width="540" height="24" rx="4" fill="#fff3cd" stroke="#cc9900"/>
+<text x="400" y="2381" text-anchor="middle" font-size="10" font-weight="600" fill="#664400">⚡ Voter Registry and Vote Ledger run on separate DB instances — no shared credentials, no cross-DB queries possible</text>
+
+<!-- ====== SECTION 12: VOTER RECEIPT VERIFICATION ====== -->
+<line x1="30" y1="2460" x2="770" y2="2460" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2452" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— voter receipt verification (post-election transparency) —</text>
+
+<rect x="20"  y="2468" width="220" height="72" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="130" y="2488" text-anchor="middle" font-size="11" font-weight="700" fill="#0c447c">Voter keeps receipt</text>
+<text x="130" y="2504" text-anchor="middle" font-size="10" fill="#185fa5">receiptHash = SHA-256(voteId + tokenHash)</text>
+<text x="130" y="2520" text-anchor="middle" font-size="10" fill="#185fa5">Given at time of vote cast</text>
+<text x="130" y="2532" text-anchor="middle" font-size="10" fill="#185fa5">Unique to this vote only</text>
+
+<line x1="240" y1="2504" x2="270" y2="2504" stroke="#888" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+<rect x="270" y="2468" width="260" height="72" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="2488" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">Public verification portal</text>
+<text x="400" y="2504" text-anchor="middle" font-size="10" fill="#3b6d11">Enter receipt hash → confirm vote was counted</text>
+<text x="400" y="2520" text-anchor="middle" font-size="10" fill="#3b6d11">Does NOT reveal which candidate was chosen</text>
+<text x="400" y="2532" text-anchor="middle" font-size="10" fill="#3b6d11">Binary answer: COUNTED / NOT FOUND</text>
+
+<line x1="530" y1="2504" x2="560" y2="2504" stroke="#888" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+<rect x="560" y="2468" width="220" height="72" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="670" y="2488" text-anchor="middle" font-size="11" font-weight="700" fill="#085041">Anonymity preserved</text>
+<text x="670" y="2504" text-anchor="middle" font-size="10" fill="#0f6e56">Even if coerced to share receipt:</text>
+<text x="670" y="2520" text-anchor="middle" font-size="10" fill="#0f6e56">receipt only proves vote counted</text>
+<text x="670" y="2532" text-anchor="middle" font-size="10" fill="#0f6e56">choice remains secret always</text>
+
+<!-- ====== SECTION 13: 5 HARDEST DESIGN DECISIONS ====== -->
+<line x1="30" y1="2612" x2="770" y2="2612" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2604" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— the 5 hardest design decisions —</text>
+
+<rect x="30" y="2620" width="740" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2640" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">1. Vote anonymisation without losing verifiability</text>
+<text x="400" y="2658" text-anchor="middle" font-size="11" fill="#0f6e56">VoteToken bridges identity → vote without storing the link. Voter gets receipt hash to verify counted. Vote stores only token hash — not voter ID. The token is destroyed after use. No join is possible between the two records.</text>
+
+<rect x="30" y="2684" width="740" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2704" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">2. Double-vote prevention without revealing identity</text>
+<text x="400" y="2722" text-anchor="middle" font-size="11" fill="#185fa5">voter.hasVoted() checked BEFORE issuing token. Token is single-use (consumed flag + TTL). Voter registry records voteTokenHash — not the vote. All three checks must fail for a double vote to succeed.</text>
+
+<rect x="30" y="2748" width="740" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="2768" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">3. Audit chain must be append-only — no UPDATE or DELETE ever</text>
+<text x="400" y="2786" text-anchor="middle" font-size="11" fill="#854f0b">Each AuditEntry hashes its own content + previous entry hash. Any mutation breaks downstream hashes. DB schema has no UPDATE/DELETE grants. verifyChainIntegrity() re-derives every hash from GENESIS on demand.</text>
+
+<rect x="30" y="2812" width="740" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2832" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">4. Tally runs only after polls close — never expose live counts</text>
+<text x="400" y="2850" text-anchor="middle" font-size="11" fill="#534ab7">Live counts can influence late voters (bandwagon/strategic voting). TallyStrategy.tally() gated behind VOTING_CLOSED status. Strategy pattern allows swapping FPTP → RCV → Approval without changing the counting gate logic.</text>
+
+<rect x="30" y="2876" width="740" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2896" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">5. Admin undo (CastVoteCommand.undo()) must be audited, not hidden</text>
+<text x="400" y="2914" text-anchor="middle" font-size="11" fill="#993c1d">Technical errors may require voiding a vote (e.g. system crash mid-cast). undo() voids and removes from store — but AuditLogger records it. Without this: silent deletion. With audit: every void is transparent and challengeable.</text>
+
+<!-- FINAL BOX -->
+<rect x="30" y="2940" width="740" height="56" rx="8" fill="#1c1a2e"/>
+<text x="400" y="2962" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">National elections process tens of millions of votes. Anonymisation and double-vote prevention are non-negotiable. Audit chain integrity is the legal record.</text>
+<text x="400" y="2982" text-anchor="middle" font-size="11" fill="#aaa">Voter registry and vote ledger must be on physically separate databases. The only link is the one-way token hash — and even that reveals nothing about the vote itself.</text>
+
+</svg>
+</body></html>
