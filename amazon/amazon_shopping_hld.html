@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f7f3ee; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 3820" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#ba7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ===================== TITLE ===================== -->
+<rect x="0" y="0" width="800" height="48" fill="#131921"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#ff9900">AMAZON SHOPPING APP</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">Search → Cart → Pricing → Order → Payment → Delivery → Fallback &amp; Recovery</text>
+
+<!-- ====== SECTION 1: CLIENT LAYER ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— client layer —</text>
+<rect x="20"  y="80" width="160" height="72" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="100" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#131921">Mobile App</text>
+<text x="100" y="116" text-anchor="middle" font-size="10" fill="#5f5e5a">Android / iOS</text>
+<text x="100" y="132" text-anchor="middle" font-size="10" fill="#5f5e5a">WebSocket live prices</text>
+<text x="100" y="144" text-anchor="middle" font-size="10" fill="#5f5e5a">Offline cart (local DB)</text>
+
+<rect x="320" y="80" width="160" height="72" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#131921">Web / PWA</text>
+<text x="400" y="116" text-anchor="middle" font-size="10" fill="#5f5e5a">React SPA</text>
+<text x="400" y="132" text-anchor="middle" font-size="10" fill="#5f5e5a">Service Worker cache</text>
+<text x="400" y="144" text-anchor="middle" font-size="10" fill="#5f5e5a">Offline fallback page</text>
+
+<rect x="620" y="80" width="160" height="72" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="700" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#131921">Alexa / API</text>
+<text x="700" y="116" text-anchor="middle" font-size="10" fill="#5f5e5a">Voice shopping</text>
+<text x="700" y="132" text-anchor="middle" font-size="10" fill="#5f5e5a">Seller API / B2B</text>
+<text x="700" y="144" text-anchor="middle" font-size="10" fill="#5f5e5a">Affiliate links</text>
+
+<line x1="100" y1="152" x2="280" y2="196" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="152" x2="400" y2="196" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="700" y1="152" x2="520" y2="196" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- API Gateway -->
+<rect x="160" y="196" width="480" height="60" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="218" text-anchor="middle" font-size="12" font-weight="700" fill="#131921">API Gateway + CDN Edge (CloudFront)</text>
+<text x="400" y="234" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth (Cognito) · Rate limiting · TLS · A/B routing · Circuit breaker at edge</text>
+<text x="400" y="248" text-anchor="middle" font-size="11" fill="#5f5e5a">Static assets from S3/CDN — always available even if services are down</text>
+
+<line x1="400" y1="256" x2="400" y2="296" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 2: CORE SERVICES ====== -->
+<line x1="30" y1="352" x2="770" y2="352" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="344" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— core microservices —</text>
+
+<rect x="20"  y="296" width="115" height="52" rx="6" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="77"  y="316" text-anchor="middle" font-size="10" font-weight="700" fill="#085041">Search</text>
+<text x="77"  y="330" text-anchor="middle" font-size="9"  fill="#0f6e56">ES + ranking</text>
+<text x="77"  y="342" text-anchor="middle" font-size="9"  fill="#0f6e56">CB + cache</text>
+
+<rect x="145" y="296" width="115" height="52" rx="6" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="202" y="316" text-anchor="middle" font-size="10" font-weight="700" fill="#085041">Product</text>
+<text x="202" y="330" text-anchor="middle" font-size="9"  fill="#0f6e56">Catalog CDN</text>
+<text x="202" y="342" text-anchor="middle" font-size="9"  fill="#0f6e56">Image S3</text>
+
+<rect x="270" y="296" width="115" height="52" rx="6" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="327" y="316" text-anchor="middle" font-size="10" font-weight="700" fill="#0c447c">Cart</text>
+<text x="327" y="330" text-anchor="middle" font-size="9"  fill="#185fa5">Redis session</text>
+<text x="327" y="342" text-anchor="middle" font-size="9"  fill="#185fa5">Sync on login</text>
+
+<rect x="395" y="296" width="115" height="52" rx="6" fill="#faeeda" stroke="#ba7517"/>
+<text x="452" y="316" text-anchor="middle" font-size="10" font-weight="700" fill="#633806">Pricing</text>
+<text x="452" y="330" text-anchor="middle" font-size="9"  fill="#854f0b">Strategy+Decorator</text>
+<text x="452" y="342" text-anchor="middle" font-size="9"  fill="#854f0b">5-min TTL cache</text>
+
+<rect x="520" y="296" width="115" height="52" rx="6" fill="#eedefe" stroke="#7f77dd"/>
+<text x="577" y="316" text-anchor="middle" font-size="10" font-weight="700" fill="#3c3489">Inventory</text>
+<text x="577" y="330" text-anchor="middle" font-size="9"  fill="#534ab7">Reservation lock</text>
+<text x="577" y="342" text-anchor="middle" font-size="9"  fill="#534ab7">CB + stale cache</text>
+
+<rect x="645" y="296" width="115" height="52" rx="6" fill="#faece7" stroke="#993c1d"/>
+<text x="702" y="316" text-anchor="middle" font-size="10" font-weight="700" fill="#712b13">Order</text>
+<text x="702" y="330" text-anchor="middle" font-size="9"  fill="#993c1d">State machine</text>
+<text x="702" y="342" text-anchor="middle" font-size="9"  fill="#993c1d">Event sourcing</text>
+
+<!-- ====== SECTION 3: SEARCH FLOW ====== -->
+<line x1="30" y1="416" x2="770" y2="416" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="408" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— search &amp; product discovery —</text>
+
+<rect x="130" y="360" width="540" height="92" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="382" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Search Service (Strategy Pattern)</text>
+<text x="400" y="400" text-anchor="middle" font-size="11" fill="#0f6e56">RelevanceRankingStrategy: name match + rating sort | PriceRankingStrategy: cheapest first</text>
+<text x="400" y="416" text-anchor="middle" font-size="11" fill="#0f6e56">PopularityRankingStrategy: best-seller rank | AmazonChoice: ML composite score</text>
+<text x="400" y="432" text-anchor="middle" font-size="11" fill="#0f6e56">Elasticsearch: full-text, filters (brand, price range, rating, prime-only, delivery day)</text>
+<text x="400" y="444" text-anchor="middle" font-size="11" fill="#0f6e56">Personalization: user click/purchase history boosts results via ML ranking layer</text>
+
+<!-- Search fallbacks -->
+<line x1="130" y1="400" x2="60" y2="452" stroke="#c0392b" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow-r)"/>
+<rect x="14"  y="452" width="136" height="52" rx="6" fill="#faece7" stroke="#993c1d"/>
+<text x="82"  y="470" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">Search CB OPEN</text>
+<text x="82"  y="484" text-anchor="middle" font-size="10" fill="#993c1d">→ stale Redis cache</text>
+<text x="82"  y="496" text-anchor="middle" font-size="10" fill="#993c1d">→ category browse</text>
+
+<line x1="400" y1="452" x2="400" y2="492" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 4: CART ====== -->
+<line x1="30" y1="548" x2="770" y2="548" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="540" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— cart management (Command Pattern) —</text>
+
+<rect x="130" y="492" width="540" height="80" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="514" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">Cart Service</text>
+<text x="400" y="532" text-anchor="middle" font-size="11" fill="#185fa5">AddToCartCommand.execute() → cart.addItem(product, qty) | undo() → removeItem()</text>
+<text x="400" y="548" text-anchor="middle" font-size="11" fill="#185fa5">Cart persisted in Redis (user session) + DynamoDB (guest/cross-device sync)</text>
+<text x="400" y="564" text-anchor="middle" font-size="11" fill="#185fa5">Merge strategy on login: server cart + local cart → union (higher qty wins)</text>
+
+<!-- Cart fallback -->
+<line x1="670" y1="532" x2="730" y2="580" stroke="#c0392b" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow-r)"/>
+<rect x="646" y="580" width="140" height="40" rx="6" fill="#faece7" stroke="#993c1d"/>
+<text x="716" y="598" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">Redis down →</text>
+<text x="716" y="612" text-anchor="middle" font-size="10" fill="#993c1d">Local storage cart</text>
+
+<line x1="400" y1="572" x2="400" y2="612" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 5: PRICING ENGINE ====== -->
+<line x1="30" y1="668" x2="770" y2="668" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="660" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— pricing engine (Strategy + Decorator) —</text>
+
+<rect x="130" y="612" width="540" height="92" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="634" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">PricingStrategy (Strategy) + FareDecorator Chain (Decorator)</text>
+<text x="400" y="652" text-anchor="middle" font-size="11" fill="#854f0b">StandardPricingStrategy: BasePrice → +GST(18%) → +DeliveryFee(₹40 or FREE ≥₹499)</text>
+<text x="400" y="668" text-anchor="middle" font-size="11" fill="#854f0b">DealPricingStrategy: BasePrice → -Discount% → -Coupon(flat) → +GST → +Delivery</text>
+<text x="400" y="684" text-anchor="middle" font-size="11" fill="#854f0b">PrimePricingStrategy: BasePrice → -5%(Prime) → -Coupon → +GST → FREE Delivery</text>
+<text x="400" y="700" text-anchor="middle" font-size="11" fill="#854f0b">Decorators are composable — add/remove Insurance, Subscription Discount, EMI surcharge independently</text>
+
+<!-- Decorator visual chain -->
+<rect x="130" y="716" width="80"  height="28" rx="4" fill="#fff8e6" stroke="#cc9900"/>
+<text x="170"  y="734" text-anchor="middle" font-size="9" fill="#664400">BasePrice</text>
+<line x1="210" y1="730" x2="226" y2="730" stroke="#ba7517" stroke-width="1.2" marker-end="url(#arrow-o)"/>
+<rect x="226" y="716" width="80"  height="28" rx="4" fill="#fff8e6" stroke="#cc9900"/>
+<text x="266"  y="734" text-anchor="middle" font-size="9" fill="#664400">-Discount</text>
+<line x1="306" y1="730" x2="322" y2="730" stroke="#ba7517" stroke-width="1.2" marker-end="url(#arrow-o)"/>
+<rect x="322" y="716" width="80"  height="28" rx="4" fill="#fff8e6" stroke="#cc9900"/>
+<text x="362"  y="734" text-anchor="middle" font-size="9" fill="#664400">-Coupon</text>
+<line x1="402" y1="730" x2="418" y2="730" stroke="#ba7517" stroke-width="1.2" marker-end="url(#arrow-o)"/>
+<rect x="418" y="716" width="80"  height="28" rx="4" fill="#fff8e6" stroke="#cc9900"/>
+<text x="458"  y="734" text-anchor="middle" font-size="9" fill="#664400">+GST 18%</text>
+<line x1="498" y1="730" x2="514" y2="730" stroke="#ba7517" stroke-width="1.2" marker-end="url(#arrow-o)"/>
+<rect x="514" y="716" width="100" height="28" rx="4" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="564"  y="734" text-anchor="middle" font-size="9" fill="#27500a">+Delivery/FREE</text>
+<line x1="614" y1="730" x2="630" y2="730" stroke="#ba7517" stroke-width="1.2" marker-end="url(#arrow-o)"/>
+<rect x="630" y="716" width="140" height="28" rx="4" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="700"  y="734" text-anchor="middle" font-size="9" font-weight="700" fill="#085041">= Total Payable</text>
+
+<line x1="400" y1="744" x2="400" y2="784" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 6: ORDER LIFECYCLE ====== -->
+<line x1="30" y1="840" x2="770" y2="840" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="832" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— order lifecycle (State Pattern + Template Method) —</text>
+
+<!-- Template method box -->
+<rect x="130" y="784" width="540" height="80" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="806" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">AbstractOrderProcessor.placeOrder() — 6-step template</text>
+<text x="400" y="824" text-anchor="middle" font-size="11" fill="#0f6e56">1. validateCart() → 2. reserve inventory → 3. buildFare (Decorator chain)</text>
+<text x="400" y="840" text-anchor="middle" font-size="11" fill="#0f6e56">4. PlaceOrderCommand.execute() → 5. PaymentFallbackChain → 6. postPlace()</text>
+<text x="400" y="856" text-anchor="middle" font-size="11" fill="#0f6e56">Inventory rollback on any failure (reserve → partial → release all)</text>
+
+<!-- State machine boxes -->
+<rect x="14"  y="860" width="74"  height="40" rx="5" fill="#f1efe8" stroke="#888780"/>
+<text x="51"  y="876" text-anchor="middle" font-size="8" font-weight="700" fill="#2c2c2a">PLACED</text>
+<text x="51"  y="890" text-anchor="middle" font-size="7" fill="#5f5e5a">PNR issued</text>
+
+<line x1="88" y1="880" x2="104" y2="880" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="104" y="860" width="74"  height="40" rx="5" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="141" y="876" text-anchor="middle" font-size="8" font-weight="700" fill="#085041">CONFIRMED</text>
+<text x="141" y="890" text-anchor="middle" font-size="7" fill="#0f6e56">Payment ✓</text>
+
+<line x1="178" y1="880" x2="194" y2="880" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="194" y="860" width="74"  height="40" rx="5" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="231" y="876" text-anchor="middle" font-size="8" font-weight="700" fill="#27500a">PACKED</text>
+<text x="231" y="890" text-anchor="middle" font-size="7" fill="#3b6d11">Warehouse</text>
+
+<line x1="268" y1="880" x2="284" y2="880" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="284" y="860" width="74"  height="40" rx="5" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="321" y="876" text-anchor="middle" font-size="8" font-weight="700" fill="#27500a">SHIPPED</text>
+<text x="321" y="890" text-anchor="middle" font-size="7" fill="#3b6d11">Tracking ID</text>
+
+<line x1="358" y1="880" x2="374" y2="880" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="374" y="860" width="74"  height="40" rx="5" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="411" y="876" text-anchor="middle" font-size="8" font-weight="700" fill="#27500a">OUT FOR</text>
+<text x="411" y="890" text-anchor="middle" font-size="7" fill="#3b6d11">DELIVERY</text>
+
+<line x1="448" y1="880" x2="464" y2="880" stroke="#0f6e56" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+
+<rect x="464" y="860" width="74"  height="40" rx="5" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="501" y="876" text-anchor="middle" font-size="8" font-weight="700" fill="#085041">DELIVERED</text>
+<text x="501" y="890" text-anchor="middle" font-size="7" fill="#0f6e56">Review prompt</text>
+
+<!-- Return branch -->
+<line x1="538" y1="880" x2="554" y2="880" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<rect x="554" y="860" width="74"  height="40" rx="5" fill="#faece7" stroke="#993c1d"/>
+<text x="591" y="876" text-anchor="middle" font-size="8" font-weight="700" fill="#712b13">RETURN</text>
+<text x="591" y="890" text-anchor="middle" font-size="7" fill="#993c1d">REQUESTED</text>
+
+<line x1="628" y1="880" x2="644" y2="880" stroke="#c0392b" stroke-width="1.2" marker-end="url(#arrow-r)"/>
+<rect x="644" y="860" width="74"  height="40" rx="5" fill="#faece7" stroke="#993c1d"/>
+<text x="681" y="876" text-anchor="middle" font-size="8" font-weight="700" fill="#712b13">REFUND</text>
+<text x="681" y="890" text-anchor="middle" font-size="7" fill="#993c1d">COMPLETED</text>
+
+<!-- Cancel branch from CONFIRMED -->
+<line x1="141" y1="900" x2="141" y2="920" stroke="#c0392b" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow-r)"/>
+<rect x="90"  y="920" width="102" height="24" rx="4" fill="#faece7" stroke="#993c1d"/>
+<text x="141" y="937" text-anchor="middle" font-size="8" font-weight="600" fill="#712b13">CANCELLED → refund</text>
+
+<!-- ====== SECTION 7: PAYMENT FALLBACK CHAIN ====== -->
+<line x1="30" y1="1008" x2="770" y2="1008" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1000" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— payment fallback chain (Chain of Responsibility) —</text>
+
+<!-- CoR chain -->
+<rect x="20"  y="956" width="160" height="80" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="100" y="976" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">Primary Gateway</text>
+<text x="100" y="992" text-anchor="middle" font-size="10" fill="#534ab7">Razorpay / PayU</text>
+<text x="100" y="1008" text-anchor="middle" font-size="10" fill="#534ab7">UPI / Card / NB</text>
+<text x="100" y="1024" text-anchor="middle" font-size="10" fill="#534ab7">CB: 3 fails → OPEN</text>
+
+<line x1="180" y1="996" x2="205" y2="996" stroke="#534ab7" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-b)"/>
+<text x="192" y="988" text-anchor="middle" font-size="9" fill="#c0392b">fails</text>
+
+<rect x="205" y="956" width="140" height="80" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="275" y="976" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">Secondary Gateway</text>
+<text x="275" y="992" text-anchor="middle" font-size="10" fill="#534ab7">CCAvenue / BillDesk</text>
+<text x="275" y="1008" text-anchor="middle" font-size="10" fill="#534ab7">Same methods</text>
+<text x="275" y="1024" text-anchor="middle" font-size="10" fill="#534ab7">Independent PG</text>
+
+<line x1="345" y1="996" x2="370" y2="996" stroke="#534ab7" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-b)"/>
+<text x="357" y="988" text-anchor="middle" font-size="9" fill="#c0392b">fails</text>
+
+<rect x="370" y="956" width="140" height="80" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="440" y="976" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">Amazon Wallet</text>
+<text x="440" y="992" text-anchor="middle" font-size="10" fill="#534ab7">Pay balance</text>
+<text x="440" y="1008" text-anchor="middle" font-size="10" fill="#534ab7">Gift cards</text>
+<text x="440" y="1024" text-anchor="middle" font-size="10" fill="#534ab7">Reward points</text>
+
+<line x1="510" y1="996" x2="535" y2="996" stroke="#534ab7" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-b)"/>
+<text x="522" y="988" text-anchor="middle" font-size="9" fill="#c0392b">fails</text>
+
+<rect x="535" y="956" width="120" height="80" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="595" y="976" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">Cash on Delivery</text>
+<text x="595" y="992" text-anchor="middle" font-size="10" fill="#3b6d11">Ultimate fallback</text>
+<text x="595" y="1008" text-anchor="middle" font-size="10" fill="#3b6d11">No digital payment</text>
+<text x="595" y="1024" text-anchor="middle" font-size="10" fill="#3b6d11">Always succeeds</text>
+
+<!-- Note: Retry -->
+<rect x="665" y="960" width="125" height="72" rx="6" fill="#fff8e6" stroke="#cc9900"/>
+<text x="727" y="978" text-anchor="middle" font-size="9" font-weight="700" fill="#664400">Retry Executor</text>
+<text x="727" y="992" text-anchor="middle" font-size="8" fill="#664400">3 attempts</text>
+<text x="727" y="1004" text-anchor="middle" font-size="8" fill="#664400">200ms → 400ms</text>
+<text x="727" y="1016" text-anchor="middle" font-size="8" fill="#664400">→ 800ms backoff</text>
+<text x="727" y="1028" text-anchor="middle" font-size="8" fill="#664400">per handler attempt</text>
+
+<line x1="400" y1="1036" x2="400" y2="1076" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 8: OBSERVER FAN-OUT ====== -->
+<line x1="30" y1="1132" x2="770" y2="1132" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1124" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— observer fan-out (Observer Pattern) —</text>
+
+<rect x="200" y="1076" width="400" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1094" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">OrderEventObserver</text>
+<text x="400" y="1110" text-anchor="middle" font-size="11" fill="#534ab7">onOrderPlaced | onOrderConfirmed | onOrderShipped | onOrderDelivered | onOrderCancelled | onReturnInitiated | onRefundCompleted</text>
+
+<line x1="240" y1="1120" x2="90"  y2="1164" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="320" y1="1120" x2="265" y2="1164" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="1120" x2="400" y2="1164" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="480" y1="1120" x2="535" y2="1164" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="560" y1="1120" x2="700" y2="1164" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1164" width="130" height="80" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="85"  y="1184" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">Notification</text>
+<text x="85"  y="1200" text-anchor="middle" font-size="10" fill="#3b6d11">Email / SMS / Push</text>
+<text x="85"  y="1216" text-anchor="middle" font-size="10" fill="#3b6d11">Delivery ETA update</text>
+<text x="85"  y="1232" text-anchor="middle" font-size="10" fill="#3b6d11">Review request</text>
+
+<rect x="160" y="1164" width="150" height="80" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="235" y="1184" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">Inventory</text>
+<text x="235" y="1200" text-anchor="middle" font-size="10" fill="#3b6d11">Confirm deduction</text>
+<text x="235" y="1216" text-anchor="middle" font-size="10" fill="#3b6d11">Restock on return</text>
+<text x="235" y="1232" text-anchor="middle" font-size="10" fill="#3b6d11">Release on cancel</text>
+
+<rect x="320" y="1164" width="150" height="80" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="395" y="1184" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">Loyalty</text>
+<text x="395" y="1200" text-anchor="middle" font-size="10" fill="#3b6d11">2pts / ₹100 on deliver</text>
+<text x="395" y="1216" text-anchor="middle" font-size="10" fill="#3b6d11">Deduct on cancel</text>
+<text x="395" y="1232" text-anchor="middle" font-size="10" fill="#3b6d11">Prime tier upgrade</text>
+
+<rect x="480" y="1164" width="150" height="80" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="555" y="1184" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">Analytics</text>
+<text x="555" y="1200" text-anchor="middle" font-size="10" fill="#3b6d11">Sales by category</text>
+<text x="555" y="1216" text-anchor="middle" font-size="10" fill="#3b6d11">Return rate tracking</text>
+<text x="555" y="1232" text-anchor="middle" font-size="10" fill="#3b6d11">Conversion funnel</text>
+
+<rect x="640" y="1164" width="140" height="80" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="710" y="1184" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">Recommendation</text>
+<text x="710" y="1200" text-anchor="middle" font-size="10" fill="#3b6d11">Update user profile</text>
+<text x="710" y="1216" text-anchor="middle" font-size="10" fill="#3b6d11">"Bought together"</text>
+<text x="710" y="1232" text-anchor="middle" font-size="10" fill="#3b6d11">ML feature signal</text>
+
+<!-- ====== SECTION 9: DELIVERY FLOW ====== -->
+<line x1="30" y1="1316" x2="770" y2="1316" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1308" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— delivery flow (Strategy Pattern) —</text>
+
+<rect x="20"  y="1324" width="222" height="104" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="131" y="1344" text-anchor="middle" font-size="11" font-weight="700" fill="#085041">Standard (5-7 days)</text>
+<text x="131" y="1360" text-anchor="middle" font-size="10" fill="#0f6e56">FREE ≥ ₹499 or ₹40</text>
+<text x="131" y="1376" text-anchor="middle" font-size="10" fill="#0f6e56">Delhivery / Ekart / Blue Dart</text>
+<text x="131" y="1392" text-anchor="middle" font-size="10" fill="#0f6e56">Multiple attempts</text>
+<text x="131" y="1408" text-anchor="middle" font-size="10" fill="#0f6e56">Pickup point option</text>
+<text x="131" y="1420" text-anchor="middle" font-size="10" fill="#0f6e56">3 delivery attempts</text>
+
+<rect x="290" y="1324" width="222" height="104" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="401" y="1344" text-anchor="middle" font-size="11" font-weight="700" fill="#633806">Prime (1-2 days)</text>
+<text x="401" y="1360" text-anchor="middle" font-size="10" fill="#854f0b">Always FREE for Prime</text>
+<text x="401" y="1376" text-anchor="middle" font-size="10" fill="#854f0b">Amazon Logistics priority</text>
+<text x="401" y="1392" text-anchor="middle" font-size="10" fill="#854f0b">Dedicated Prime fleet</text>
+<text x="401" y="1408" text-anchor="middle" font-size="10" fill="#854f0b">Sunday + holiday delivery</text>
+<text x="401" y="1420" text-anchor="middle" font-size="10" fill="#854f0b">Live GPS tracking</text>
+
+<rect x="560" y="1324" width="220" height="104" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="670" y="1344" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">Same Day (8 hrs)</text>
+<text x="670" y="1360" text-anchor="middle" font-size="10" fill="#534ab7">Order by 2 PM</text>
+<text x="670" y="1376" text-anchor="middle" font-size="10" fill="#534ab7">Select metros only</text>
+<text x="670" y="1392" text-anchor="middle" font-size="10" fill="#534ab7">₹99 or FREE (Prime)</text>
+<text x="670" y="1408" text-anchor="middle" font-size="10" fill="#534ab7">Amazon Flex riders</text>
+<text x="670" y="1420" text-anchor="middle" font-size="10" fill="#534ab7">Real-time OTP delivery</text>
+
+<!-- ====== SECTION 10: FALLBACK MECHANISM (the big focus section) ====== -->
+<line x1="30" y1="1496" x2="770" y2="1496" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1488" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— fallback mechanism: when the app crashes —</text>
+
+<!-- Big header -->
+<rect x="130" y="1500" width="540" height="32" rx="6" fill="#131921"/>
+<text x="400" y="1520" text-anchor="middle" font-size="12" font-weight="700" fill="#ff9900">3-Layer Defence: Circuit Breaker → Retry + Backoff → Stale Cache / Graceful Degradation</text>
+
+<!-- CIRCUIT BREAKER DETAIL -->
+<rect x="20" y="1540" width="240" height="248" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="140" y="1560" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Circuit Breaker</text>
+
+<!-- CB state diagram -->
+<rect x="50" y="1572" width="72" height="32" rx="6" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="86" y="1593" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">CLOSED</text>
+
+<line x1="122" y1="1588" x2="148" y2="1588" stroke="#c0392b" stroke-width="1.2" marker-end="url(#arrow-r)"/>
+<text x="135" y="1582" text-anchor="middle" font-size="8" fill="#c0392b">3 fails</text>
+
+<rect x="148" y="1572" width="72" height="32" rx="6" fill="#faece7" stroke="#993c1d"/>
+<text x="184" y="1593" text-anchor="middle" font-size="10" font-weight="700" fill="#712b13">OPEN</text>
+
+<path d="M184 1604 Q184 1640 135 1640 Q86 1640 86 1620" fill="none" stroke="#ba7517" stroke-width="1.2" stroke-dasharray="4 2" marker-end="url(#arrow-o)"/>
+<text x="165" y="1638" text-anchor="middle" font-size="8" fill="#ba7517">timeout</text>
+
+<rect x="98"  y="1648" width="84" height="32" rx="6" fill="#faeeda" stroke="#ba7517"/>
+<text x="140" y="1669" text-anchor="middle" font-size="10" font-weight="700" fill="#633806">HALF_OPEN</text>
+
+<line x1="140" y1="1680" x2="86" y2="1700" stroke="#0f6e56" stroke-width="1" marker-end="url(#arrow-g)"/>
+<text x="95" y="1696" font-size="8" fill="#0f6e56">2 success</text>
+<text x="86"  y="1712" font-size="8" fill="#0f6e56">→ CLOSED ✓</text>
+
+<line x1="140" y1="1680" x2="184" y2="1700" stroke="#c0392b" stroke-width="1" marker-end="url(#arrow-r)"/>
+<text x="184" y="1712" font-size="8" fill="#c0392b">fail→OPEN</text>
+
+<text x="140" y="1742" text-anchor="middle" font-size="9" fill="#993c1d">• Inventory CB: threshold=3</text>
+<text x="140" y="1756" text-anchor="middle" font-size="9" fill="#993c1d">• Search CB: threshold=3</text>
+<text x="140" y="1770" text-anchor="middle" font-size="9" fill="#993c1d">• Payment CB: threshold=3</text>
+<text x="140" y="1784" text-anchor="middle" font-size="9" fill="#993c1d">• OPEN window: 5 seconds</text>
+
+<!-- RETRY + BACKOFF DETAIL -->
+<rect x="280" y="1540" width="240" height="248" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="1560" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Retry + Exponential Backoff</text>
+
+<rect x="300" y="1572" width="200" height="28" rx="4" fill="#dceefb" stroke="#185fa5"/>
+<text x="400" y="1591" text-anchor="middle" font-size="9" fill="#0c447c">Attempt 1 → fail</text>
+<line x1="400" y1="1600" x2="400" y2="1616" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<rect x="300" y="1616" width="200" height="28" rx="4" fill="#dceefb" stroke="#185fa5"/>
+<text x="400" y="1635" text-anchor="middle" font-size="9" fill="#0c447c">Wait 200ms → Attempt 2 → fail</text>
+<line x1="400" y1="1644" x2="400" y2="1660" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<rect x="300" y="1660" width="200" height="28" rx="4" fill="#dceefb" stroke="#185fa5"/>
+<text x="400" y="1679" text-anchor="middle" font-size="9" fill="#0c447c">Wait 400ms → Attempt 3 → fail</text>
+<line x1="400" y1="1688" x2="400" y2="1704" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<rect x="300" y="1704" width="200" height="28" rx="4" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="1723" text-anchor="middle" font-size="9" fill="#712b13">All 3 exhausted → invoke fallback</text>
+
+<text x="400" y="1752" text-anchor="middle" font-size="9" fill="#185fa5">Applied on: Search queries</text>
+<text x="400" y="1766" text-anchor="middle" font-size="9" fill="#185fa5">Inventory reserve calls</text>
+<text x="400" y="1780" text-anchor="middle" font-size="9" fill="#185fa5">Payment gateway calls</text>
+<text x="400" y="1784" text-anchor="middle" font-size="9" fill="#185fa5">Notification delivery</text>
+
+<!-- STALE CACHE DETAIL -->
+<rect x="540" y="1540" width="240" height="248" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="660" y="1560" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Stale Cache / Graceful Degradation</text>
+
+<rect x="560" y="1572" width="200" height="40" rx="4" fill="#d5ede7" stroke="#0f6e56"/>
+<text x="660" y="1590" text-anchor="middle" font-size="9" fill="#085041">Service alive → fresh data</text>
+<text x="660" y="1604" text-anchor="middle" font-size="9" fill="#0f6e56">→ cache.put(key, result) on success</text>
+
+<line x1="660" y1="1612" x2="660" y2="1628" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="560" y="1628" width="200" height="40" rx="4" fill="#faeeda" stroke="#ba7517"/>
+<text x="660" y="1646" text-anchor="middle" font-size="9" fill="#633806">Service down (CB OPEN)</text>
+<text x="660" y="1660" text-anchor="middle" font-size="9" fill="#854f0b">→ cache.get(key) — stale OK</text>
+
+<line x1="660" y1="1668" x2="660" y2="1684" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="560" y="1684" width="200" height="40" rx="4" fill="#faece7" stroke="#993c1d"/>
+<text x="660" y="1702" text-anchor="middle" font-size="9" fill="#712b13">Cache miss too</text>
+<text x="660" y="1716" text-anchor="middle" font-size="9" fill="#993c1d">→ graceful degraded response</text>
+
+<text x="660" y="1745" text-anchor="middle" font-size="9" fill="#0f6e56">Search: show category browse</text>
+<text x="660" y="1759" text-anchor="middle" font-size="9" fill="#0f6e56">Inventory: optimistic allow</text>
+<text x="660" y="1773" text-anchor="middle" font-size="9" fill="#0f6e56">Pricing: last known price</text>
+<text x="660" y="1787" text-anchor="middle" font-size="9" fill="#0f6e56">Recommendations: popular items</text>
+
+<!-- ====== SECTION 11: SERVICE-SPECIFIC FALLBACKS ====== -->
+<line x1="30" y1="1856" x2="770" y2="1856" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1848" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— service-specific fallback table —</text>
+
+<rect x="20" y="1864" width="760" height="28" rx="4" fill="#131921"/>
+<text x="140" y="1882" text-anchor="middle" font-size="10" font-weight="700" fill="#ff9900">SERVICE</text>
+<text x="330" y="1882" text-anchor="middle" font-size="10" font-weight="700" fill="#ff9900">PRIMARY FAILURE</text>
+<text x="540" y="1882" text-anchor="middle" font-size="10" font-weight="700" fill="#ff9900">FALLBACK ACTION</text>
+<text x="710" y="1882" text-anchor="middle" font-size="10" font-weight="700" fill="#ff9900">USER IMPACT</text>
+
+<rect x="20" y="1892" width="760" height="28" rx="0" fill="#eaf3de"/>
+<text x="140" y="1911" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Search Service</text>
+<text x="330" y="1911" text-anchor="middle" font-size="9" fill="#3b6d11">Elasticsearch cluster down</text>
+<text x="540" y="1911" text-anchor="middle" font-size="9" fill="#3b6d11">Stale Redis cache → category browse</text>
+<text x="710" y="1911" text-anchor="middle" font-size="9" fill="#3b6d11">Reduced but working</text>
+
+<rect x="20" y="1920" width="760" height="28" rx="0" fill="#f1efe8"/>
+<text x="140" y="1939" text-anchor="middle" font-size="9" font-weight="600" fill="#2c2c2a">Inventory Service</text>
+<text x="330" y="1939" text-anchor="middle" font-size="9" fill="#5f5e5a">DB write failure</text>
+<text x="540" y="1939" text-anchor="middle" font-size="9" fill="#5f5e5a">Optimistic reserve from cache</text>
+<text x="710" y="1939" text-anchor="middle" font-size="9" fill="#5f5e5a">May oversell (reconcile async)</text>
+
+<rect x="20" y="1948" width="760" height="28" rx="0" fill="#eaf3de"/>
+<text x="140" y="1967" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Payment Gateway</text>
+<text x="330" y="1967" text-anchor="middle" font-size="9" fill="#3b6d11">Primary PG timeout</text>
+<text x="540" y="1967" text-anchor="middle" font-size="9" fill="#3b6d11">Secondary PG → Wallet → COD</text>
+<text x="710" y="1967" text-anchor="middle" font-size="9" fill="#3b6d11">Order still completes</text>
+
+<rect x="20" y="1976" width="760" height="28" rx="0" fill="#f1efe8"/>
+<text x="140" y="1995" text-anchor="middle" font-size="9" font-weight="600" fill="#2c2c2a">Pricing Service</text>
+<text x="330" y="1995" text-anchor="middle" font-size="9" fill="#5f5e5a">Strategy compute error</text>
+<text x="540" y="1995" text-anchor="middle" font-size="9" fill="#5f5e5a">Last cached price (5-min TTL)</text>
+<text x="710" y="1995" text-anchor="middle" font-size="9" fill="#5f5e5a">Stale price, corrected at checkout</text>
+
+<rect x="20" y="2004" width="760" height="28" rx="0" fill="#eaf3de"/>
+<text x="140" y="2023" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Order Service</text>
+<text x="330" y="2023" text-anchor="middle" font-size="9" fill="#3b6d11">DB write timeout</text>
+<text x="540" y="2023" text-anchor="middle" font-size="9" fill="#3b6d11">Kafka event → async write via consumer</text>
+<text x="710" y="2023" text-anchor="middle" font-size="9" fill="#3b6d11">Order placed (eventual consistency)</text>
+
+<rect x="20" y="2032" width="760" height="28" rx="0" fill="#f1efe8"/>
+<text x="140" y="2051" text-anchor="middle" font-size="9" font-weight="600" fill="#2c2c2a">Notification Service</text>
+<text x="330" y="2051" text-anchor="middle" font-size="9" fill="#5f5e5a">SMS/Email gateway down</text>
+<text x="540" y="2051" text-anchor="middle" font-size="9" fill="#5f5e5a">Kafka DLQ → retry queue → push fallback</text>
+<text x="710" y="2051" text-anchor="middle" font-size="9" fill="#5f5e5a">Delayed notification</text>
+
+<rect x="20" y="2060" width="760" height="28" rx="0" fill="#eaf3de"/>
+<text x="140" y="2079" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Recommendation</text>
+<text x="330" y="2079" text-anchor="middle" font-size="9" fill="#3b6d11">ML model server down</text>
+<text x="540" y="2079" text-anchor="middle" font-size="9" fill="#3b6d11">Rule-based "Best Sellers" list</text>
+<text x="710" y="2079" text-anchor="middle" font-size="9" fill="#3b6d11">Generic recs, not personalized</text>
+
+<rect x="20" y="2088" width="760" height="28" rx="0" fill="#faece7"/>
+<text x="140" y="2107" text-anchor="middle" font-size="9" font-weight="600" fill="#712b13">Entire App Crash</text>
+<text x="330" y="2107" text-anchor="middle" font-size="9" fill="#993c1d">All services unreachable</text>
+<text x="540" y="2107" text-anchor="middle" font-size="9" fill="#993c1d">CDN static maintenance page + PNR lookup</text>
+<text x="710" y="2107" text-anchor="middle" font-size="9" fill="#993c1d">Read-only minimal UI</text>
+
+<!-- ====== SECTION 12: APP CRASH RECOVERY ARCHITECTURE ====== -->
+<line x1="30" y1="2180" x2="770" y2="2180" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2172" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— full app crash: recovery architecture —</text>
+
+<!-- 4 recovery pillars -->
+<rect x="20"  y="2188" width="180" height="156" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="110" y="2208" text-anchor="middle" font-size="11" font-weight="700" fill="#712b13">1. Health Checks</text>
+<text x="110" y="2226" text-anchor="middle" font-size="10" fill="#993c1d">Liveness probe: is JVM alive?</text>
+<text x="110" y="2242" text-anchor="middle" font-size="10" fill="#993c1d">Readiness probe: can serve?</text>
+<text x="110" y="2258" text-anchor="middle" font-size="10" fill="#993c1d">ECS/K8s auto-restarts pod</text>
+<text x="110" y="2274" text-anchor="middle" font-size="10" fill="#993c1d">on liveness fail (30s)</text>
+<text x="110" y="2290" text-anchor="middle" font-size="10" fill="#993c1d">ALB removes unhealthy</text>
+<text x="110" y="2306" text-anchor="middle" font-size="10" fill="#993c1d">instance from rotation</text>
+<text x="110" y="2322" text-anchor="middle" font-size="10" fill="#993c1d">in-flight requests → retry</text>
+<text x="110" y="2338" text-anchor="middle" font-size="10" fill="#993c1d">on another healthy pod</text>
+
+<rect x="210" y="2188" width="180" height="156" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="300" y="2208" text-anchor="middle" font-size="11" font-weight="700" fill="#0c447c">2. Multi-AZ Deploy</text>
+<text x="300" y="2226" text-anchor="middle" font-size="10" fill="#185fa5">3 AZs per region</text>
+<text x="300" y="2242" text-anchor="middle" font-size="10" fill="#185fa5">Min 2 pods per AZ</text>
+<text x="300" y="2258" text-anchor="middle" font-size="10" fill="#185fa5">AZ failure → ALB reroutes</text>
+<text x="300" y="2274" text-anchor="middle" font-size="10" fill="#185fa5">to surviving AZs</text>
+<text x="300" y="2290" text-anchor="middle" font-size="10" fill="#185fa5">RDS Multi-AZ: replica</text>
+<text x="300" y="2306" text-anchor="middle" font-size="10" fill="#185fa5">promoted in &lt;60s</text>
+<text x="300" y="2322" text-anchor="middle" font-size="10" fill="#185fa5">ElastiCache cluster mode</text>
+<text x="300" y="2338" text-anchor="middle" font-size="10" fill="#185fa5">auto-failover on node loss</text>
+
+<rect x="400" y="2188" width="180" height="156" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="490" y="2208" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">3. Event Sourcing</text>
+<text x="490" y="2226" text-anchor="middle" font-size="10" fill="#3b6d11">All state changes → Kafka</text>
+<text x="490" y="2242" text-anchor="middle" font-size="10" fill="#3b6d11">Order events durable</text>
+<text x="490" y="2258" text-anchor="middle" font-size="10" fill="#3b6d11">Crash → replay from offset</text>
+<text x="490" y="2274" text-anchor="middle" font-size="10" fill="#3b6d11">Zero order loss</text>
+<text x="490" y="2290" text-anchor="middle" font-size="10" fill="#3b6d11">Outbox pattern: DB write</text>
+<text x="490" y="2306" text-anchor="middle" font-size="10" fill="#3b6d11">+ Kafka in same txn</text>
+<text x="490" y="2322" text-anchor="middle" font-size="10" fill="#3b6d11">DLQ for failed messages</text>
+<text x="490" y="2338" text-anchor="middle" font-size="10" fill="#3b6d11">→ manual reprocess</text>
+
+<rect x="590" y="2188" width="190" height="156" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="685" y="2208" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">4. Graceful Shutdown</text>
+<text x="685" y="2226" text-anchor="middle" font-size="10" fill="#534ab7">SIGTERM → drain (30s)</text>
+<text x="685" y="2242" text-anchor="middle" font-size="10" fill="#534ab7">No new requests accepted</text>
+<text x="685" y="2258" text-anchor="middle" font-size="10" fill="#534ab7">In-flight requests complete</text>
+<text x="685" y="2274" text-anchor="middle" font-size="10" fill="#534ab7">DB connections closed</text>
+<text x="685" y="2290" text-anchor="middle" font-size="10" fill="#534ab7">Kafka offsets committed</text>
+<text x="685" y="2306" text-anchor="middle" font-size="10" fill="#534ab7">CB state persisted to</text>
+<text x="685" y="2322" text-anchor="middle" font-size="10" fill="#534ab7">Redis before exit</text>
+<text x="685" y="2338" text-anchor="middle" font-size="10" fill="#534ab7">Peer notification to LB</text>
+
+<!-- ====== SECTION 13: CRASH RECOVERY TIMELINE ====== -->
+<line x1="30" y1="2412" x2="770" y2="2412" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2404" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— crash recovery timeline: t=0 crash to t=full recovery —</text>
+
+<rect x="20" y="2420" width="760" height="200" rx="8" fill="#1a1a18" stroke="#444"/>
+
+<!-- Timeline line -->
+<line x1="40" y1="2520" x2="760" y2="2520" stroke="#ff9900" stroke-width="2"/>
+
+<!-- Markers -->
+<line x1="40"  y1="2510" x2="40"  y2="2530" stroke="#ff9900" stroke-width="2"/>
+<text x="40"   y="2545" text-anchor="middle" font-size="9" fill="#ff9900">t=0</text>
+<text x="40"   y="2558" text-anchor="middle" font-size="8" fill="#aaa">CRASH</text>
+
+<line x1="115" y1="2510" x2="115" y2="2530" stroke="#c0392b" stroke-width="2"/>
+<text x="115"  y="2545" text-anchor="middle" font-size="9" fill="#c0392b">t=5s</text>
+<text x="115"  y="2558" text-anchor="middle" font-size="8" fill="#aaa">Liveness</text>
+<text x="115"  y="2570" text-anchor="middle" font-size="8" fill="#aaa">probe fails</text>
+
+<line x1="220" y1="2510" x2="220" y2="2530" stroke="#ba7517" stroke-width="2"/>
+<text x="220"  y="2545" text-anchor="middle" font-size="9" fill="#ba7517">t=15s</text>
+<text x="220"  y="2558" text-anchor="middle" font-size="8" fill="#aaa">K8s restarts</text>
+<text x="220"  y="2570" text-anchor="middle" font-size="8" fill="#aaa">pod</text>
+
+<line x1="340" y1="2510" x2="340" y2="2530" stroke="#7f77dd" stroke-width="2"/>
+<text x="340"  y="2545" text-anchor="middle" font-size="9" fill="#7f77dd">t=25s</text>
+<text x="340"  y="2558" text-anchor="middle" font-size="8" fill="#aaa">New pod</text>
+<text x="340"  y="2570" text-anchor="middle" font-size="8" fill="#aaa">STARTING</text>
+
+<line x1="460" y1="2510" x2="460" y2="2530" stroke="#185fa5" stroke-width="2"/>
+<text x="460"  y="2545" text-anchor="middle" font-size="9" fill="#185fa5">t=40s</text>
+<text x="460"  y="2558" text-anchor="middle" font-size="8" fill="#aaa">Readiness</text>
+<text x="460"  y="2570" text-anchor="middle" font-size="8" fill="#aaa">passes</text>
+
+<line x1="580" y1="2510" x2="580" y2="2530" stroke="#3b6d11" stroke-width="2"/>
+<text x="580"  y="2545" text-anchor="middle" font-size="9" fill="#3b6d11">t=50s</text>
+<text x="580"  y="2558" text-anchor="middle" font-size="8" fill="#aaa">ALB traffic</text>
+<text x="580"  y="2570" text-anchor="middle" font-size="8" fill="#aaa">restored</text>
+
+<line x1="700" y1="2510" x2="700" y2="2530" stroke="#0f6e56" stroke-width="2"/>
+<text x="700"  y="2545" text-anchor="middle" font-size="9" fill="#0f6e56">t=60s</text>
+<text x="700"  y="2558" text-anchor="middle" font-size="8" fill="#aaa">CB resets</text>
+<text x="700"  y="2570" text-anchor="middle" font-size="8" fill="#aaa">FULL RECOVERY</text>
+
+<!-- What users see during outage -->
+<text x="400" y="2470" text-anchor="middle" font-size="9" font-weight="600" fill="#ff9900">During t=0 → t=50s: other AZ pods serve all traffic | CB OPEN → stale cache | Cart: local storage fallback</text>
+<text x="400" y="2484" text-anchor="middle" font-size="9" fill="#aaa">Search: cached results | Pricing: last known | Orders: Kafka-queued, processed when recovered | Payments: secondary PG</text>
+<text x="400" y="2498" text-anchor="middle" font-size="9" fill="#7f77dd">User sees: slightly stale prices, possibly slower search — but CAN still browse and order via other AZ instances</text>
+
+<!-- ====== SECTION 14: DATA STORES ====== -->
+<line x1="30" y1="2688" x2="770" y2="2688" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2680" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="2696" width="175" height="148" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="107" y="2716" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis (ElastiCache)</text>
+<text x="107" y="2732" text-anchor="middle" font-size="10" fill="#3b6d11">Cart sessions (TTL 30d)</text>
+<text x="107" y="2748" text-anchor="middle" font-size="10" fill="#3b6d11">Inventory reserve locks</text>
+<text x="107" y="2764" text-anchor="middle" font-size="10" fill="#3b6d11">Pricing cache (5min)</text>
+<text x="107" y="2780" text-anchor="middle" font-size="10" fill="#3b6d11">Search result cache</text>
+<text x="107" y="2796" text-anchor="middle" font-size="10" fill="#3b6d11">CB state persistence</text>
+<text x="107" y="2812" text-anchor="middle" font-size="10" fill="#3b6d11">Rate limit counters</text>
+<text x="107" y="2828" text-anchor="middle" font-size="10" fill="#3b6d11">Pub/Sub live updates</text>
+
+<rect x="211" y="2696" width="175" height="148" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="298" y="2716" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">RDS Aurora</text>
+<text x="298" y="2732" text-anchor="middle" font-size="10" fill="#185fa5">Orders + PNRs</text>
+<text x="298" y="2748" text-anchor="middle" font-size="10" fill="#185fa5">Customers + addresses</text>
+<text x="298" y="2764" text-anchor="middle" font-size="10" fill="#185fa5">Payments + refunds</text>
+<text x="298" y="2780" text-anchor="middle" font-size="10" fill="#185fa5">Product catalog</text>
+<text x="298" y="2796" text-anchor="middle" font-size="10" fill="#185fa5">Inventory stock</text>
+<text x="298" y="2812" text-anchor="middle" font-size="10" fill="#185fa5">Multi-AZ replica</text>
+<text x="298" y="2828" text-anchor="middle" font-size="10" fill="#185fa5">Read replica for search</text>
+
+<rect x="402" y="2696" width="175" height="148" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="489" y="2716" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka (MSK)</text>
+<text x="489" y="2732" text-anchor="middle" font-size="10" fill="#534ab7">order-events</text>
+<text x="489" y="2748" text-anchor="middle" font-size="10" fill="#534ab7">payment-events</text>
+<text x="489" y="2764" text-anchor="middle" font-size="10" fill="#534ab7">inventory-updates</text>
+<text x="489" y="2780" text-anchor="middle" font-size="10" fill="#534ab7">notification-queue</text>
+<text x="489" y="2796" text-anchor="middle" font-size="10" fill="#534ab7">DLQ for failures</text>
+<text x="489" y="2812" text-anchor="middle" font-size="10" fill="#534ab7">Event sourcing log</text>
+<text x="489" y="2828" text-anchor="middle" font-size="10" fill="#534ab7">Crash replay from offset</text>
+
+<rect x="593" y="2696" width="187" height="148" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="686" y="2716" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">S3 + Elasticsearch</text>
+<text x="686" y="2732" text-anchor="middle" font-size="10" fill="#854f0b">Product images (S3)</text>
+<text x="686" y="2748" text-anchor="middle" font-size="10" fill="#854f0b">Static assets (CloudFront)</text>
+<text x="686" y="2764" text-anchor="middle" font-size="10" fill="#854f0b">Search index (ES)</text>
+<text x="686" y="2780" text-anchor="middle" font-size="10" fill="#854f0b">Analytics data lake</text>
+<text x="686" y="2796" text-anchor="middle" font-size="10" fill="#854f0b">ML training data</text>
+<text x="686" y="2812" text-anchor="middle" font-size="10" fill="#854f0b">Order history archive</text>
+<text x="686" y="2828" text-anchor="middle" font-size="10" fill="#854f0b">Audit logs (S3 Glacier)</text>
+
+<!-- ====== SECTION 15: 5 HARDEST DESIGN DECISIONS ====== -->
+<line x1="30" y1="2908" x2="770" y2="2908" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2900" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— the 5 hardest design decisions —</text>
+
+<rect x="30" y="2916" width="740" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2936" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">1. Inventory reserve must be atomic — synchronized at item level, rolled back on any partial failure</text>
+<text x="400" y="2954" text-anchor="middle" font-size="11" fill="#0f6e56">PlaceOrderCommand reserves ALL items first. If any item fails, ALL already-reserved items are released. No order with partial stock — either fully reserved or nothing. Concurrency: per-productId synchronized block prevents oversell.</text>
+
+<rect x="30" y="2980" width="740" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="3000" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">2. Payment fallback chain — COD is the ultimate fallback, never fail the order</text>
+<text x="400" y="3018" text-anchor="middle" font-size="11" fill="#185fa5">PaymentHandler chain: Primary PG → Secondary PG → Amazon Wallet → COD. CB on Primary PG means 3 failures → OPEN → immediately skip to Secondary. This guarantees checkout never fully fails due to payment issues alone.</text>
+
+<rect x="30" y="3044" width="740" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="3064" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">3. Decorator for pricing — composable fee layers, never hardcoded totals</text>
+<text x="400" y="3082" text-anchor="middle" font-size="11" fill="#854f0b">New fee types (EMI surcharge, subscription discount, coupon) wrap the existing chain without touching order logic. Each Decorator.calculate(qty) re-delegates down. Adding insurance = new TravelInsuranceDecorator wrapping the chain. Zero coupling.</text>
+
+<rect x="30" y="3108" width="740" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="3128" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">4. Circuit Breaker state must survive crashes — persisted to Redis, not only in memory</text>
+<text x="400" y="3146" text-anchor="middle" font-size="11" fill="#534ab7">In-memory CB state is lost on pod crash. On graceful shutdown: CB state written to Redis. On startup: CB hydrated from Redis. Prevents a restarted pod from immediately hammering a still-struggling upstream service with a full load.</text>
+
+<rect x="30" y="3172" width="740" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="3192" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">5. Event sourcing — Kafka as the source of truth, not the DB write</text>
+<text x="400" y="3210" text-anchor="middle" font-size="11" fill="#993c1d">If the order service crashes after Kafka publish but before DB write: replay from Kafka offset → re-derive state. Outbox pattern: DB write and Kafka publish in the same transaction using the transactional outbox table. Zero order loss on crash.</text>
+
+<!-- FINAL BOX -->
+<rect x="30" y="3236" width="740" height="56" rx="8" fill="#131921"/>
+<text x="400" y="3256" text-anchor="middle" font-size="12" font-weight="700" fill="#ff9900">Amazon processes 66,000 orders per hour. Recovery SLA: &lt;60s for pod crash, &lt;2min for AZ failure. CB trip time: 200ms.</text>
+<text x="400" y="3276" text-anchor="middle" font-size="11" fill="#aaa">3-layer defence (CB + Retry + Stale Cache) ensures user can always browse and checkout — even when primary services are degraded. No hard failure — always a fallback.</text>
+
+</svg>
+</body></html>
