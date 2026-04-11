@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 820px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 760 5440" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#ba7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: CONTENT INGESTION (WRITE PATH) ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— content ingestion pipeline (licensed content, not user uploads) —</text>
+
+<!-- CONTENT SOURCES -->
+<rect x="40"  y="32" width="200" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="140" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Studio / Distributor</text>
+<text x="140" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Licensed .mxf / .mov master files</text>
+
+<rect x="520" y="32" width="200" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="620" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Netflix Originals</text>
+<text x="620" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Internal production → direct ingest</text>
+
+<line x1="140" y1="84" x2="280" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="620" y1="84" x2="480" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CONTENT INGESTION SERVICE -->
+<rect x="190" y="132" width="380" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="154" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Content Ingestion Service</text>
+<text x="380" y="172" text-anchor="middle" font-size="11" fill="#0f6e56">Store raw master file in S3 cold storage</text>
+<text x="380" y="188" text-anchor="middle" font-size="11" fill="#0f6e56">Transcode to H.264/H.265 in SD, HD, 4K, HDR</text>
+<text x="380" y="204" text-anchor="middle" font-size="11" fill="#0f6e56">Generate subtitle tracks (30+ languages)</text>
+<text x="380" y="220" text-anchor="middle" font-size="11" fill="#0f6e56">Split into 2-second MPEG-DASH/HLS segments</text>
+<text x="380" y="232" text-anchor="middle" font-size="11" fill="#0f6e56">Tag region licensing: available in IN, US, UK...</text>
+
+<line x1="380" y1="232" x2="380" y2="280" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CDN PUSH -->
+<rect x="190" y="280" width="380" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="302" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Push segments to Open Connect CDN</text>
+<text x="380" y="320" text-anchor="middle" font-size="11" fill="#854f0b">Netflix's own CDN — ISP-embedded appliances globally</text>
+<text x="380" y="336" text-anchor="middle" font-size="11" fill="#854f0b">Popular titles pre-positioned during off-peak hours</text>
+
+<line x1="380" y1="344" x2="380" y2="392" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- METADATA + INDEX -->
+<rect x="190" y="392" width="380" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="414" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Write metadata to PostgreSQL + Elasticsearch</text>
+<text x="380" y="430" text-anchor="middle" font-size="11" fill="#3b6d11">Title, cast, genres, rating, regions — searchable</text>
+
+<!-- ====== SECTION 2: PLAY FLOW ====== -->
+<line x1="40" y1="504" x2="720" y2="504" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="496" text-anchor="middle" font-size="11" fill="#888">— play content flow (read hot path) —</text>
+
+<!-- DEVICE -->
+<rect x="240" y="512" width="280" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="534" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">Client Device</text>
+<text x="380" y="552" text-anchor="middle" font-size="11" fill="#5f5e5a">TV / Phone / Laptop / Tablet</text>
+<text x="380" y="568" text-anchor="middle" font-size="11" fill="#5f5e5a">GET /play?contentId=X&profileId=Y</text>
+
+<line x1="380" y1="576" x2="380" y2="608" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- API GATEWAY -->
+<rect x="240" y="608" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="630" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway + Load Balancer</text>
+<text x="380" y="646" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth (JWT), rate limiting, region routing</text>
+
+<line x1="380" y1="660" x2="380" y2="696" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PLAYBACK SERVICE -->
+<rect x="190" y="696" width="380" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="718" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Playback Service</text>
+<text x="380" y="736" text-anchor="middle" font-size="11" fill="#0f6e56">1. Validate subscription — is account active?</text>
+<text x="380" y="752" text-anchor="middle" font-size="11" fill="#0f6e56">2. Check concurrent stream count (plan limit)</text>
+<text x="380" y="768" text-anchor="middle" font-size="11" fill="#0f6e56">3. Profile rating gate — kids profile blocked from MA</text>
+<text x="380" y="784" text-anchor="middle" font-size="11" fill="#0f6e56">4. Region check — content licensed in this country?</text>
+<text x="380" y="796" text-anchor="middle" font-size="11" fill="#0f6e56">5. Return manifest URL (m3u8 / mpd) to client</text>
+
+<!-- concurrent limit fail -->
+<line x1="190" y1="752" x2="90" y2="820" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="78" y="802" font-size="10" text-anchor="end" fill="#d85a30">limit exceeded</text>
+<rect x="16" y="820" width="148" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="90" y="838" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">HTTP 403</text>
+<text x="90" y="852" text-anchor="middle" font-size="10" fill="#993c1d">Upgrade plan prompt</text>
+
+<line x1="380" y1="796" x2="380" y2="856" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- STEERING SERVICE -->
+<rect x="190" y="856" width="380" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="878" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Steering Service (CDN Selection)</text>
+<text x="380" y="896" text-anchor="middle" font-size="11" fill="#534ab7">Detect client IP → resolve nearest CDN node</text>
+<text x="380" y="912" text-anchor="middle" font-size="11" fill="#534ab7">Pick lowest-latency Open Connect Appliance</text>
+
+<line x1="380" y1="920" x2="380" y2="968" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CDN STREAMING -->
+<rect x="190" y="968" width="380" height="88" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="990" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Open Connect CDN (Netflix's own CDN)</text>
+<text x="380" y="1008" text-anchor="middle" font-size="11" fill="#854f0b">Client fetches 2-second DASH/HLS segments</text>
+<text x="380" y="1024" text-anchor="middle" font-size="11" fill="#854f0b">ABR: measure bandwidth → switch quality seamlessly</text>
+<text x="380" y="1040" text-anchor="middle" font-size="11" fill="#854f0b">Prefetch next 3 segments → zero buffering</text>
+<text x="380" y="1056" text-anchor="middle" font-size="11" fill="#854f0b">CDN miss → origin S3 → edge caches segment</text>
+
+<!-- ====== SECTION 3: HOME SCREEN / RECOMMENDATION ====== -->
+<line x1="40" y1="1120" x2="720" y2="1120" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1112" text-anchor="middle" font-size="11" fill="#888">— home screen + recommendation flow —</text>
+
+<rect x="240" y="1128" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="1150" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">User opens Netflix</text>
+<text x="380" y="1166" text-anchor="middle" font-size="11" fill="#5f5e5a">GET /home?profileId=Y</text>
+
+<line x1="380" y1="1180" x2="380" y2="1212" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- HOME SERVICE -->
+<rect x="190" y="1212" width="380" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="1234" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Home Service</text>
+<text x="380" y="1252" text-anchor="middle" font-size="11" fill="#0f6e56">Row 1: Continue Watching (from Redis)</text>
+<text x="380" y="1268" text-anchor="middle" font-size="11" fill="#0f6e56">Row 2: My List</text>
+<text x="380" y="1284" text-anchor="middle" font-size="11" fill="#0f6e56">Row 3-N: ML recommendations per profile</text>
+<text x="380" y="1300" text-anchor="middle" font-size="11" fill="#0f6e56">Cached per profile in Redis (TTL 2min)</text>
+<text x="380" y="1312" text-anchor="middle" font-size="11" fill="#0f6e56">Region-filtered: only show licensed titles</text>
+
+<line x1="380" y1="1312" x2="380" y2="1360" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ML RECOMMENDATION -->
+<rect x="190" y="1360" width="380" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1382" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Recommendation Engine (ML)</text>
+<text x="380" y="1400" text-anchor="middle" font-size="11" fill="#534ab7">Collaborative filtering: similar users watched...</text>
+<text x="380" y="1416" text-anchor="middle" font-size="11" fill="#534ab7">Content-based: genre/actor/director preferences</text>
+<text x="380" y="1424" text-anchor="middle" font-size="11" fill="#534ab7">Taste Match %: predicted enjoyment score</text>
+<text x="380" y="1440" text-anchor="middle" font-size="11" fill="#534ab7">Artwork personalisation: show different thumbnail</text>
+<text x="380" y="1456" text-anchor="middle" font-size="11" fill="#534ab7">to different users for same title</text>
+
+<!-- ====== SECTION 4: CONTINUE WATCHING + DOWNLOAD ====== -->
+<line x1="40" y1="1524" x2="720" y2="1524" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1516" text-anchor="middle" font-size="11" fill="#888">— continue watching + download flow —</text>
+
+<line x1="300" y1="1544" x2="160" y2="1588" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="1544" x2="600" y2="1588" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="1532" width="380" height="20" rx="6" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="1546" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Async: save progress + handle downloads</text>
+
+<!-- CONTINUE WATCHING -->
+<rect x="20"  y="1588" width="240" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="130" y="1610" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Continue Watching Service</text>
+<text x="130" y="1628" text-anchor="middle" font-size="11" fill="#3b6d11">Save: profileId → {contentId, positionSecs}</text>
+<text x="130" y="1644" text-anchor="middle" font-size="11" fill="#3b6d11">Redis (fast reads) + DB (persistent)</text>
+<text x="130" y="1660" text-anchor="middle" font-size="11" fill="#3b6d11">Mark complete if 95% watched</text>
+
+<!-- DOWNLOAD SERVICE -->
+<rect x="500" y="1588" width="240" height="76" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="620" y="1610" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Download Service</text>
+<text x="620" y="1628" text-anchor="middle" font-size="11" fill="#185fa5">Plan gate: Standard/Premium only</text>
+<text x="620" y="1644" text-anchor="middle" font-size="11" fill="#185fa5">Download encrypted segments to device</text>
+<text x="620" y="1660" text-anchor="middle" font-size="11" fill="#185fa5">License TTL: 30 days (DRM enforced)</text>
+
+<!-- ====== SECTION 5: KEY ARCHITECTURAL DECISIONS ====== -->
+<line x1="40" y1="1728" x2="720" y2="1728" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1720" text-anchor="middle" font-size="11" fill="#888">— Netflix's unique architectural decisions —</text>
+
+<rect x="20"  y="1736" width="350" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="195" y="1758" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Open Connect (Netflix's own CDN)</text>
+<text x="195" y="1776" text-anchor="middle" font-size="11" fill="#534ab7">Netflix embeds hardware appliances inside ISPs</text>
+<text x="195" y="1792" text-anchor="middle" font-size="11" fill="#534ab7">No public CDN (no Cloudfront/Akamai for video)</text>
+<text x="195" y="1808" text-anchor="middle" font-size="11" fill="#534ab7">Pre-positions popular content during off-peak hours</text>
+<text x="195" y="1824" text-anchor="middle" font-size="11" fill="#534ab7">Eliminates most inter-network traffic costs</text>
+
+<rect x="390" y="1736" width="350" height="100" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="565" y="1758" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Personalised Thumbnail (A/B Test)</text>
+<text x="565" y="1776" text-anchor="middle" font-size="11" fill="#854f0b">Same movie → different artwork per user</text>
+<text x="565" y="1792" text-anchor="middle" font-size="11" fill="#854f0b">Action fans see action scene thumbnail</text>
+<text x="565" y="1808" text-anchor="middle" font-size="11" fill="#854f0b">Romance fans see romantic scene thumbnail</text>
+<text x="565" y="1824" text-anchor="middle" font-size="11" fill="#854f0b">Tested via multi-armed bandit algorithm</text>
+
+<!-- ====== DATA STORES ====== -->
+<line x1="40" y1="1900" x2="720" y2="1900" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1892" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1908" width="148" height="128" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="94"  y="1930" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="94"  y="1948" text-anchor="middle" font-size="10" fill="#3b6d11">Continue watching</text>
+<text x="94"  y="1964" text-anchor="middle" font-size="10" fill="#3b6d11">Home feed per profile</text>
+<text x="94"  y="1980" text-anchor="middle" font-size="10" fill="#3b6d11">Active sessions</text>
+<text x="94"  y="1996" text-anchor="middle" font-size="10" fill="#3b6d11">Metadata cache</text>
+<text x="94"  y="2012" text-anchor="middle" font-size="10" fill="#3b6d11">Search typeahead</text>
+<text x="94"  y="2028" text-anchor="middle" font-size="10" fill="#3b6d11">User preferences</text>
+
+<rect x="186" y="1908" width="148" height="128" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="260" y="1930" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="260" y="1948" text-anchor="middle" font-size="10" fill="#185fa5">Accounts, profiles</text>
+<text x="260" y="1964" text-anchor="middle" font-size="10" fill="#185fa5">Subscriptions</text>
+<text x="260" y="1980" text-anchor="middle" font-size="10" fill="#185fa5">Content metadata</text>
+<text x="260" y="1996" text-anchor="middle" font-size="10" fill="#185fa5">Region licenses</text>
+<text x="260" y="2012" text-anchor="middle" font-size="10" fill="#185fa5">Watch history</text>
+<text x="260" y="2028" text-anchor="middle" font-size="10" fill="#185fa5">Payments, plans</text>
+
+<rect x="352" y="1908" width="148" height="128" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="426" y="1930" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="426" y="1948" text-anchor="middle" font-size="10" fill="#854f0b">View events</text>
+<text x="426" y="1964" text-anchor="middle" font-size="10" fill="#854f0b">Watch time series</text>
+<text x="426" y="1980" text-anchor="middle" font-size="10" fill="#854f0b">QoE metrics</text>
+<text x="426" y="1996" text-anchor="middle" font-size="10" fill="#854f0b">ABR decisions log</text>
+<text x="426" y="2012" text-anchor="middle" font-size="10" fill="#854f0b">A/B test results</text>
+<text x="426" y="2028" text-anchor="middle" font-size="10" fill="#854f0b">Recommendation logs</text>
+
+<rect x="518" y="1908" width="222" height="128" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="629" y="1930" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">S3 + Elasticsearch</text>
+<text x="629" y="1948" text-anchor="middle" font-size="10" fill="#534ab7">S3: raw master files</text>
+<text x="629" y="1964" text-anchor="middle" font-size="10" fill="#534ab7">Transcoded segments</text>
+<text x="629" y="1980" text-anchor="middle" font-size="10" fill="#534ab7">Subtitle files (30+ langs)</text>
+<text x="629" y="1996" text-anchor="middle" font-size="10" fill="#534ab7">ES: full-text content search</text>
+<text x="629" y="2012" text-anchor="middle" font-size="10" fill="#534ab7">Cast/director lookup</text>
+<text x="629" y="2028" text-anchor="middle" font-size="10" fill="#534ab7">Genre faceted search</text>
+
+<!-- FINAL COMPARISON BOX -->
+<line x1="40" y1="2100" x2="720" y2="2100" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2092" text-anchor="middle" font-size="11" fill="#888">— Netflix vs YouTube: key architectural differences —</text>
+<rect x="20" y="2108" width="720" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="2130" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Netflix: Licensed content, no UGC → focus is CDN (Open Connect) + ML recommendation</text>
+<text x="380" y="2150" text-anchor="middle" font-size="11" fill="#5f5e5a">YouTube: User uploads, UGC → focus is transcoding pipeline + scale of creator ecosystem</text>
+<text x="380" y="2168" text-anchor="middle" font-size="11" fill="#5f5e5a">Netflix unique: personalised thumbnails, Open Connect CDN, multi-profile per account, DRM downloads</text>
+
+
+<!-- ================================================================ -->
+<!-- ============  FALLBACK MECHANISM — STARTS HERE  ================ -->
+<!-- ================================================================ -->
+
+<!-- ====== FALLBACK TITLE BANNER ====== -->
+<rect x="0" y="2220" width="760" height="52" rx="0" fill="#141414"/>
+<rect x="0" y="2220" width="6"   height="52" rx="0" fill="#e50914"/>
+<text x="380" y="2244" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">FALLBACK MECHANISM — WHEN NETFLIX CRASHES OR DB IS DOWN</text>
+<text x="380" y="2262" text-anchor="middle" font-size="11" fill="#aaaaaa">3-Layer Defence: Circuit Breaker → Stale Cache → Graceful Degradation</text>
+
+<!-- ====== SECTION 6: 3-LAYER DEFENCE ====== -->
+<line x1="40" y1="2328" x2="720" y2="2328" stroke="#333" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2320" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 3-layer defence (applied to every critical service) —</text>
+
+<rect x="20"  y="2336" width="224" height="120" rx="8" fill="#1c0a0a" stroke="#993c1d"/>
+<text x="132" y="2358" text-anchor="middle" font-size="12" font-weight="700" fill="#e50914">Layer 1 · Circuit Breaker</text>
+<text x="132" y="2376" text-anchor="middle" font-size="10" fill="#cc6666">CLOSED → normal calls pass through</text>
+<text x="132" y="2392" text-anchor="middle" font-size="10" fill="#cc6666">OPEN → calls fail-fast; return cached</text>
+<text x="132" y="2408" text-anchor="middle" font-size="10" fill="#cc6666">response or graceful error instantly</text>
+<text x="132" y="2424" text-anchor="middle" font-size="10" fill="#cc6666">HALF_OPEN → 1 probe; success=CLOSED</text>
+<text x="132" y="2440" text-anchor="middle" font-size="10" fill="#cc6666">Threshold: 5 failures / 10s window</text>
+<text x="132" y="2452" text-anchor="middle" font-size="10" fill="#cc6666">Open window: 30s timeout before probe</text>
+
+<rect x="268" y="2336" width="224" height="120" rx="8" fill="#0a0a1c" stroke="#534ab7"/>
+<text x="380" y="2358" text-anchor="middle" font-size="12" font-weight="700" fill="#a090ff">Layer 2 · Stale Cache Serve</text>
+<text x="380" y="2376" text-anchor="middle" font-size="10" fill="#9090cc">Redis holds last-known home feed,</text>
+<text x="380" y="2392" text-anchor="middle" font-size="10" fill="#9090cc">continue-watching, metadata, and</text>
+<text x="380" y="2408" text-anchor="middle" font-size="10" fill="#9090cc">top-10 recommendations per profile</text>
+<text x="380" y="2424" text-anchor="middle" font-size="10" fill="#9090cc">Stale-while-revalidate: show cached</text>
+<text x="380" y="2440" text-anchor="middle" font-size="10" fill="#9090cc">data instantly; refresh async on live</text>
+<text x="380" y="2452" text-anchor="middle" font-size="10" fill="#9090cc">TTL: home feed 2 min · session 1 hr</text>
+
+<rect x="516" y="2336" width="224" height="120" rx="8" fill="#0a1a0a" stroke="#3b6d11"/>
+<text x="628" y="2358" text-anchor="middle" font-size="12" font-weight="700" fill="#60cc60">Layer 3 · Graceful Degrade</text>
+<text x="628" y="2376" text-anchor="middle" font-size="10" fill="#80aa80">If cache is also cold/missing: show</text>
+<text x="628" y="2392" text-anchor="middle" font-size="10" fill="#80aa80">global trending / editorial picks row</text>
+<text x="628" y="2408" text-anchor="middle" font-size="10" fill="#80aa80">Active streams buffer from pre-fetched</text>
+<text x="628" y="2424" text-anchor="middle" font-size="10" fill="#80aa80">segments on device — keep playing</text>
+<text x="628" y="2440" text-anchor="middle" font-size="10" fill="#80aa80">Read-only mode: browse + play only</text>
+<text x="628" y="2452" text-anchor="middle" font-size="10" fill="#80aa80">No new sign-ups, no plan changes</text>
+
+<!-- ====== SECTION 7: CIRCUIT BREAKER STATE MACHINE ====== -->
+<line x1="40" y1="2524" x2="720" y2="2524" stroke="#333" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2516" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— circuit breaker state machine (Hystrix / Resilience4j pattern) —</text>
+
+<rect x="100" y="2532" width="560" height="228" rx="8" fill="#141414" stroke="#444"/>
+<text x="380" y="2556" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Per-service Circuit Breaker — Netflix pioneered this with Hystrix</text>
+
+<!-- CLOSED -->
+<rect x="135" y="2572" width="120" height="44" rx="8" fill="#1a3a1a" stroke="#3b6d11"/>
+<text x="195" y="2590" text-anchor="middle" font-size="11" font-weight="700" fill="#60cc60">CLOSED</text>
+<text x="195" y="2606" text-anchor="middle" font-size="9"  fill="#80aa80">All calls pass through</text>
+
+<!-- CLOSED → OPEN -->
+<line x1="255" y1="2594" x2="355" y2="2594" stroke="#e50914" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="305" y="2586" text-anchor="middle" font-size="9" fill="#e50914">≥5 failures / 10s</text>
+<text x="305" y="2606" text-anchor="middle" font-size="9" fill="#e50914">or p99 latency &gt;2s</text>
+
+<!-- OPEN -->
+<rect x="355" y="2572" width="120" height="44" rx="8" fill="#3a1a1a" stroke="#993c1d"/>
+<text x="415" y="2590" text-anchor="middle" font-size="11" font-weight="700" fill="#e50914">OPEN</text>
+<text x="415" y="2606" text-anchor="middle" font-size="9"  fill="#cc6666">Fail-fast → fallback</text>
+
+<!-- OPEN → HALF_OPEN arc -->
+<path d="M415 2616 Q415 2680 305 2690 Q195 2700 195 2660" fill="none" stroke="#ba7517" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-o)"/>
+<text x="310" y="2706" text-anchor="middle" font-size="9" fill="#ba7517">30s timeout → probe</text>
+
+<!-- HALF_OPEN -->
+<rect x="135" y="2660" width="120" height="44" rx="8" fill="#2a1e0a" stroke="#ba7517"/>
+<text x="195" y="2678" text-anchor="middle" font-size="11" font-weight="700" fill="#f0a500">HALF_OPEN</text>
+<text x="195" y="2694" text-anchor="middle" font-size="9"  fill="#cc9900">1 trial request</text>
+
+<!-- HALF_OPEN → CLOSED success -->
+<line x1="255" y1="2678" x2="355" y2="2624" stroke="#0f6e56" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+<text x="338" y="2648" text-anchor="middle" font-size="9" fill="#0f6e56">success</text>
+<text x="338" y="2660" text-anchor="middle" font-size="9" fill="#0f6e56">→ CLOSED ✓</text>
+
+<!-- HALF_OPEN → OPEN fail -->
+<line x1="255" y1="2694" x2="355" y2="2694" stroke="#d85a30" stroke-width="1.5" marker-end="url(#arrow-r)"/>
+<text x="305" y="2686" text-anchor="middle" font-size="9" fill="#d85a30">fail → OPEN</text>
+
+<!-- When OPEN: fallback box -->
+<rect x="510" y="2572" width="136" height="152" rx="8" fill="#0d0d0d" stroke="#555"/>
+<text x="578" y="2590" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">When OPEN:</text>
+<text x="578" y="2608" text-anchor="middle" font-size="9"  fill="#888">• Return Redis cache</text>
+<text x="578" y="2624" text-anchor="middle" font-size="9"  fill="#888">• Show trending row</text>
+<text x="578" y="2640" text-anchor="middle" font-size="9"  fill="#888">• Stream keeps playing</text>
+<text x="578" y="2656" text-anchor="middle" font-size="9"  fill="#888">  (pre-fetched segments)</text>
+<text x="578" y="2672" text-anchor="middle" font-size="9"  fill="#888">• PagerDuty alert fires</text>
+<text x="578" y="2688" text-anchor="middle" font-size="9"  fill="#888">• Ops dashboard flags</text>
+<text x="578" y="2704" text-anchor="middle" font-size="9"  fill="#888">  service as DEGRADED</text>
+
+<text x="380" y="2746" text-anchor="middle" font-size="10" fill="#666">CBs on: Playback · Home · Steering · Recommendation · Billing · Notification · Cassandra writes · PostgreSQL reads</text>
+
+<!-- ====== SECTION 8: COMPONENT FALLBACK DETAILS ====== -->
+<line x1="40" y1="2776" x2="720" y2="2776" stroke="#333" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2768" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— component-specific crash &amp; recovery —</text>
+
+<!-- ── BOX 1: PLAYBACK SERVICE CRASH ── -->
+<rect x="20" y="2784" width="348" height="196" rx="8" fill="#1c0a0a" stroke="#993c1d"/>
+<text x="194" y="2806" text-anchor="middle" font-size="12" font-weight="700" fill="#e50914">Playback Service Crash</text>
+<text x="194" y="2824" text-anchor="middle" font-size="10" fill="#cc6666">Root: OOM / exception / deployment rollout</text>
+<text x="32" y="2844" font-size="10" font-weight="600" fill="#e50914">Impact:</text>
+<text x="194" y="2860" text-anchor="middle" font-size="10" fill="#cc6666">New play requests get HTTP 503</text>
+<text x="194" y="2876" text-anchor="middle" font-size="10" fill="#cc6666">Active streams unaffected — client has manifest</text>
+<text x="194" y="2892" text-anchor="middle" font-size="10" fill="#cc6666">and pre-fetched segments; keeps playing</text>
+<text x="32" y="2912" font-size="10" font-weight="600" fill="#60cc60">Recovery:</text>
+<text x="194" y="2928" text-anchor="middle" font-size="10" fill="#80aa80">1. LB routes to healthy Playback pods instantly</text>
+<text x="194" y="2944" text-anchor="middle" font-size="10" fill="#80aa80">2. K8s restarts crashed pod (&lt;30s)</text>
+<text x="194" y="2960" text-anchor="middle" font-size="10" fill="#80aa80">3. Client retries /play — new pod serves manifest</text>
+<text x="194" y="2972" text-anchor="middle" font-size="9"  fill="#993c1d">⚠ RTO: &lt;30s · Active streams: zero impact</text>
+
+<!-- ── BOX 2: CDN / STREAMING FAILURE ── -->
+<rect x="392" y="2784" width="348" height="196" rx="8" fill="#1a1208" stroke="#ba7517"/>
+<text x="566" y="2806" text-anchor="middle" font-size="12" font-weight="700" fill="#f0a500">CDN Node / Open Connect Failure</text>
+<text x="566" y="2824" text-anchor="middle" font-size="10" fill="#cc9900">Root: appliance hardware fail / ISP link down</text>
+<text x="404" y="2844" font-size="10" font-weight="600" fill="#f0a500">Impact:</text>
+<text x="566" y="2860" text-anchor="middle" font-size="10" fill="#cc9900">Segment fetches time out → buffering</text>
+<text x="566" y="2876" text-anchor="middle" font-size="10" fill="#cc9900">ABR drops quality to survive on degraded link</text>
+<text x="566" y="2892" text-anchor="middle" font-size="10" fill="#cc9900">Client manifests alternate CDN URLs</text>
+<text x="404" y="2912" font-size="10" font-weight="600" fill="#60cc60">Recovery:</text>
+<text x="566" y="2928" text-anchor="middle" font-size="10" fill="#80aa80">1. Steering Service reroutes to next-nearest OCA</text>
+<text x="566" y="2944" text-anchor="middle" font-size="10" fill="#80aa80">2. CDN miss → origin S3 fallback (higher latency)</text>
+<text x="566" y="2960" text-anchor="middle" font-size="10" fill="#80aa80">3. ABR auto-lowers quality to maintain playback</text>
+<text x="566" y="2972" text-anchor="middle" font-size="9"  fill="#ba7517">⚠ RTO: &lt;10s reroute · Worst: SD quality buffer</text>
+
+<!-- ── BOX 3: REDIS DOWN ── -->
+<rect x="20" y="2996" width="348" height="196" rx="8" fill="#0a1a0a" stroke="#3b6d11"/>
+<text x="194" y="3018" text-anchor="middle" font-size="12" font-weight="700" fill="#60cc60">Redis Cache Down</text>
+<text x="194" y="3036" text-anchor="middle" font-size="10" fill="#80aa80">Root: node eviction / Sentinel failover lag / OOM</text>
+<text x="32" y="3056" font-size="10" font-weight="600" fill="#60cc60">Impact:</text>
+<text x="194" y="3072" text-anchor="middle" font-size="10" fill="#80aa80">Home feed: must hit PostgreSQL/ML on each load</text>
+<text x="194" y="3088" text-anchor="middle" font-size="10" fill="#80aa80">Continue-watching: position not restored (lost)</text>
+<text x="194" y="3104" text-anchor="middle" font-size="10" fill="#80aa80">Session auth: JWT re-verified from DB (slower)</text>
+<text x="32" y="3124" font-size="10" font-weight="600" fill="#60cc60">Recovery:</text>
+<text x="194" y="3140" text-anchor="middle" font-size="10" fill="#80aa80">1. Redis Sentinel promotes replica (&lt;15s)</text>
+<text x="194" y="3156" text-anchor="middle" font-size="10" fill="#80aa80">2. Home falls back to PostgreSQL + ML (slower)</text>
+<text x="194" y="3172" text-anchor="middle" font-size="10" fill="#80aa80">3. Continue-watching falls back to DB position</text>
+<text x="194" y="3184" text-anchor="middle" font-size="9"  fill="#3b6d11">⚠ RTO: &lt;15s · UX: slow home load, no seek resume</text>
+
+<!-- ── BOX 4: POSTGRESQL DOWN ── -->
+<rect x="392" y="2996" width="348" height="196" rx="8" fill="#0a0a1c" stroke="#534ab7"/>
+<text x="566" y="3018" text-anchor="middle" font-size="12" font-weight="700" fill="#a090ff">PostgreSQL Down</text>
+<text x="566" y="3036" text-anchor="middle" font-size="10" fill="#9090cc">Root: primary failure / slow query / disk I/O</text>
+<text x="404" y="3056" font-size="10" font-weight="600" fill="#a090ff">Impact:</text>
+<text x="566" y="3072" text-anchor="middle" font-size="10" fill="#9090cc">Subscription checks fail → Playback CB opens</text>
+<text x="566" y="3088" text-anchor="middle" font-size="10" fill="#9090cc">Safe default: allow in-progress streams continue</text>
+<text x="566" y="3104" text-anchor="middle" font-size="10" fill="#9090cc">New play: serve cached token for JWT-verified user</text>
+<text x="404" y="3124" font-size="10" font-weight="600" fill="#60cc60">Recovery:</text>
+<text x="566" y="3140" text-anchor="middle" font-size="10" fill="#9090cc">1. Read replica promoted via Aurora failover (&lt;60s)</text>
+<text x="566" y="3156" text-anchor="middle" font-size="10" fill="#9090cc">2. Subscription status served from Redis cache TTL</text>
+<text x="566" y="3172" text-anchor="middle" font-size="10" fill="#9090cc">3. Account writes queued and replayed on recovery</text>
+<text x="566" y="3184" text-anchor="middle" font-size="9"  fill="#7f77dd">⚠ RTO: &lt;60s · Cached sub status covers gap safely</text>
+
+<!-- ── BOX 5: CASSANDRA DOWN ── -->
+<rect x="20" y="3208" width="348" height="180" rx="8" fill="#1a1208" stroke="#ba7517"/>
+<text x="194" y="3230" text-anchor="middle" font-size="12" font-weight="700" fill="#f0a500">Cassandra Down</text>
+<text x="194" y="3248" text-anchor="middle" font-size="10" fill="#cc9900">Root: node loss / ring split / compaction storm</text>
+<text x="32" y="3268" font-size="10" font-weight="600" fill="#f0a500">Impact:</text>
+<text x="194" y="3284" text-anchor="middle" font-size="10" fill="#cc9900">View events + watch-time writes fail silently</text>
+<text x="194" y="3300" text-anchor="middle" font-size="10" fill="#cc9900">QoE metrics not recorded (analytics gap)</text>
+<text x="194" y="3316" text-anchor="middle" font-size="10" fill="#cc9900">Streaming unaffected — Cassandra is write path</text>
+<text x="32" y="3336" font-size="10" font-weight="600" fill="#60cc60">Recovery:</text>
+<text x="194" y="3352" text-anchor="middle" font-size="10" fill="#80aa80">1. Events buffered in Kafka → replay on recovery</text>
+<text x="194" y="3368" text-anchor="middle" font-size="10" fill="#80aa80">2. Cassandra hinted handoff covers short outages</text>
+<text x="194" y="3380" text-anchor="middle" font-size="9"  fill="#ba7517">⚠ RTO: eventual (analytics) · Streaming: zero impact</text>
+
+<!-- ── BOX 6: RECOMMENDATION ENGINE DOWN ── -->
+<rect x="392" y="3208" width="348" height="180" rx="8" fill="#1c0a0a" stroke="#993c1d"/>
+<text x="566" y="3230" text-anchor="middle" font-size="12" font-weight="700" fill="#e50914">Recommendation Engine Down</text>
+<text x="566" y="3248" text-anchor="middle" font-size="10" fill="#cc6666">Root: ML model OOM / CUDA failure / retraining</text>
+<text x="404" y="3268" font-size="10" font-weight="600" fill="#e50914">Impact:</text>
+<text x="566" y="3284" text-anchor="middle" font-size="10" fill="#cc6666">Home feed ML rows cannot be freshly scored</text>
+<text x="566" y="3300" text-anchor="middle" font-size="10" fill="#cc6666">Profile-specific rows unavailable from live model</text>
+<text x="404" y="3320" font-size="10" font-weight="600" fill="#60cc60">Recovery:</text>
+<text x="566" y="3336" text-anchor="middle" font-size="10" fill="#80aa80">1. Home serves cached recommendations (Redis TTL)</text>
+<text x="566" y="3352" text-anchor="middle" font-size="10" fill="#80aa80">2. Cache miss → editorial "Top 10 in your country"</text>
+<text x="566" y="3368" text-anchor="middle" font-size="10" fill="#80aa80">3. Genre-based rules engine as ultimate fallback</text>
+<text x="566" y="3380" text-anchor="middle" font-size="9"  fill="#993c1d">⚠ RTO: immediate fallback · UX: generic rows only</text>
+
+<!-- ====== SECTION 9: DB DOWN SCENARIOS TABLE ====== -->
+<line x1="40" y1="3440" x2="720" y2="3440" stroke="#333" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="3432" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— database down: what each service does —</text>
+
+<!-- Table header -->
+<rect x="20" y="3448" width="720" height="28" rx="4" fill="#141414"/>
+<text x="140" y="3467" text-anchor="middle" font-size="10" font-weight="700" fill="#e50914">DATABASE</text>
+<text x="300" y="3467" text-anchor="middle" font-size="10" font-weight="700" fill="#e50914">PRIMARY FAILURE</text>
+<text x="490" y="3467" text-anchor="middle" font-size="10" font-weight="700" fill="#e50914">FALLBACK ACTION</text>
+<text x="680" y="3467" text-anchor="middle" font-size="10" font-weight="700" fill="#e50914">USER IMPACT</text>
+
+<rect x="20" y="3476" width="720" height="26" rx="0" fill="#0a1a0a"/>
+<text x="140" y="3494" text-anchor="middle" font-size="9" font-weight="600" fill="#60cc60">Redis</text>
+<text x="300" y="3494" text-anchor="middle" font-size="9" fill="#80aa80">Node failure / eviction storm</text>
+<text x="490" y="3494" text-anchor="middle" font-size="9" fill="#80aa80">Sentinel promotes replica · DB fallback for reads</text>
+<text x="680" y="3494" text-anchor="middle" font-size="9" fill="#80aa80">Slow home load · no resume position</text>
+
+<rect x="20" y="3502" width="720" height="26" rx="0" fill="#111111"/>
+<text x="140" y="3520" text-anchor="middle" font-size="9" font-weight="600" fill="#a090ff">PostgreSQL</text>
+<text x="300" y="3520" text-anchor="middle" font-size="9" fill="#9090cc">Primary crash / disk full</text>
+<text x="490" y="3520" text-anchor="middle" font-size="9" fill="#9090cc">Aurora replica promoted · cached sub status served</text>
+<text x="680" y="3520" text-anchor="middle" font-size="9" fill="#9090cc">No new sign-ups · streams continue</text>
+
+<rect x="20" y="3528" width="720" height="26" rx="0" fill="#0a1a0a"/>
+<text x="140" y="3546" text-anchor="middle" font-size="9" font-weight="600" fill="#f0a500">Cassandra</text>
+<text x="300" y="3546" text-anchor="middle" font-size="9" fill="#cc9900">Ring split / compaction OOM</text>
+<text x="490" y="3546" text-anchor="middle" font-size="9" fill="#cc9900">Kafka buffers events · hinted handoff on recovery</text>
+<text x="680" y="3546" text-anchor="middle" font-size="9" fill="#cc9900">Analytics gap · no streaming impact</text>
+
+<rect x="20" y="3554" width="720" height="26" rx="0" fill="#111111"/>
+<text x="140" y="3572" text-anchor="middle" font-size="9" font-weight="600" fill="#66aaff">Elasticsearch</text>
+<text x="300" y="3572" text-anchor="middle" font-size="9" fill="#8888cc">Index shard failure</text>
+<text x="490" y="3572" text-anchor="middle" font-size="9" fill="#8888cc">PostgreSQL metadata fallback · partial search only</text>
+<text x="680" y="3572" text-anchor="middle" font-size="9" fill="#8888cc">Search degraded; no advanced filters</text>
+
+<rect x="20" y="3580" width="720" height="26" rx="0" fill="#0a1a0a"/>
+<text x="140" y="3598" text-anchor="middle" font-size="9" font-weight="600" fill="#60cc60">S3 (segments)</text>
+<text x="300" y="3598" text-anchor="middle" font-size="9" fill="#80aa80">Region outage</text>
+<text x="490" y="3598" text-anchor="middle" font-size="9" fill="#80aa80">S3 cross-region replication · CDN edge cache serves</text>
+<text x="680" y="3598" text-anchor="middle" font-size="9" fill="#80aa80">Cold-start slower; cached content unaffected</text>
+
+<rect x="20" y="3606" width="720" height="26" rx="0" fill="#111111"/>
+<text x="140" y="3624" text-anchor="middle" font-size="9" font-weight="600" fill="#e50914">All DBs + CDN</text>
+<text x="300" y="3624" text-anchor="middle" font-size="9" fill="#cc6666">Full DC loss / AWS region down</text>
+<text x="490" y="3624" text-anchor="middle" font-size="9" fill="#cc6666">Route 53 DNS failover to standby region (&lt;90s)</text>
+<text x="680" y="3624" text-anchor="middle" font-size="9" fill="#cc6666">Read-only degraded · active streams: buffer</text>
+
+<!-- ====== SECTION 10: CRASH RECOVERY TIMELINE ====== -->
+<line x1="40" y1="3688" x2="720" y2="3688" stroke="#333" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="3680" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— crash recovery timeline: t=0 crash to full recovery —</text>
+
+<rect x="20" y="3696" width="720" height="188" rx="8" fill="#0d0d0d" stroke="#333"/>
+
+<!-- Timeline bar -->
+<line x1="50" y1="3806" x2="710" y2="3806" stroke="#e50914" stroke-width="2.5"/>
+
+<!-- t=0 -->
+<line x1="50"  y1="3794" x2="50"  y2="3818" stroke="#e50914" stroke-width="2.5"/>
+<text x="50"   y="3834" text-anchor="middle" font-size="9" fill="#e50914">t=0</text>
+<text x="50"   y="3846" text-anchor="middle" font-size="8" fill="#888">CRASH</text>
+<text x="50"   y="3778" text-anchor="middle" font-size="8" fill="#888">Liveness probe</text>
+<text x="50"   y="3768" text-anchor="middle" font-size="8" fill="#888">starts failing</text>
+
+<!-- t=5s -->
+<line x1="160" y1="3794" x2="160" y2="3818" stroke="#e50914" stroke-width="2"/>
+<text x="160"  y="3834" text-anchor="middle" font-size="9" fill="#e50914">t=5s</text>
+<text x="160"  y="3846" text-anchor="middle" font-size="8" fill="#888">CB opens</text>
+<text x="160"  y="3778" text-anchor="middle" font-size="8" fill="#888">Requests →</text>
+<text x="160"  y="3768" text-anchor="middle" font-size="8" fill="#888">Redis cache</text>
+
+<!-- t=15s -->
+<line x1="280" y1="3794" x2="280" y2="3818" stroke="#ba7517" stroke-width="2"/>
+<text x="280"  y="3834" text-anchor="middle" font-size="9" fill="#ba7517">t=15s</text>
+<text x="280"  y="3846" text-anchor="middle" font-size="8" fill="#888">K8s terminates</text>
+<text x="280"  y="3778" text-anchor="middle" font-size="8" fill="#888">pod; LB routes</text>
+<text x="280"  y="3768" text-anchor="middle" font-size="8" fill="#888">to healthy pod</text>
+
+<!-- t=30s -->
+<line x1="400" y1="3794" x2="400" y2="3818" stroke="#7f77dd" stroke-width="2"/>
+<text x="400"  y="3834" text-anchor="middle" font-size="9" fill="#7f77dd">t=30s</text>
+<text x="400"  y="3846" text-anchor="middle" font-size="8" fill="#888">New pod starts</text>
+<text x="400"  y="3778" text-anchor="middle" font-size="8" fill="#888">containers init</text>
+<text x="400"  y="3768" text-anchor="middle" font-size="8" fill="#888">dependencies up</text>
+
+<!-- t=45s -->
+<line x1="520" y1="3794" x2="520" y2="3818" stroke="#185fa5" stroke-width="2"/>
+<text x="520"  y="3834" text-anchor="middle" font-size="9" fill="#185fa5">t=45s</text>
+<text x="520"  y="3846" text-anchor="middle" font-size="8" fill="#888">Readiness probe</text>
+<text x="520"  y="3778" text-anchor="middle" font-size="8" fill="#888">passes; LB</text>
+<text x="520"  y="3768" text-anchor="middle" font-size="8" fill="#888">re-adds pod</text>
+
+<!-- t=60s -->
+<line x1="640" y1="3794" x2="640" y2="3818" stroke="#3b6d11" stroke-width="2"/>
+<text x="640"  y="3834" text-anchor="middle" font-size="9" fill="#3b6d11">t=60s</text>
+<text x="640"  y="3846" text-anchor="middle" font-size="8" fill="#888">CB → HALF_OPEN</text>
+<text x="640"  y="3778" text-anchor="middle" font-size="8" fill="#888">probe request</text>
+<text x="640"  y="3768" text-anchor="middle" font-size="8" fill="#888">sent to new pod</text>
+
+<!-- t=75s RECOVERED -->
+<line x1="710" y1="3794" x2="710" y2="3818" stroke="#0f6e56" stroke-width="2.5"/>
+<text x="710"  y="3834" text-anchor="middle" font-size="9" fill="#0f6e56">t=75s</text>
+<text x="710"  y="3846" text-anchor="middle" font-size="8" fill="#0f6e56">CB → CLOSED</text>
+<text x="710"  y="3778" text-anchor="middle" font-size="8" fill="#0f6e56">FULL</text>
+<text x="710"  y="3768" text-anchor="middle" font-size="8" fill="#0f6e56">RECOVERY ✓</text>
+
+<!-- user experience note -->
+<text x="380" y="3866" text-anchor="middle" font-size="9" fill="#e50914">t=0→t=75s: active streams keep playing (pre-fetched segments on device) · home feed served from Redis cache</text>
+<text x="380" y="3880" text-anchor="middle" font-size="9" fill="#888">New play requests get cached manifest or retry message · No buffering for current watchers · Zero data loss</text>
+
+<!-- ====== SECTION 11: ACTIVE STREAM RESILIENCE ====== -->
+<line x1="40" y1="3940" x2="720" y2="3940" stroke="#333" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="3932" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— active stream resilience (most critical path) —</text>
+
+<rect x="20" y="3948" width="720" height="128" rx="8" fill="#141414" stroke="#e50914"/>
+<text x="380" y="3970" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Why active streams survive almost any crash</text>
+
+<!-- 3 pillars -->
+<rect x="32"  y="3984" width="216" height="80" rx="6" fill="#1a1208" stroke="#ba7517"/>
+<text x="140" y="4002" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">Pre-fetched Buffer</text>
+<text x="140" y="4018" text-anchor="middle" font-size="9" fill="#cc9900">Client always holds 3 future</text>
+<text x="140" y="4032" text-anchor="middle" font-size="9" fill="#cc9900">segments (6–8 seconds) locally</text>
+<text x="140" y="4046" text-anchor="middle" font-size="9" fill="#cc9900">Plays through any momentary</text>
+<text x="140" y="4060" text-anchor="middle" font-size="9" fill="#cc9900">server blip transparently</text>
+
+<rect x="272" y="3984" width="216" height="80" rx="6" fill="#0a1a0a" stroke="#3b6d11"/>
+<text x="380" y="4002" text-anchor="middle" font-size="10" font-weight="700" fill="#60cc60">ABR Auto-Quality-Drop</text>
+<text x="380" y="4018" text-anchor="middle" font-size="9" fill="#80aa80">Bandwidth degrades → client</text>
+<text x="380" y="4032" text-anchor="middle" font-size="9" fill="#80aa80">automatically switches to lower</text>
+<text x="380" y="4046" text-anchor="middle" font-size="9" fill="#80aa80">bitrate rendition in real-time</text>
+<text x="380" y="4060" text-anchor="middle" font-size="9" fill="#80aa80">No pause — quality drops silently</text>
+
+<rect x="512" y="3984" width="216" height="80" rx="6" fill="#1c0a0a" stroke="#993c1d"/>
+<text x="620" y="4002" text-anchor="middle" font-size="10" font-weight="700" fill="#e50914">CDN Multi-Node Fallback</text>
+<text x="620" y="4018" text-anchor="middle" font-size="9" fill="#cc6666">Manifest lists multiple CDN URLs</text>
+<text x="620" y="4032" text-anchor="middle" font-size="9" fill="#cc6666">Client tries next URL on timeout</text>
+<text x="620" y="4046" text-anchor="middle" font-size="9" fill="#cc6666">OCA fail → next OCA → S3 origin</text>
+<text x="620" y="4060" text-anchor="middle" font-size="9" fill="#cc6666">User sees buffering, not black screen</text>
+
+<!-- ====== SECTION 12: 5 CRITICAL FALLBACK DECISIONS ====== -->
+<line x1="40" y1="4148" x2="720" y2="4148" stroke="#333" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="4140" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— the 5 critical fallback design decisions —</text>
+
+<rect x="20" y="4156" width="720" height="60" rx="8" fill="#0a1a0a" stroke="#3b6d11"/>
+<text x="380" y="4178" text-anchor="middle" font-size="12" font-weight="700" fill="#60cc60">1. Active streams never touch the Playback Service after manifest is issued</text>
+<text x="380" y="4198" text-anchor="middle" font-size="11" fill="#80aa80">Once the client has the .m3u8 manifest and starts buffering segments from CDN, the Playback Service is out of the loop. Segments come directly from Open Connect CDN. Any Playback Service crash has zero effect on in-progress streams — only new play requests are blocked.</text>
+
+<rect x="20" y="4228" width="720" height="60" rx="8" fill="#1c0a0a" stroke="#993c1d"/>
+<text x="380" y="4250" text-anchor="middle" font-size="12" font-weight="700" fill="#e50914">2. Subscription check must default to ALLOW for existing JWT — not block</text>
+<text x="380" y="4270" text-anchor="middle" font-size="11" fill="#cc6666">When PostgreSQL is down, the subscription service CB opens. For a valid unexpired JWT, the safe default is to allow playback — the user proved entitlement at login. Blocking is worse: it breaks paying subscribers. New JWTs require DB; renewals wait. Allow-with-valid-token is the Netflix standard.</text>
+
+<rect x="20" y="4300" width="720" height="60" rx="8" fill="#1a1208" stroke="#ba7517"/>
+<text x="380" y="4322" text-anchor="middle" font-size="12" font-weight="700" fill="#f0a500">3. Continue-watching writes are fire-and-forget via Kafka — never block the stream</text>
+<text x="380" y="4342" text-anchor="middle" font-size="11" fill="#cc9900">Watch-position saves are sent to Kafka asynchronously. If Cassandra or Redis is down, the Kafka event is buffered. The stream is never paused waiting for a position write. On recovery, Kafka replays to Cassandra. Worst case: user resumes from a slightly stale position, not the start.</text>
+
+<rect x="20" y="4372" width="720" height="60" rx="8" fill="#0a0a1c" stroke="#534ab7"/>
+<text x="380" y="4394" text-anchor="middle" font-size="12" font-weight="700" fill="#a090ff">4. Recommendation fallback must be instant — pre-computed, not generated on-demand</text>
+<text x="380" y="4414" text-anchor="middle" font-size="11" fill="#9090cc">ML recommendations are computed offline (batch jobs every few hours) and stored in Redis per profile. When the ML engine is down, no generation is attempted — cached rows are served immediately. Cache miss → editorial top-10 by region. A blank home screen is never acceptable.</text>
+
+<rect x="20" y="4444" width="720" height="60" rx="8" fill="#1a1208" stroke="#ba7517"/>
+<text x="380" y="4466" text-anchor="middle" font-size="12" font-weight="700" fill="#f0a500">5. Idempotency on view-event writes — Kafka exactly-once prevents duplicate analytics</text>
+<text x="380" y="4486" text-anchor="middle" font-size="11" fill="#cc9900">If Cassandra write fails and the event is retried from Kafka, a naive retry inflates view counts. Kafka transactions + Cassandra row-level idempotency key (profileId + contentId + timestamp bucket) ensure the same event is never double-counted even after a crash + replay cycle.</text>
+
+<!-- ====== FINAL FALLBACK SUMMARY BOX ====== -->
+<rect x="20" y="4524" width="720" height="60" rx="8" fill="#141414" stroke="#e50914"/>
+<text x="380" y="4548" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Netflix streams to 280M subscribers simultaneously. A single service crash must never cause a black screen.</text>
+<text x="380" y="4568" text-anchor="middle" font-size="11" fill="#aaaaaa">Pre-fetched CDN buffer + CB + stale-cache serve = active streams survive any single component failure. DB down → cached JWT + Redis → home still loads. Full DC loss → Route 53 failover in &lt;90s.</text>
+
+</svg>
+</body></html>
