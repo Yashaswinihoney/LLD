@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg { max-width: 820px; display: block; margin: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 760 4960" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#ba7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ===================== SECTION LABEL ===================== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— ride request flow —</text>
+
+<!-- CLIENTS -->
+<rect x="80"  y="32" width="180" height="48" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="170" y="52" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">Rider App</text>
+<text x="170" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Requests ride</text>
+
+<rect x="500" y="32" width="180" height="48" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="590" y="52" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">Driver App</text>
+<text x="590" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Streams GPS location</text>
+
+<!-- both hit API gateway -->
+<line x1="170" y1="80" x2="280" y2="120" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="590" y1="80" x2="480" y2="120" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- API GATEWAY -->
+<rect x="240" y="120" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="142" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway</text>
+<text x="380" y="158" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth (JWT), rate limiting, routing</text>
+
+<line x1="380" y1="172" x2="380" y2="204" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- LOCATION SERVICE (always-on) -->
+<rect x="500" y="172" width="220" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="610" y="194" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Location Service</text>
+<text x="610" y="210" text-anchor="middle" font-size="11" fill="#3b6d11">Driver GPS → Redis GeoHash</text>
+
+<!-- driver app streams to location service directly -->
+<line x1="590" y1="80" x2="610" y2="172" stroke="#3b6d11" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-g)"/>
+<text x="630" y="130" font-size="10" fill="#3b6d11">every 4s</text>
+
+<!-- RIDE MATCHING SERVICE -->
+<rect x="230" y="204" width="300" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="226" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Ride Matching Service</text>
+<text x="380" y="244" text-anchor="middle" font-size="11" fill="#0f6e56">Find nearby drivers via GeoHash</text>
+<text x="380" y="260" text-anchor="middle" font-size="11" fill="#0f6e56">Query Location Service (Redis)</text>
+
+<!-- parallel calls -->
+<line x1="310" y1="268" x2="150" y2="320" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="268" x2="380" y2="320" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="450" y1="268" x2="610" y2="320" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<text x="138" y="302" font-size="10" text-anchor="end" fill="#888">parallel</text>
+<text x="356" y="302" font-size="10" fill="#888">parallel</text>
+<text x="620" y="302" font-size="10" fill="#888">parallel</text>
+
+<!-- ETA SERVICE -->
+<rect x="40" y="320" width="180" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="130" y="342" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">ETA Service</text>
+<text x="130" y="358" text-anchor="middle" font-size="11" fill="#185fa5">Maps API + routing</text>
+
+<!-- PRICING SERVICE -->
+<rect x="280" y="320" width="200" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="342" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Pricing Service</text>
+<text x="380" y="358" text-anchor="middle" font-size="11" fill="#185fa5">Surge pricing + fare calc</text>
+
+<!-- TRIP SERVICE -->
+<rect x="530" y="320" width="180" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="620" y="342" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Trip Service</text>
+<text x="620" y="358" text-anchor="middle" font-size="11" fill="#185fa5">Create trip record in DB</text>
+
+<!-- all converge back -->
+<line x1="130" y1="372" x2="300" y2="424" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="372" x2="380" y2="424" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="620" y1="372" x2="460" y2="424" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- RESPONSE TO RIDER -->
+<rect x="230" y="424" width="300" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="446" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Show fare + ETA to rider</text>
+<text x="380" y="462" text-anchor="middle" font-size="11" fill="#0f6e56">Rider confirms booking</text>
+
+<line x1="380" y1="476" x2="380" y2="508" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- NOTIFICATION SERVICE -->
+<rect x="230" y="508" width="300" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="530" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Notification Service</text>
+<text x="380" y="548" text-anchor="middle" font-size="11" fill="#534ab7">Push to best-matched driver</text>
+<text x="380" y="564" text-anchor="middle" font-size="11" fill="#534ab7">WebSocket / FCM</text>
+
+<line x1="380" y1="572" x2="380" y2="604" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- DRIVER ACCEPTS -->
+<rect x="250" y="604" width="260" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="626" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Driver accepts</text>
+<text x="380" y="642" text-anchor="middle" font-size="11" fill="#854f0b">Trip state → IN_PROGRESS</text>
+
+<!-- ===================== DIVIDER: LIVE TRIP ===================== -->
+<line x1="40" y1="690" x2="720" y2="690" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="682" text-anchor="middle" font-size="11" fill="#888">— live trip tracking flow —</text>
+
+<!-- DRIVER GPS STREAMING -->
+<rect x="80" y="700" width="200" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="180" y="722" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Driver streams GPS</text>
+<text x="180" y="738" text-anchor="middle" font-size="11" fill="#5f5e5a">WebSocket, every 4 seconds</text>
+
+<line x1="280" y1="726" x2="340" y2="726" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- LOCATION SERVICE UPDATE -->
+<rect x="340" y="700" width="200" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="440" y="722" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Location Service</text>
+<text x="440" y="738" text-anchor="middle" font-size="11" fill="#3b6d11">Update Redis GeoHash</text>
+
+<line x1="540" y1="726" x2="600" y2="726" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- RIDER APP LIVE MAP -->
+<rect x="600" y="700" width="120" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="660" y="722" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Rider App</text>
+<text x="660" y="738" text-anchor="middle" font-size="11" fill="#5f5e5a">Live map update</text>
+
+<!-- ===================== DIVIDER: TRIP END ===================== -->
+<line x1="40" y1="790" x2="720" y2="790" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="782" text-anchor="middle" font-size="11" fill="#888">— trip end + payment flow —</text>
+
+<!-- TRIP ENDS -->
+<rect x="260" y="800" width="240" height="48" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="820" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Driver ends trip</text>
+<text x="380" y="836" text-anchor="middle" font-size="11" fill="#854f0b">Trip state → COMPLETED</text>
+
+<line x1="380" y1="848" x2="380" y2="880" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PAYMENT SERVICE -->
+<rect x="230" y="880" width="300" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="902" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Payment Service</text>
+<text x="380" y="920" text-anchor="middle" font-size="11" fill="#534ab7">Charge rider (idempotent)</text>
+<text x="380" y="936" text-anchor="middle" font-size="11" fill="#534ab7">Stripe / Razorpay gateway</text>
+
+<!-- payment fans out -->
+<line x1="310" y1="944" x2="160" y2="988" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="450" y1="944" x2="600" y2="988" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="60"  y="988" width="200" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="160" y="1010" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Receipt to rider</text>
+<text x="160" y="1026" text-anchor="middle" font-size="11" fill="#185fa5">Push + email notification</text>
+
+<rect x="490" y="988" width="200" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="590" y="1010" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Payout to driver</text>
+<text x="590" y="1026" text-anchor="middle" font-size="11" fill="#185fa5">Scheduled batch settlement</text>
+
+<!-- ===================== DIVIDER: DATA STORES ===================== -->
+<line x1="40" y1="1080" x2="720" y2="1080" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1072" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="40"  y="1090" width="150" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="115" y="1112" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="115" y="1128" text-anchor="middle" font-size="10" fill="#3b6d11">Driver locations (GeoHash)</text>
+
+<rect x="210" y="1090" width="150" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="285" y="1112" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="285" y="1128" text-anchor="middle" font-size="10" fill="#185fa5">Trips, users, payments</text>
+
+<rect x="380" y="1090" width="150" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="455" y="1112" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="455" y="1128" text-anchor="middle" font-size="10" fill="#534ab7">Trip events, notifications</text>
+
+<rect x="550" y="1090" width="170" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="635" y="1112" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="635" y="1128" text-anchor="middle" font-size="10" fill="#854f0b">Location history, analytics</text>
+
+
+<!-- ================================================================ -->
+<!-- ========= FALLBACK MECHANISM — STARTS HERE ==================== -->
+<!-- ================================================================ -->
+
+<!-- ── TITLE BANNER ── -->
+<rect x="0"   y="1168" width="760" height="52" rx="0" fill="#1a1208"/>
+<rect x="0"   y="1168" width="6"   height="52" rx="0" fill="#000000"/>
+<text x="380" y="1192" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">FALLBACK MECHANISM — WHEN UBER FAILS OR DB IS DOWN</text>
+<text x="380" y="1210" text-anchor="middle" font-size="11" fill="#aaaaaa">3-Layer Defence: Circuit Breaker → Stale Cache → Graceful Degradation</text>
+
+<!-- ====== SECTION: 3-LAYER DEFENCE ====== -->
+<line x1="40" y1="1278" x2="720" y2="1278" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1270" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 3-layer defence (applied to every critical service) —</text>
+
+<rect x="20"  y="1286" width="224" height="128" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="132" y="1308" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Layer 1 · Circuit Breaker</text>
+<text x="132" y="1326" text-anchor="middle" font-size="10" fill="#993c1d">CLOSED → calls pass normally</text>
+<text x="132" y="1342" text-anchor="middle" font-size="10" fill="#993c1d">OPEN → ≥5 failures / 10s window</text>
+<text x="132" y="1358" text-anchor="middle" font-size="10" fill="#993c1d">→ fail-fast; return cached response</text>
+<text x="132" y="1374" text-anchor="middle" font-size="10" fill="#993c1d">HALF_OPEN → 1 probe after 30s</text>
+<text x="132" y="1390" text-anchor="middle" font-size="10" fill="#993c1d">success → CLOSED · fail → OPEN</text>
+<text x="132" y="1406" text-anchor="middle" font-size="10" fill="#993c1d">On: Matching · ETA · Payment · GPS</text>
+
+<rect x="268" y="1286" width="224" height="128" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1308" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Layer 2 · Stale Cache</text>
+<text x="380" y="1326" text-anchor="middle" font-size="10" fill="#185fa5">Redis holds last-known driver</text>
+<text x="380" y="1342" text-anchor="middle" font-size="10" fill="#185fa5">locations (GeoHash, TTL 30s)</text>
+<text x="380" y="1358" text-anchor="middle" font-size="10" fill="#185fa5">Surge multiplier cached (TTL 1min)</text>
+<text x="380" y="1374" text-anchor="middle" font-size="10" fill="#185fa5">ETA estimates cached per corridor</text>
+<text x="380" y="1390" text-anchor="middle" font-size="10" fill="#185fa5">Rider app shows stale positions</text>
+<text x="380" y="1406" text-anchor="middle" font-size="10" fill="#185fa5">with "updating…" indicator</text>
+
+<rect x="516" y="1286" width="224" height="128" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="628" y="1308" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Layer 3 · Graceful Degrade</text>
+<text x="628" y="1326" text-anchor="middle" font-size="10" fill="#3b6d11">No drivers found → widen radius</text>
+<text x="628" y="1342" text-anchor="middle" font-size="10" fill="#3b6d11">or show "no cars available"</text>
+<text x="628" y="1358" text-anchor="middle" font-size="10" fill="#3b6d11">Payment fails → retry chain</text>
+<text x="628" y="1374" text-anchor="middle" font-size="10" fill="#3b6d11">(card → wallet → COD)</text>
+<text x="628" y="1390" text-anchor="middle" font-size="10" fill="#3b6d11">GPS lost → last-known position</text>
+<text x="628" y="1406" text-anchor="middle" font-size="10" fill="#3b6d11">+ dead-reckoning estimate</text>
+
+<!-- ====== SECTION: CIRCUIT BREAKER STATE MACHINE ====== -->
+<line x1="40" y1="1472" x2="720" y2="1472" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1464" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— circuit breaker state machine (per microservice) —</text>
+
+<rect x="100" y="1480" width="560" height="232" rx="8" fill="#1a1208" stroke="#ba7517"/>
+<text x="380" y="1504" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Circuit Breaker — wraps every external call (Hystrix / Resilience4j)</text>
+
+<!-- CLOSED -->
+<rect x="134" y="1524" width="120" height="44" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="194" y="1542" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">CLOSED</text>
+<text x="194" y="1558" text-anchor="middle" font-size="9"  fill="#3b6d11">Normal flow ✓</text>
+
+<!-- CLOSED → OPEN -->
+<line x1="254" y1="1546" x2="358" y2="1546" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="306" y="1538" text-anchor="middle" font-size="9" fill="#d85a30">≥5 failures / 10s</text>
+<text x="306" y="1560" text-anchor="middle" font-size="9" fill="#d85a30">or latency &gt; 800ms</text>
+
+<!-- OPEN -->
+<rect x="358" y="1524" width="120" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="418" y="1542" text-anchor="middle" font-size="11" font-weight="700" fill="#712b13">OPEN</text>
+<text x="418" y="1558" text-anchor="middle" font-size="9"  fill="#993c1d">Fail-fast + fallback</text>
+
+<!-- OPEN → HALF_OPEN arc -->
+<path d="M418 1568 Q418 1640 306 1650 Q194 1660 194 1620" fill="none" stroke="#ba7517" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-o)"/>
+<text x="312" y="1672" text-anchor="middle" font-size="9" fill="#ba7517">30s timeout → probe</text>
+
+<!-- HALF_OPEN -->
+<rect x="134" y="1620" width="120" height="44" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="194" y="1638" text-anchor="middle" font-size="11" font-weight="700" fill="#633806">HALF_OPEN</text>
+<text x="194" y="1654" text-anchor="middle" font-size="9"  fill="#854f0b">1 trial request</text>
+
+<!-- HALF_OPEN → CLOSED -->
+<line x1="254" y1="1638" x2="358" y2="1588" stroke="#0f6e56" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+<text x="340" y="1610" text-anchor="middle" font-size="9" fill="#0f6e56">success</text>
+<text x="340" y="1622" text-anchor="middle" font-size="9" fill="#0f6e56">→ CLOSED ✓</text>
+
+<!-- HALF_OPEN → OPEN -->
+<line x1="254" y1="1654" x2="358" y2="1654" stroke="#d85a30" stroke-width="1.5" marker-end="url(#arrow-r)"/>
+<text x="306" y="1646" text-anchor="middle" font-size="9" fill="#d85a30">fail → OPEN</text>
+
+<!-- When OPEN sidebar -->
+<rect x="506" y="1524" width="140" height="152" rx="8" fill="#2c2c2a" stroke="#555"/>
+<text x="576" y="1544" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">When OPEN:</text>
+<text x="576" y="1562" text-anchor="middle" font-size="9" fill="#aaa">• Return cached drivers list</text>
+<text x="576" y="1578" text-anchor="middle" font-size="9" fill="#aaa">• Use cached surge price</text>
+<text x="576" y="1594" text-anchor="middle" font-size="9" fill="#aaa">• Use cached ETA estimate</text>
+<text x="576" y="1610" text-anchor="middle" font-size="9" fill="#aaa">• Payment: retry chain</text>
+<text x="576" y="1626" text-anchor="middle" font-size="9" fill="#aaa">• PagerDuty alert fires</text>
+<text x="576" y="1642" text-anchor="middle" font-size="9" fill="#aaa">• Ops dashboard flags</text>
+<text x="576" y="1658" text-anchor="middle" font-size="9" fill="#aaa">  service DEGRADED</text>
+
+<text x="380" y="1698" text-anchor="middle" font-size="10" fill="#888">CBs on: Location Svc · Ride Matching · ETA · Pricing · Trip Svc · Notification · Payment · PostgreSQL · Cassandra</text>
+
+<!-- ====== SECTION: COMPONENT-SPECIFIC FALLBACKS ====== -->
+<line x1="40" y1="1724" x2="720" y2="1724" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1716" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— component-specific crash &amp; recovery —</text>
+
+<!-- ── BOX 1: GPS / Location Service crash ── -->
+<rect x="20"  y="1732" width="350" height="200" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="195" y="1754" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">GPS Stream / Location Service Crash</text>
+<text x="195" y="1772" text-anchor="middle" font-size="10" fill="#3b6d11">Root: Redis GeoHash write failure / driver WS drop</text>
+<text x="32"  y="1794" font-size="10" font-weight="600" fill="#27500a">Impact:</text>
+<text x="195" y="1810" text-anchor="middle" font-size="10" fill="#3b6d11">Driver position unknown — cannot match new rides</text>
+<text x="195" y="1826" text-anchor="middle" font-size="10" fill="#3b6d11">Live map goes stale; rider sees last-known pin</text>
+<text x="195" y="1842" text-anchor="middle" font-size="10" fill="#3b6d11">In-progress trips unaffected (trip state in PostgreSQL)</text>
+<text x="32"  y="1862" font-size="10" font-weight="600" fill="#27500a">Recovery:</text>
+<text x="195" y="1878" text-anchor="middle" font-size="10" fill="#3b6d11">1. Driver app reconnects WS with exponential backoff</text>
+<text x="195" y="1894" text-anchor="middle" font-size="10" fill="#3b6d11">2. Redis Sentinel promotes replica in &lt;15s</text>
+<text x="195" y="1910" text-anchor="middle" font-size="10" fill="#3b6d11">3. Matching uses cached GeoHash positions (TTL 30s)</text>
+<text x="195" y="1922" text-anchor="middle" font-size="9"  fill="#3b6d11">⚠ RTO: &lt;15s · Map: "Updating location…" shown</text>
+
+<!-- ── BOX 2: Ride Matching Service crash ── -->
+<rect x="390" y="1732" width="350" height="200" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="565" y="1754" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Ride Matching Service Crash</text>
+<text x="565" y="1772" text-anchor="middle" font-size="10" fill="#0f6e56">Root: OOM spike on high-demand event / GC pause</text>
+<text x="402" y="1794" font-size="10" font-weight="600" fill="#085041">Impact:</text>
+<text x="565" y="1810" text-anchor="middle" font-size="10" fill="#0f6e56">New ride requests cannot be matched to drivers</text>
+<text x="565" y="1826" text-anchor="middle" font-size="10" fill="#0f6e56">Rider sees "Finding your driver…" spinner</text>
+<text x="565" y="1842" text-anchor="middle" font-size="10" fill="#0f6e56">In-flight trip records safe in PostgreSQL</text>
+<text x="402" y="1862" font-size="10" font-weight="600" fill="#085041">Recovery:</text>
+<text x="565" y="1878" text-anchor="middle" font-size="10" fill="#0f6e56">1. LB routes to healthy matching pods instantly</text>
+<text x="565" y="1894" text-anchor="middle" font-size="10" fill="#0f6e56">2. K8s restarts crashed pod (&lt;30s)</text>
+<text x="565" y="1910" text-anchor="middle" font-size="10" fill="#0f6e56">3. Rider request retried automatically (idempotent)</text>
+<text x="565" y="1922" text-anchor="middle" font-size="9"  fill="#0f6e56">⚠ RTO: &lt;30s · No duplicate trips (idempotency key)</text>
+
+<!-- ── BOX 3: ETA / Maps API crash ── -->
+<rect x="20"  y="1948" width="350" height="200" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="195" y="1970" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">ETA Service / Maps API Down</text>
+<text x="195" y="1988" text-anchor="middle" font-size="10" fill="#185fa5">Root: Google Maps API quota / 3rd-party outage</text>
+<text x="32"  y="2008" font-size="10" font-weight="600" fill="#0c447c">Impact:</text>
+<text x="195" y="2024" text-anchor="middle" font-size="10" fill="#185fa5">Cannot compute fresh ETA for new bookings</text>
+<text x="195" y="2040" text-anchor="middle" font-size="10" fill="#185fa5">Fare estimate uses stale ETA — may be inaccurate</text>
+<text x="195" y="2056" text-anchor="middle" font-size="10" fill="#185fa5">Live tracking map stops updating route line</text>
+<text x="32"  y="2076" font-size="10" font-weight="600" fill="#0c447c">Recovery:</text>
+<text x="195" y="2092" text-anchor="middle" font-size="10" fill="#185fa5">1. CB opens → return cached ETA per geo corridor</text>
+<text x="195" y="2108" text-anchor="middle" font-size="10" fill="#185fa5">2. Fallback to internal routing engine (OSM / H3)</text>
+<text x="195" y="2124" text-anchor="middle" font-size="10" fill="#185fa5">3. Show "ETA: ~N min" with disclaimer to rider</text>
+<text x="195" y="2138" text-anchor="middle" font-size="9"  fill="#185fa5">⚠ RTO: immediate (cached) · Fare shown as estimate</text>
+
+<!-- ── BOX 4: Pricing / Surge Service crash ── -->
+<rect x="390" y="1948" width="350" height="200" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="565" y="1970" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Pricing / Surge Service Crash</text>
+<text x="565" y="1988" text-anchor="middle" font-size="10" fill="#854f0b">Root: ML model OOM / pricing engine exception</text>
+<text x="402" y="2008" font-size="10" font-weight="600" fill="#633806">Impact:</text>
+<text x="565" y="2024" text-anchor="middle" font-size="10" fill="#854f0b">Cannot compute fresh surge multiplier</text>
+<text x="565" y="2040" text-anchor="middle" font-size="10" fill="#854f0b">New bookings show stale price — may under/overcharge</text>
+<text x="565" y="2056" text-anchor="middle" font-size="10" fill="#854f0b">Rider may be overcharged on settlement reconcile</text>
+<text x="402" y="2076" font-size="10" font-weight="600" fill="#633806">Recovery:</text>
+<text x="565" y="2092" text-anchor="middle" font-size="10" fill="#854f0b">1. CB opens → last cached surge multiplier served</text>
+<text x="565" y="2108" text-anchor="middle" font-size="10" fill="#854f0b">2. Fallback: base fare only (surge = 1.0x)</text>
+<text x="565" y="2124" text-anchor="middle" font-size="10" fill="#854f0b">3. Reconcile overcharged rides in batch job at EOD</text>
+<text x="565" y="2138" text-anchor="middle" font-size="9"  fill="#ba7517">⚠ RTO: immediate (cache) · Conservative: no surge</text>
+
+<!-- ── BOX 5: Payment Service / Gateway crash ── -->
+<rect x="20"  y="2164" width="350" height="216" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="195" y="2186" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Payment Service / Gateway Crash</text>
+<text x="195" y="2204" text-anchor="middle" font-size="10" fill="#534ab7">Root: Stripe/Razorpay timeout / idempotency bug</text>
+<text x="32"  y="2224" font-size="10" font-weight="600" fill="#3c3489">Impact:</text>
+<text x="195" y="2240" text-anchor="middle" font-size="10" fill="#534ab7">Rider payment not charged at trip end</text>
+<text x="195" y="2256" text-anchor="middle" font-size="10" fill="#534ab7">Driver payout delayed</text>
+<text x="195" y="2272" text-anchor="middle" font-size="10" fill="#534ab7">Risk: double charge on retry without idempotency</text>
+<text x="32"  y="2292" font-size="10" font-weight="600" fill="#3c3489">Recovery (Fallback Chain):</text>
+<text x="195" y="2308" text-anchor="middle" font-size="10" fill="#534ab7">1. Primary gateway fails → Secondary gateway retry</text>
+<text x="195" y="2324" text-anchor="middle" font-size="10" fill="#534ab7">2. Secondary fails → Uber Cash wallet deduction</text>
+<text x="195" y="2340" text-anchor="middle" font-size="10" fill="#534ab7">3. Wallet fails → Kafka queue; charge async later</text>
+<text x="195" y="2356" text-anchor="middle" font-size="10" fill="#534ab7">4. Idempotency key: same tripId = no double charge</text>
+<text x="195" y="2372" text-anchor="middle" font-size="9"  fill="#7f77dd">⚠ RTO: async · Rider: "Payment processing" message</text>
+
+<!-- ── BOX 6: PostgreSQL / Trip DB crash ── -->
+<rect x="390" y="2164" width="350" height="216" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="565" y="2186" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">PostgreSQL (Trip DB) Down</text>
+<text x="565" y="2204" text-anchor="middle" font-size="10" fill="#185fa5">Root: primary crash / disk full / slow query lock</text>
+<text x="402" y="2224" font-size="10" font-weight="600" fill="#0c447c">Impact:</text>
+<text x="565" y="2240" text-anchor="middle" font-size="10" fill="#185fa5">Trip record creation fails — no new bookings persist</text>
+<text x="565" y="2256" text-anchor="middle" font-size="10" fill="#185fa5">Trip state updates (ACCEPTED → IN_PROGRESS) lost</text>
+<text x="565" y="2272" text-anchor="middle" font-size="10" fill="#185fa5">In-flight trip state read from Kafka event log</text>
+<text x="402" y="2292" font-size="10" font-weight="600" fill="#0c447c">Recovery:</text>
+<text x="565" y="2308" text-anchor="middle" font-size="10" fill="#185fa5">1. Read replica promoted via Aurora failover (&lt;60s)</text>
+<text x="565" y="2324" text-anchor="middle" font-size="10" fill="#185fa5">2. Trip state read from Kafka event log (source of truth)</text>
+<text x="565" y="2340" text-anchor="middle" font-size="10" fill="#185fa5">3. New bookings queued in Kafka; replayed on recovery</text>
+<text x="565" y="2356" text-anchor="middle" font-size="10" fill="#185fa5">4. Outbox pattern: DB write + Kafka in same txn</text>
+<text x="565" y="2372" text-anchor="middle" font-size="9"  fill="#185fa5">⚠ RTO: &lt;60s Aurora failover · RPO: 0 (Kafka log)</text>
+
+<!-- ── BOX 7: Notification Service crash ── -->
+<rect x="20"  y="2396" width="350" height="168" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="195" y="2418" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Notification Service Crash</text>
+<text x="195" y="2436" text-anchor="middle" font-size="10" fill="#854f0b">Root: FCM gateway rate-limit / WS server OOM</text>
+<text x="32"  y="2456" font-size="10" font-weight="600" fill="#633806">Impact:</text>
+<text x="195" y="2472" text-anchor="middle" font-size="10" fill="#854f0b">Driver does not receive ride request push</text>
+<text x="195" y="2488" text-anchor="middle" font-size="10" fill="#854f0b">Rider not notified of driver acceptance</text>
+<text x="32"  y="2508" font-size="10" font-weight="600" fill="#633806">Recovery:</text>
+<text x="195" y="2524" text-anchor="middle" font-size="10" fill="#854f0b">1. Kafka buffers notification events safely</text>
+<text x="195" y="2540" text-anchor="middle" font-size="10" fill="#854f0b">2. Driver app polls GET /pending-requests (fallback)</text>
+<text x="195" y="2556" text-anchor="middle" font-size="9"  fill="#ba7517">⚠ RTO: &lt;30s · Driver: polling fallback on WS failure</text>
+
+<!-- ── BOX 8: Kafka crash ── -->
+<rect x="390" y="2396" width="350" height="168" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="565" y="2418" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Kafka Broker Crash</text>
+<text x="565" y="2436" text-anchor="middle" font-size="10" fill="#534ab7">Root: disk full / leader partition loss</text>
+<text x="402" y="2456" font-size="10" font-weight="600" fill="#3c3489">Impact:</text>
+<text x="565" y="2472" text-anchor="middle" font-size="10" fill="#534ab7">Trip events cannot be published</text>
+<text x="565" y="2488" text-anchor="middle" font-size="10" fill="#534ab7">Notification and analytics pipelines stall</text>
+<text x="402" y="2508" font-size="10" font-weight="600" fill="#3c3489">Recovery:</text>
+<text x="565" y="2524" text-anchor="middle" font-size="10" fill="#534ab7">1. ISR=3 replica promoted as leader (&lt;30s)</text>
+<text x="565" y="2540" text-anchor="middle" font-size="10" fill="#534ab7">2. Producers buffer in memory; flush on reconnect</text>
+<text x="565" y="2556" text-anchor="middle" font-size="9"  fill="#7f77dd">⚠ RTO: &lt;30s · RPO: 0 (ISR=3 guarantees)</text>
+
+<!-- ====== SECTION: PAYMENT FALLBACK CHAIN ====== -->
+<line x1="40" y1="2624" x2="720" y2="2624" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2616" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— payment fallback chain (Chain of Responsibility) —</text>
+
+<rect x="20"  y="2632" width="152" height="88" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="96"  y="2652" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">Primary PG</text>
+<text x="96"  y="2668" text-anchor="middle" font-size="10" fill="#534ab7">Stripe / Razorpay</text>
+<text x="96"  y="2684" text-anchor="middle" font-size="10" fill="#534ab7">Card / UPI</text>
+<text x="96"  y="2700" text-anchor="middle" font-size="10" fill="#534ab7">CB: 3 fails→OPEN</text>
+
+<line x1="172" y1="2676" x2="198" y2="2676" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="185" y="2666" text-anchor="middle" font-size="9" fill="#d85a30">fails</text>
+
+<rect x="198" y="2632" width="152" height="88" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="274" y="2652" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">Secondary PG</text>
+<text x="274" y="2668" text-anchor="middle" font-size="10" fill="#534ab7">PayU / CCAvenue</text>
+<text x="274" y="2684" text-anchor="middle" font-size="10" fill="#534ab7">Independent gateway</text>
+<text x="274" y="2700" text-anchor="middle" font-size="10" fill="#534ab7">Idempotency key shared</text>
+
+<line x1="350" y1="2676" x2="376" y2="2676" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="363" y="2666" text-anchor="middle" font-size="9" fill="#d85a30">fails</text>
+
+<rect x="376" y="2632" width="152" height="88" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="452" y="2652" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">Uber Cash</text>
+<text x="452" y="2668" text-anchor="middle" font-size="10" fill="#3b6d11">In-app wallet balance</text>
+<text x="452" y="2684" text-anchor="middle" font-size="10" fill="#3b6d11">No external gateway</text>
+<text x="452" y="2700" text-anchor="middle" font-size="10" fill="#3b6d11">Instant deduction</text>
+
+<line x1="528" y1="2676" x2="554" y2="2676" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="541" y="2666" text-anchor="middle" font-size="9" fill="#d85a30">fails</text>
+
+<rect x="554" y="2632" width="186" height="88" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="647" y="2652" text-anchor="middle" font-size="11" font-weight="700" fill="#633806">Async Kafka Queue</text>
+<text x="647" y="2668" text-anchor="middle" font-size="10" fill="#854f0b">Queue charge event</text>
+<text x="647" y="2684" text-anchor="middle" font-size="10" fill="#854f0b">Retry on recovery</text>
+<text x="647" y="2700" text-anchor="middle" font-size="10" fill="#854f0b">Rider: "Payment processing"</text>
+
+<!-- ====== SECTION: DB DOWN TABLE ====== -->
+<line x1="40" y1="2780" x2="720" y2="2780" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2772" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— database down: what each service does —</text>
+
+<rect x="20"  y="2788" width="720" height="28" rx="4" fill="#1a1208"/>
+<text x="130" y="2807" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">DATABASE</text>
+<text x="300" y="2807" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">FAILURE MODE</text>
+<text x="490" y="2807" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">FALLBACK ACTION</text>
+<text x="680" y="2807" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">USER IMPACT</text>
+
+<rect x="20"  y="2816" width="720" height="26" rx="0" fill="#eaf3de"/>
+<text x="130" y="2834" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Redis (GeoHash)</text>
+<text x="300" y="2834" text-anchor="middle" font-size="9" fill="#3b6d11">Node eviction / OOM</text>
+<text x="490" y="2834" text-anchor="middle" font-size="9" fill="#3b6d11">Sentinel promotes replica · stale GeoHash served (TTL 30s)</text>
+<text x="680" y="2834" text-anchor="middle" font-size="9" fill="#3b6d11">Slightly stale driver positions</text>
+
+<rect x="20"  y="2842" width="720" height="26" rx="0" fill="#f1efe8"/>
+<text x="130" y="2860" text-anchor="middle" font-size="9" font-weight="600" fill="#633806">PostgreSQL (Trips)</text>
+<text x="300" y="2860" text-anchor="middle" font-size="9" fill="#854f0b">Primary crash / disk full</text>
+<text x="490" y="2860" text-anchor="middle" font-size="9" fill="#854f0b">Aurora replica promoted · Kafka event log is source of truth</text>
+<text x="680" y="2860" text-anchor="middle" font-size="9" fill="#854f0b">New bookings queued; &lt;60s gap</text>
+
+<rect x="20"  y="2868" width="720" height="26" rx="0" fill="#eaf3de"/>
+<text x="130" y="2886" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Kafka</text>
+<text x="300" y="2886" text-anchor="middle" font-size="9" fill="#3b6d11">Broker crash / leader loss</text>
+<text x="490" y="2886" text-anchor="middle" font-size="9" fill="#3b6d11">ISR replica elected · producers buffer in memory (&lt;30s)</text>
+<text x="680" y="2886" text-anchor="middle" font-size="9" fill="#3b6d11">Notifs delayed; trips still saved</text>
+
+<rect x="20"  y="2894" width="720" height="26" rx="0" fill="#f1efe8"/>
+<text x="130" y="2912" text-anchor="middle" font-size="9" font-weight="600" fill="#3c3489">Cassandra (Location)</text>
+<text x="300" y="2912" text-anchor="middle" font-size="9" fill="#534ab7">Ring split / compaction OOM</text>
+<text x="490" y="2912" text-anchor="middle" font-size="9" fill="#534ab7">RF=3 survivors serve reads · hinted handoff on rejoin</text>
+<text x="680" y="2912" text-anchor="middle" font-size="9" fill="#534ab7">Analytics gap; trip ops unaffected</text>
+
+<rect x="20"  y="2920" width="720" height="26" rx="0" fill="#eaf3de"/>
+<text x="130" y="2938" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Maps API (3rd party)</text>
+<text x="300" y="2938" text-anchor="middle" font-size="9" fill="#3b6d11">Google Maps quota / outage</text>
+<text x="490" y="2938" text-anchor="middle" font-size="9" fill="#3b6d11">Internal OSM/H3 engine · cached ETA per geo corridor</text>
+<text x="680" y="2938" text-anchor="middle" font-size="9" fill="#3b6d11">ETA as estimate; map degraded</text>
+
+<rect x="20"  y="2946" width="720" height="26" rx="0" fill="#faece7"/>
+<text x="130" y="2964" text-anchor="middle" font-size="9" font-weight="600" fill="#712b13">Full DC failure</text>
+<text x="300" y="2964" text-anchor="middle" font-size="9" fill="#d85a30">All services unreachable</text>
+<text x="490" y="2964" text-anchor="middle" font-size="9" fill="#d85a30">Route 53 DNS failover to standby region (&lt;90s)</text>
+<text x="680" y="2964" text-anchor="middle" font-size="9" fill="#d85a30">All new rides blocked until DR active</text>
+
+<!-- ====== SECTION: CRASH RECOVERY TIMELINE ====== -->
+<line x1="40" y1="3040" x2="720" y2="3040" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="3032" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— crash recovery timeline: t=0 crash → full recovery —</text>
+
+<rect x="20"  y="3048" width="720" height="196" rx="8" fill="#1a1208" stroke="#ba7517"/>
+
+<!-- Timeline bar -->
+<line x1="50" y1="3164" x2="710" y2="3164" stroke="#f0a500" stroke-width="2.5"/>
+
+<!-- t=0 CRASH -->
+<line x1="50"  y1="3152" x2="50"  y2="3176" stroke="#d85a30" stroke-width="2.5"/>
+<text x="50"   y="3192" text-anchor="middle" font-size="9" fill="#d85a30">t=0</text>
+<text x="50"   y="3204" text-anchor="middle" font-size="8" fill="#aaa">CRASH</text>
+<text x="50"   y="3136" text-anchor="middle" font-size="8" fill="#aaa">Kafka events</text>
+<text x="50"   y="3126" text-anchor="middle" font-size="8" fill="#aaa">queue up</text>
+
+<!-- t=5s -->
+<line x1="162" y1="3152" x2="162" y2="3176" stroke="#d85a30" stroke-width="2"/>
+<text x="162"  y="3192" text-anchor="middle" font-size="9" fill="#d85a30">t=5s</text>
+<text x="162"  y="3204" text-anchor="middle" font-size="8" fill="#aaa">CB opens</text>
+<text x="162"  y="3136" text-anchor="middle" font-size="8" fill="#aaa">Cached driver</text>
+<text x="162"  y="3126" text-anchor="middle" font-size="8" fill="#aaa">list served</text>
+
+<!-- t=15s -->
+<line x1="296" y1="3152" x2="296" y2="3176" stroke="#ba7517" stroke-width="2"/>
+<text x="296"  y="3192" text-anchor="middle" font-size="9" fill="#ba7517">t=15s</text>
+<text x="296"  y="3204" text-anchor="middle" font-size="8" fill="#aaa">Liveness fails</text>
+<text x="296"  y="3136" text-anchor="middle" font-size="8" fill="#aaa">K8s terminates</text>
+<text x="296"  y="3126" text-anchor="middle" font-size="8" fill="#aaa">pod; LB reroutes</text>
+
+<!-- t=30s -->
+<line x1="430" y1="3152" x2="430" y2="3176" stroke="#7f77dd" stroke-width="2"/>
+<text x="430"  y="3192" text-anchor="middle" font-size="9" fill="#7f77dd">t=30s</text>
+<text x="430"  y="3204" text-anchor="middle" font-size="8" fill="#aaa">New pod starts</text>
+<text x="430"  y="3136" text-anchor="middle" font-size="8" fill="#aaa">Redis / Kafka</text>
+<text x="430"  y="3126" text-anchor="middle" font-size="8" fill="#aaa">connections init</text>
+
+<!-- t=45s -->
+<line x1="564" y1="3152" x2="564" y2="3176" stroke="#185fa5" stroke-width="2"/>
+<text x="564"  y="3192" text-anchor="middle" font-size="9" fill="#185fa5">t=45s</text>
+<text x="564"  y="3204" text-anchor="middle" font-size="8" fill="#aaa">Readiness probe</text>
+<text x="564"  y="3136" text-anchor="middle" font-size="8" fill="#aaa">passes; LB</text>
+<text x="564"  y="3126" text-anchor="middle" font-size="8" fill="#aaa">re-adds pod</text>
+
+<!-- t=75s FULL RECOVERED -->
+<line x1="710" y1="3152" x2="710" y2="3176" stroke="#0f6e56" stroke-width="2.5"/>
+<text x="710"  y="3192" text-anchor="middle" font-size="9" fill="#0f6e56">t=75s</text>
+<text x="710"  y="3204" text-anchor="middle" font-size="8" fill="#0f6e56">CB → CLOSED</text>
+<text x="710"  y="3136" text-anchor="middle" font-size="8" fill="#0f6e56">FULL</text>
+<text x="710"  y="3126" text-anchor="middle" font-size="8" fill="#0f6e56">RECOVERY ✓</text>
+
+<!-- timeline note -->
+<text x="380" y="3226" text-anchor="middle" font-size="9" fill="#f0a500">t=0→t=75s: in-progress trips unaffected (state in PostgreSQL/Kafka) · driver GPS buffered and replayed · rider sees cached map</text>
+<text x="380" y="3240" text-anchor="middle" font-size="9" fill="#aaa">New ride requests get "Finding your driver…" until recovery · idempotency key prevents duplicate trip creation on retry</text>
+
+<!-- ====== SECTION: GPS DEAD RECKONING ====== -->
+<line x1="40" y1="3296" x2="720" y2="3296" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="3288" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— GPS stream loss: dead reckoning fallback (unique to Uber) —</text>
+
+<rect x="20"  y="3304" width="720" height="132" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="3326" text-anchor="middle" font-size="12" font-weight="700" fill="#2c2c2a">Why a dropped GPS ping never freezes the map</text>
+
+<rect x="32"  y="3340" width="216" height="84" rx="6" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="140" y="3360" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">1 · Last-Known Position</text>
+<text x="140" y="3378" text-anchor="middle" font-size="10" fill="#3b6d11">Redis GeoHash TTL 30s</text>
+<text x="140" y="3394" text-anchor="middle" font-size="10" fill="#3b6d11">If no update: show last pin</text>
+<text x="140" y="3410" text-anchor="middle" font-size="10" fill="#3b6d11">with "Updating…" indicator</text>
+<text x="140" y="3420" text-anchor="middle" font-size="10" fill="#3b6d11">until next ping arrives</text>
+
+<rect x="272" y="3340" width="216" height="84" rx="6" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="3360" text-anchor="middle" font-size="10" font-weight="700" fill="#0c447c">2 · Dead Reckoning</text>
+<text x="380" y="3378" text-anchor="middle" font-size="10" fill="#185fa5">Use last heading + speed</text>
+<text x="380" y="3394" text-anchor="middle" font-size="10" fill="#185fa5">to project position forward</text>
+<text x="380" y="3410" text-anchor="middle" font-size="10" fill="#185fa5">Map snaps to road network</text>
+<text x="380" y="3420" text-anchor="middle" font-size="10" fill="#185fa5">(H3 / map-matching algo)</text>
+
+<rect x="512" y="3340" width="216" height="84" rx="6" fill="#faeeda" stroke="#ba7517"/>
+<text x="620" y="3360" text-anchor="middle" font-size="10" font-weight="700" fill="#633806">3 · Client-Side Smoothing</text>
+<text x="620" y="3378" text-anchor="middle" font-size="10" fill="#854f0b">App interpolates between</text>
+<text x="620" y="3394" text-anchor="middle" font-size="10" fill="#854f0b">received pings (animation)</text>
+<text x="620" y="3410" text-anchor="middle" font-size="10" fill="#854f0b">Map car never jumps — it</text>
+<text x="620" y="3420" text-anchor="middle" font-size="10" fill="#854f0b">glides even on sparse pings</text>
+
+<!-- ====== SECTION: 5 CRITICAL FALLBACK DECISIONS ====== -->
+<line x1="40" y1="3492" x2="720" y2="3492" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="3484" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— the 5 critical fallback design decisions —</text>
+
+<rect x="20"  y="3500" width="720" height="60" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="3520" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">1. Trip state lives in Kafka, not only PostgreSQL</text>
+<text x="380" y="3540" text-anchor="middle" font-size="11" fill="#0f6e56">Every trip state transition (REQUESTED → ACCEPTED → IN_PROGRESS → COMPLETED) is published to Kafka before DB write. If PostgreSQL goes down mid-trip, the current state is reconstructed from the Kafka event log. Outbox pattern ensures DB write and Kafka publish happen in the same transaction — no split-brain trip state.</text>
+
+<rect x="20"  y="3572" width="720" height="60" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="3592" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">2. Payment charge must be idempotent — tripId is the idempotency key</text>
+<text x="380" y="3612" text-anchor="middle" font-size="11" fill="#185fa5">Trip end triggers the charge. If the gateway times out and the client retries, the same tripId is sent. The payment gateway deduplicates on tripId — the rider is never double-charged. This works across all fallback levels: primary gateway, secondary, and the async Kafka queue. Without this, a network blip at trip end means double charges at scale.</text>
+
+<rect x="20"  y="3644" width="720" height="60" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="3664" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">3. Surge pricing must default to 1.0x on service failure — never block the booking</text>
+<text x="380" y="3684" text-anchor="middle" font-size="11" fill="#854f0b">If the Pricing Service is down, the booking must still complete. The safe default is base fare (surge = 1.0x) served from cache. Showing an error instead of a price causes the rider to abandon the booking entirely — worse revenue outcome than a slight under-surge. Reconcile at settlement if a cached surge is materially wrong.</text>
+
+<rect x="20"  y="3716" width="720" height="60" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="3736" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">4. Driver location TTL is 30s — after that, treat as offline</text>
+<text x="380" y="3756" text-anchor="middle" font-size="11" fill="#534ab7">Redis GeoHash entries have a 30-second TTL. If the driver app loses connectivity and stops streaming GPS, the entry expires and the driver is treated as unavailable. This prevents the matching engine from dispatching rides to a ghost driver. It also ensures the map shows a stale-data indicator after 30s rather than a frozen pin forever.</text>
+
+<rect x="20"  y="3788" width="720" height="60" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="380" y="3808" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">5. Ride request is idempotent — rider retry never creates duplicate trip</text>
+<text x="380" y="3828" text-anchor="middle" font-size="11" fill="#993c1d">The rider app includes a request-scoped UUID in every POST /ride. The Ride Matching Service checks Redis for this UUID before creating a Trip record. Retry on 503 (matching service recovering) returns the existing trip, not a new one. Without this, a 3G blip at booking time creates two trips for the same ride — both drivers dispatch.</text>
+
+<!-- ── FINAL SUMMARY BOX ── -->
+<rect x="20"  y="3864" width="720" height="60" rx="8" fill="#1a1208" stroke="#ba7517"/>
+<text x="380" y="3886" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Uber processes 20 million trips/day. GPS streams 250M+ location pings/minute. Any component crash must not cancel an in-progress trip or double-charge a rider.</text>
+<text x="380" y="3906" text-anchor="middle" font-size="11" fill="#aaa">Recovery SLA: Location &lt;15s · Matching &lt;30s · Kafka &lt;30s · PostgreSQL &lt;60s · Payment async · Full DC &lt;90s</text>
+
+</svg>
+</body>
+</html>

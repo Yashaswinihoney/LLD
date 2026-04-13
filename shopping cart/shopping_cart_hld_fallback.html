@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 820px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 760 5220" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#ba7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: ADD TO CART FLOW ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— add to cart flow —</text>
+
+<rect x="260" y="32" width="240" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="52" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">User</text>
+<text x="380" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">POST /cart/items {productId, qty}</text>
+
+<line x1="380" y1="84" x2="380" y2="116" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="240" y="116" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="138" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway</text>
+<text x="380" y="154" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth (JWT), rate limiting, routing</text>
+
+<line x1="380" y1="168" x2="380" y2="204" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CART SERVICE -->
+<rect x="190" y="204" width="380" height="88" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="226" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Cart Service</text>
+<text x="380" y="244" text-anchor="middle" font-size="11" fill="#0f6e56">Fetch live price from Pricing Service</text>
+<text x="380" y="260" text-anchor="middle" font-size="11" fill="#0f6e56">Select best PricingStrategy for user</text>
+<text x="380" y="276" text-anchor="middle" font-size="11" fill="#0f6e56">Validate stock availability</text>
+<text x="380" y="292" text-anchor="middle" font-size="11" fill="#0f6e56">Store: {productId, qty, priceAtAdd} in Redis cart</text>
+
+<!-- out of stock -->
+<line x1="190" y1="248" x2="90" y2="308" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="78" y="290" font-size="10" text-anchor="end" fill="#d85a30">out of stock</text>
+<rect x="20" y="308" width="148" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="94" y="330" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Reject + notify</text>
+
+<line x1="380" y1="292" x2="380" y2="352" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PARALLEL: Redis + Kafka -->
+<line x1="300" y1="372" x2="160" y2="416" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="372" x2="600" y2="416" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="190" y="352" width="380" height="28" rx="6" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="371" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Parallel: persist + subscribe to price changes</text>
+
+<rect x="30"  y="416" width="230" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="145" y="438" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis Cart Store</text>
+<text x="145" y="456" text-anchor="middle" font-size="11" fill="#3b6d11">cartId → {items[], coupon, status}</text>
+<text x="145" y="472" text-anchor="middle" font-size="11" fill="#3b6d11">TTL: 7 days (abandoned cart cleanup)</text>
+
+<rect x="500" y="416" width="230" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="615" y="438" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Price Watch Subscription</text>
+<text x="615" y="456" text-anchor="middle" font-size="11" fill="#534ab7">Subscribe: productId → cartId mapping</text>
+<text x="615" y="472" text-anchor="middle" font-size="11" fill="#534ab7">Stored in Redis pub/sub channel</text>
+
+<!-- ====== SECTION 2: PRICE FLUCTUATION FLOW ====== -->
+<line x1="40" y1="540" x2="720" y2="540" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="532" text-anchor="middle" font-size="11" fill="#888">— price fluctuation flow (the core challenge) —</text>
+
+<!-- PRICE CHANGE SOURCES -->
+<rect x="20"  y="548" width="148" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="94"  y="568" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Admin Panel</text>
+<text x="94"  y="584" text-anchor="middle" font-size="10" fill="#5f5e5a">Manual price update</text>
+<text x="94"  y="600" text-anchor="middle" font-size="10" fill="#5f5e5a">Flash sale start/end</text>
+
+<rect x="186" y="548" width="148" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="260" y="568" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">ML Pricing Engine</text>
+<text x="260" y="584" text-anchor="middle" font-size="10" fill="#5f5e5a">Demand-based surge</text>
+<text x="260" y="600" text-anchor="middle" font-size="10" fill="#5f5e5a">Competitor price match</text>
+
+<rect x="352" y="548" width="148" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="426" y="568" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Flash Sale Scheduler</text>
+<text x="426" y="584" text-anchor="middle" font-size="10" fill="#5f5e5a">Cron-triggered sales</text>
+<text x="426" y="600" text-anchor="middle" font-size="10" fill="#5f5e5a">Auto-revert on end</text>
+
+<rect x="518" y="548" width="222" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="629" y="568" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Inventory System</text>
+<text x="629" y="584" text-anchor="middle" font-size="10" fill="#5f5e5a">Low stock → price rise</text>
+<text x="629" y="600" text-anchor="middle" font-size="10" fill="#5f5e5a">Overstock → discount</text>
+
+<line x1="94"  y1="612" x2="240" y2="660" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="260" y1="612" x2="295" y2="660" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="426" y1="612" x2="420" y2="660" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="629" y1="612" x2="520" y2="660" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PRICING SERVICE -->
+<rect x="190" y="660" width="380" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="682" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Pricing Service</text>
+<text x="380" y="700" text-anchor="middle" font-size="11" fill="#854f0b">Update price in Product DB + Redis price cache</text>
+<text x="380" y="716" text-anchor="middle" font-size="11" fill="#854f0b">Publish price-change event to Kafka</text>
+
+<line x1="380" y1="724" x2="380" y2="772" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- KAFKA PRICE EVENTS -->
+<rect x="200" y="772" width="360" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="794" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Kafka — price-change-events topic</text>
+<text x="380" y="810" text-anchor="middle" font-size="11" fill="#534ab7">{productId, oldPrice, newPrice, type, timestamp}</text>
+
+<!-- consumers -->
+<line x1="290" y1="824" x2="140" y2="872" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="824" x2="380" y2="872" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="470" y1="824" x2="620" y2="872" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CART NOTIFIER -->
+<rect x="20"  y="872" width="220" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="130" y="894" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Cart Notifier Service</text>
+<text x="130" y="912" text-anchor="middle" font-size="11" fill="#3b6d11">Find all carts with this product</text>
+<text x="130" y="928" text-anchor="middle" font-size="11" fill="#3b6d11">Refresh price in Redis cart store</text>
+<text x="130" y="944" text-anchor="middle" font-size="11" fill="#3b6d11">Flag price_changed = true</text>
+
+<!-- NOTIFICATION SERVICE -->
+<rect x="280" y="872" width="200" height="76" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="894" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Notification Service</text>
+<text x="380" y="912" text-anchor="middle" font-size="11" fill="#534ab7">Push to active users:</text>
+<text x="380" y="928" text-anchor="middle" font-size="11" fill="#534ab7">"Price dropped on item</text>
+<text x="380" y="944" text-anchor="middle" font-size="11" fill="#534ab7">in your cart!"</text>
+
+<!-- ANALYTICS -->
+<rect x="520" y="872" width="220" height="76" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="630" y="894" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Analytics Service</text>
+<text x="630" y="912" text-anchor="middle" font-size="11" fill="#185fa5">Track price elasticity</text>
+<text x="630" y="928" text-anchor="middle" font-size="11" fill="#185fa5">Cart add/drop rates</text>
+<text x="630" y="944" text-anchor="middle" font-size="11" fill="#185fa5">on price change</text>
+
+<!-- ====== SECTION 3: CHECKOUT FLOW ====== -->
+<line x1="40" y1="1012" x2="720" y2="1012" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1004" text-anchor="middle" font-size="11" fill="#888">— checkout flow (price re-validation is critical) —</text>
+
+<rect x="260" y="1020" width="240" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="1040" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">User clicks checkout</text>
+<text x="380" y="1056" text-anchor="middle" font-size="11" fill="#5f5e5a">POST /cart/{id}/checkout</text>
+
+<line x1="380" y1="1072" x2="380" y2="1108" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- CHECKOUT SERVICE -->
+<rect x="190" y="1108" width="380" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="1130" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Checkout Service</text>
+<text x="380" y="1148" text-anchor="middle" font-size="11" fill="#0f6e56">Step 1: Re-fetch ALL live prices from Pricing Service</text>
+<text x="380" y="1164" text-anchor="middle" font-size="11" fill="#0f6e56">Step 2: Compare live price vs priceAtAdd for each item</text>
+<text x="380" y="1180" text-anchor="middle" font-size="11" fill="#0f6e56">Step 3: If any price rose → show diff, ask re-confirm</text>
+<text x="380" y="1196" text-anchor="middle" font-size="11" fill="#0f6e56">Step 4: If price dropped → apply new lower price ✅</text>
+<text x="380" y="1208" text-anchor="middle" font-size="11" fill="#0f6e56">Step 5: Validate stock, acquire distributed locks</text>
+
+<!-- price risen path -->
+<line x1="190" y1="1164" x2="90" y2="1240" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="78" y="1218" font-size="10" text-anchor="end" fill="#d85a30">price rose</text>
+<rect x="16" y="1240" width="160" height="64" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="96" y="1260" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Show price diff</text>
+<text x="96" y="1276" text-anchor="middle" font-size="10" fill="#993c1d">User must re-confirm</text>
+<text x="96" y="1292" text-anchor="middle" font-size="10" fill="#993c1d">or remove item</text>
+
+<line x1="380" y1="1208" x2="380" y2="1268" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- LOCK + RESERVE -->
+<rect x="190" y="1268" width="380" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1290" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Inventory Service — Reserve Stock</text>
+<text x="380" y="1308" text-anchor="middle" font-size="11" fill="#534ab7">Distributed lock per product (Redis SET NX)</text>
+<text x="380" y="1324" text-anchor="middle" font-size="11" fill="#534ab7">Atomically deduct stock — prevent overselling</text>
+
+<!-- stock fail -->
+<line x1="570" y1="1300" x2="640" y2="1360" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="558" y="1360" width="190" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="653" y="1382" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Out of stock — abort</text>
+
+<line x1="380" y1="1332" x2="380" y2="1380" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PRICE LOCK -->
+<rect x="190" y="1380" width="380" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="1402" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Lock total price — snapshot at checkout time</text>
+<text x="380" y="1418" text-anchor="middle" font-size="11" fill="#854f0b">Price won't change during payment (10-min TTL)</text>
+
+<line x1="380" y1="1432" x2="380" y2="1468" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PAYMENT SERVICE -->
+<rect x="200" y="1468" width="360" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1490" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Payment Service</text>
+<text x="380" y="1508" text-anchor="middle" font-size="11" fill="#534ab7">Charge via Razorpay / UPI (idempotent)</text>
+<text x="380" y="1524" text-anchor="middle" font-size="11" fill="#534ab7">OrderId as idempotency key</text>
+
+<!-- payment fail → release stock -->
+<line x1="560" y1="1500" x2="640" y2="1556" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="558" y="1556" width="190" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="653" y="1574" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Release reserved stock</text>
+<text x="653" y="1588" text-anchor="middle" font-size="10" fill="#993c1d">Cart back to ACTIVE</text>
+
+<line x1="380" y1="1532" x2="380" y2="1580" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ORDER CONFIRMED -->
+<rect x="220" y="1580" width="320" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="1602" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Order confirmed + cart → ORDERED</text>
+<text x="380" y="1618" text-anchor="middle" font-size="11" fill="#0f6e56">Kafka → Notification + Fulfilment Service</text>
+
+<!-- ====== SECTION 4: ABANDONED CART ====== -->
+<line x1="40" y1="1684" x2="720" y2="1684" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1676" text-anchor="middle" font-size="11" fill="#888">— abandoned cart recovery flow —</text>
+
+<rect x="190" y="1692" width="380" height="88" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1714" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Abandoned Cart Service</text>
+<text x="380" y="1732" text-anchor="middle" font-size="11" fill="#185fa5">Redis TTL triggers expiry after 7 days inactivity</text>
+<text x="380" y="1748" text-anchor="middle" font-size="11" fill="#185fa5">Kafka event: cart_abandoned → 3 reminder emails</text>
+<text x="380" y="1764" text-anchor="middle" font-size="11" fill="#185fa5">If item price dropped since add → "Price dropped!" push</text>
+<text x="380" y="1780" text-anchor="middle" font-size="11" fill="#185fa5">Coupon offer after 24hr: "Complete purchase — 5% off"</text>
+
+<!-- ====== DATA STORES ====== -->
+<line x1="40" y1="1848" x2="720" y2="1848" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1840" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1856" width="148" height="112" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="94"  y="1878" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="94"  y="1896" text-anchor="middle" font-size="10" fill="#3b6d11">Cart sessions (TTL 7d)</text>
+<text x="94"  y="1912" text-anchor="middle" font-size="10" fill="#3b6d11">Live price cache</text>
+<text x="94"  y="1928" text-anchor="middle" font-size="10" fill="#3b6d11">Stock locks (SET NX)</text>
+<text x="94"  y="1944" text-anchor="middle" font-size="10" fill="#3b6d11">Price watch subs</text>
+<text x="94"  y="1960" text-anchor="middle" font-size="10" fill="#3b6d11">Checkout price lock</text>
+
+<rect x="186" y="1856" width="148" height="112" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="260" y="1878" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="260" y="1896" text-anchor="middle" font-size="10" fill="#185fa5">Products, base prices</text>
+<text x="260" y="1912" text-anchor="middle" font-size="10" fill="#185fa5">Orders, payments</text>
+<text x="260" y="1928" text-anchor="middle" font-size="10" fill="#185fa5">Users, coupons</text>
+<text x="260" y="1944" text-anchor="middle" font-size="10" fill="#185fa5">Price history audit</text>
+<text x="260" y="1960" text-anchor="middle" font-size="10" fill="#185fa5">Inventory ledger</text>
+
+<rect x="352" y="1856" width="148" height="112" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="426" y="1878" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="426" y="1896" text-anchor="middle" font-size="10" fill="#534ab7">price-change-events</text>
+<text x="426" y="1912" text-anchor="middle" font-size="10" fill="#534ab7">cart-abandoned events</text>
+<text x="426" y="1928" text-anchor="middle" font-size="10" fill="#534ab7">order-confirmed events</text>
+<text x="426" y="1944" text-anchor="middle" font-size="10" fill="#534ab7">stock-update events</text>
+<text x="426" y="1960" text-anchor="middle" font-size="10" fill="#534ab7">flash-sale events</text>
+
+<rect x="518" y="1856" width="222" height="112" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="629" y="1878" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="629" y="1896" text-anchor="middle" font-size="10" fill="#854f0b">Price history time-series</text>
+<text x="629" y="1912" text-anchor="middle" font-size="10" fill="#854f0b">Cart event logs</text>
+<text x="629" y="1928" text-anchor="middle" font-size="10" fill="#854f0b">Analytics: price elasticity</text>
+<text x="629" y="1944" text-anchor="middle" font-size="10" fill="#854f0b">Flash sale performance</text>
+<text x="629" y="1960" text-anchor="middle" font-size="10" fill="#854f0b">A/B test results</text>
+
+<!-- INSIGHT BOX -->
+<line x1="40" y1="2028" x2="720" y2="2028" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2020" text-anchor="middle" font-size="11" fill="#888">— price change handling rules —</text>
+
+<rect x="20" y="2036" width="720" height="76" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="2058" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">How to handle price changes (Amazon / Flipkart rules)</text>
+<text x="380" y="2076" text-anchor="middle" font-size="11" fill="#5f5e5a">Price DROP: always honour lower price — apply silently, notify user as good news</text>
+<text x="380" y="2092" text-anchor="middle" font-size="11" fill="#5f5e5a">Price RISE: must re-confirm — show diff, let user decide to proceed or remove item</text>
+<text x="380" y="2108" text-anchor="middle" font-size="11" fill="#5f5e5a">Price LOCKED at checkout: stays fixed for 10-min payment window (no changes allowed)</text>
+
+
+<!-- ================================================================ -->
+<!-- ========  FALLBACK MECHANISM — STARTS HERE  ==================== -->
+<!-- ================================================================ -->
+
+<!-- ── TITLE BANNER ── -->
+<rect x="0"   y="2156" width="760" height="52" rx="0" fill="#1e1208"/>
+<rect x="0"   y="2156" width="6"   height="52" rx="0" fill="#ba7517"/>
+<text x="380" y="2180" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">FALLBACK MECHANISM — WHEN THE SHOPPING CART APP FAILS</text>
+<text x="380" y="2198" text-anchor="middle" font-size="11" fill="#aaaaaa">3-Layer Defence: Circuit Breaker → Stale Cache → Graceful Degradation</text>
+
+<!-- ====== SECTION 5: 3-LAYER DEFENCE ====== -->
+<line x1="40" y1="2268" x2="720" y2="2268" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2260" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 3-layer defence (applied to every critical service) —</text>
+
+<rect x="20"  y="2276" width="224" height="136" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="132" y="2298" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Layer 1 · Circuit Breaker</text>
+<text x="132" y="2316" text-anchor="middle" font-size="10" fill="#993c1d">CLOSED → all calls pass normally</text>
+<text x="132" y="2332" text-anchor="middle" font-size="10" fill="#993c1d">OPEN → 5 failures / 10s window →</text>
+<text x="132" y="2348" text-anchor="middle" font-size="10" fill="#993c1d">fail-fast; return cached fallback</text>
+<text x="132" y="2364" text-anchor="middle" font-size="10" fill="#993c1d">HALF_OPEN → 1 probe after 30s</text>
+<text x="132" y="2380" text-anchor="middle" font-size="10" fill="#993c1d">success → CLOSED · fail → OPEN</text>
+<text x="132" y="2396" text-anchor="middle" font-size="10" fill="#993c1d">Applies to: Cart · Pricing · Checkout</text>
+<text x="132" y="2404" text-anchor="middle" font-size="10" fill="#993c1d">Inventory · Payment · Notification</text>
+
+<rect x="268" y="2276" width="224" height="136" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="2298" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Layer 2 · Stale Cache</text>
+<text x="380" y="2316" text-anchor="middle" font-size="10" fill="#185fa5">Redis holds last-known prices per</text>
+<text x="380" y="2332" text-anchor="middle" font-size="10" fill="#185fa5">product (TTL 5 min) — served</text>
+<text x="380" y="2348" text-anchor="middle" font-size="10" fill="#185fa5">with "Price may vary" disclaimer</text>
+<text x="380" y="2364" text-anchor="middle" font-size="10" fill="#185fa5">Cart items preserved in Redis</text>
+<text x="380" y="2380" text-anchor="middle" font-size="10" fill="#185fa5">(TTL 7d) even if Cart Svc down</text>
+<text x="380" y="2396" text-anchor="middle" font-size="10" fill="#185fa5">Stock estimate from last snapshot</text>
+<text x="380" y="2404" text-anchor="middle" font-size="10" fill="#185fa5">until Inventory Svc recovers</text>
+
+<rect x="516" y="2276" width="224" height="136" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="628" y="2298" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Layer 3 · Graceful Degrade</text>
+<text x="628" y="2316" text-anchor="middle" font-size="10" fill="#3b6d11">Add-to-cart: offline queue locally</text>
+<text x="628" y="2332" text-anchor="middle" font-size="10" fill="#3b6d11">synced on reconnect (PWA)</text>
+<text x="628" y="2348" text-anchor="middle" font-size="10" fill="#3b6d11">Checkout blocked if price/stock</text>
+<text x="628" y="2364" text-anchor="middle" font-size="10" fill="#3b6d11">cannot be verified (safe default)</text>
+<text x="628" y="2380" text-anchor="middle" font-size="10" fill="#3b6d11">Payment fallback: secondary PG</text>
+<text x="628" y="2396" text-anchor="middle" font-size="10" fill="#3b6d11">→ wallet → deferred Kafka queue</text>
+<text x="628" y="2404" text-anchor="middle" font-size="10" fill="#3b6d11">Stock lock expires: auto-release</text>
+
+<!-- ====== SECTION 6: CIRCUIT BREAKER STATE MACHINE ====== -->
+<line x1="40" y1="2472" x2="720" y2="2472" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2464" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— circuit breaker state machine (per microservice) —</text>
+
+<rect x="100" y="2480" width="560" height="232" rx="8" fill="#1e1208" stroke="#ba7517"/>
+<text x="380" y="2504" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Circuit Breaker — wraps every downstream call on Cart, Checkout &amp; Payment</text>
+
+<!-- CLOSED -->
+<rect x="134" y="2524" width="120" height="44" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="194" y="2542" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">CLOSED</text>
+<text x="194" y="2558" text-anchor="middle" font-size="9"  fill="#3b6d11">All calls pass ✓</text>
+
+<!-- CLOSED → OPEN -->
+<line x1="254" y1="2546" x2="358" y2="2546" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="306" y="2538" text-anchor="middle" font-size="9" fill="#d85a30">≥5 failures / 10s</text>
+<text x="306" y="2560" text-anchor="middle" font-size="9" fill="#d85a30">or p99 latency &gt;1s</text>
+
+<!-- OPEN -->
+<rect x="358" y="2524" width="120" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="418" y="2542" text-anchor="middle" font-size="11" font-weight="700" fill="#712b13">OPEN</text>
+<text x="418" y="2558" text-anchor="middle" font-size="9"  fill="#993c1d">Fail-fast + fallback</text>
+
+<!-- OPEN → HALF_OPEN arc -->
+<path d="M418 2568 Q418 2640 306 2650 Q194 2660 194 2620" fill="none" stroke="#ba7517" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-o)"/>
+<text x="312" y="2672" text-anchor="middle" font-size="9" fill="#ba7517">30s timeout → probe</text>
+
+<!-- HALF_OPEN -->
+<rect x="134" y="2620" width="120" height="44" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="194" y="2638" text-anchor="middle" font-size="11" font-weight="700" fill="#633806">HALF_OPEN</text>
+<text x="194" y="2654" text-anchor="middle" font-size="9"  fill="#854f0b">1 trial request</text>
+
+<!-- HALF_OPEN → CLOSED success -->
+<line x1="254" y1="2638" x2="358" y2="2588" stroke="#0f6e56" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+<text x="342" y="2610" text-anchor="middle" font-size="9" fill="#0f6e56">success</text>
+<text x="342" y="2622" text-anchor="middle" font-size="9" fill="#0f6e56">→ CLOSED ✓</text>
+
+<!-- HALF_OPEN → OPEN fail -->
+<line x1="254" y1="2654" x2="358" y2="2654" stroke="#d85a30" stroke-width="1.5" marker-end="url(#arrow-r)"/>
+<text x="306" y="2646" text-anchor="middle" font-size="9" fill="#d85a30">fail → OPEN</text>
+
+<!-- When OPEN sidebar -->
+<rect x="506" y="2524" width="140" height="156" rx="8" fill="#2c2820" stroke="#555"/>
+<text x="576" y="2544" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">When OPEN:</text>
+<text x="576" y="2562" text-anchor="middle" font-size="9"  fill="#ccc">• Price: Redis cache (5min)</text>
+<text x="576" y="2578" text-anchor="middle" font-size="9"  fill="#ccc">• Stock: last snapshot</text>
+<text x="576" y="2594" text-anchor="middle" font-size="9"  fill="#ccc">• Cart reads: Redis direct</text>
+<text x="576" y="2610" text-anchor="middle" font-size="9"  fill="#ccc">• Checkout: block (safe)</text>
+<text x="576" y="2626" text-anchor="middle" font-size="9"  fill="#ccc">• Payment: retry chain</text>
+<text x="576" y="2642" text-anchor="middle" font-size="9"  fill="#ccc">• PagerDuty alert fires</text>
+<text x="576" y="2658" text-anchor="middle" font-size="9"  fill="#ccc">• Ops dashboard flags</text>
+<text x="576" y="2670" text-anchor="middle" font-size="9"  fill="#ccc">  service DEGRADED</text>
+
+<text x="380" y="2700" text-anchor="middle" font-size="10" fill="#888">CBs on: Cart Svc · Pricing Svc · Inventory Svc · Checkout Svc · Payment Svc · Notification Svc · Redis · PostgreSQL</text>
+
+<!-- ====== SECTION 7: COMPONENT-SPECIFIC FALLBACKS ====== -->
+<line x1="40" y1="2728" x2="720" y2="2728" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2720" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— component-specific crash &amp; recovery —</text>
+
+<!-- ── ROW 1: Cart Service crash | Redis Cart Store down ── -->
+<rect x="20"  y="2736" width="350" height="196" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="195" y="2758" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Cart Service Crash</text>
+<text x="195" y="2776" text-anchor="middle" font-size="10" fill="#0f6e56">Root: OOM / exception / deployment rollout</text>
+<text x="32"  y="2796" font-size="10" font-weight="600" fill="#085041">Impact:</text>
+<text x="195" y="2812" text-anchor="middle" font-size="10" fill="#0f6e56">POST /cart/items returns 503 — item not added</text>
+<text x="195" y="2828" text-anchor="middle" font-size="10" fill="#0f6e56">Existing cart still readable from Redis (TTL 7d)</text>
+<text x="195" y="2844" text-anchor="middle" font-size="10" fill="#0f6e56">Price watch subscriptions stall but do not drop</text>
+<text x="32"  y="2864" font-size="10" font-weight="600" fill="#085041">Recovery:</text>
+<text x="195" y="2880" text-anchor="middle" font-size="10" fill="#0f6e56">1. LB routes to healthy Cart Service pods instantly</text>
+<text x="195" y="2896" text-anchor="middle" font-size="10" fill="#0f6e56">2. K8s restarts crashed pod (&lt;30s)</text>
+<text x="195" y="2912" text-anchor="middle" font-size="10" fill="#0f6e56">3. Client retries add-to-cart (idempotent on productId)</text>
+<text x="195" y="2924" text-anchor="middle" font-size="9"  fill="#3b6d11">⚠ RTO: &lt;30s · Existing cart: never lost (Redis TTL 7d)</text>
+
+<rect x="390" y="2736" width="350" height="196" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="565" y="2758" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Redis Cart Store Down</text>
+<text x="565" y="2776" text-anchor="middle" font-size="10" fill="#3b6d11">Root: node eviction / Sentinel failover lag / OOM</text>
+<text x="402" y="2796" font-size="10" font-weight="600" fill="#27500a">Impact:</text>
+<text x="565" y="2812" text-anchor="middle" font-size="10" fill="#3b6d11">Cart reads fail — all cart sessions unavailable</text>
+<text x="565" y="2828" text-anchor="middle" font-size="10" fill="#3b6d11">Stock locks (SET NX) cannot be acquired</text>
+<text x="565" y="2844" text-anchor="middle" font-size="10" fill="#3b6d11">Price cache gone — must hit PostgreSQL</text>
+<text x="402" y="2864" font-size="10" font-weight="600" fill="#27500a">Recovery:</text>
+<text x="565" y="2880" text-anchor="middle" font-size="10" fill="#3b6d11">1. Sentinel promotes Redis replica (&lt;15s)</text>
+<text x="565" y="2896" text-anchor="middle" font-size="10" fill="#3b6d11">2. Cart data: read from PostgreSQL fallback table</text>
+<text x="565" y="2912" text-anchor="middle" font-size="10" fill="#3b6d11">3. Stock locks: PostgreSQL advisory lock as fallback</text>
+<text x="565" y="2924" text-anchor="middle" font-size="9"  fill="#3b6d11">⚠ RTO: &lt;15s · Checkout blocked until Redis recovers</text>
+
+<!-- ── ROW 2: Pricing Service crash | Kafka crash ── -->
+<rect x="20"  y="2948" width="350" height="196" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="195" y="2970" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Pricing Service / Price Cache Miss</text>
+<text x="195" y="2988" text-anchor="middle" font-size="10" fill="#854f0b">Root: ML engine OOM / DB slow query / Flash sale spike</text>
+<text x="32"  y="3008" font-size="10" font-weight="600" fill="#633806">Impact:</text>
+<text x="195" y="3024" text-anchor="middle" font-size="10" fill="#854f0b">Cannot fetch live price for new add-to-cart</text>
+<text x="195" y="3040" text-anchor="middle" font-size="10" fill="#854f0b">Checkout re-validation returns stale price</text>
+<text x="195" y="3056" text-anchor="middle" font-size="10" fill="#854f0b">Price change events not published to Kafka</text>
+<text x="32"  y="3076" font-size="10" font-weight="600" fill="#633806">Recovery:</text>
+<text x="195" y="3092" text-anchor="middle" font-size="10" fill="#854f0b">1. CB opens → Redis cached price served (TTL 5min)</text>
+<text x="195" y="3108" text-anchor="middle" font-size="10" fill="#854f0b">2. Show "Price may vary" banner on cart page</text>
+<text x="195" y="3124" text-anchor="middle" font-size="10" fill="#854f0b">3. Checkout step: block until live price confirmed</text>
+<text x="195" y="3136" text-anchor="middle" font-size="9"  fill="#ba7517">⚠ RTO: immediate (cache) · Checkout: safe-block</text>
+
+<rect x="390" y="2948" width="350" height="196" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="565" y="2970" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Kafka Broker Crash</text>
+<text x="565" y="2988" text-anchor="middle" font-size="10" fill="#534ab7">Root: disk full / broker OOM / network partition</text>
+<text x="402" y="3008" font-size="10" font-weight="600" fill="#3c3489">Impact:</text>
+<text x="565" y="3024" text-anchor="middle" font-size="10" fill="#534ab7">Price change events not published — cart not updated</text>
+<text x="565" y="3040" text-anchor="middle" font-size="10" fill="#534ab7">cart-abandoned triggers not fired — no recovery emails</text>
+<text x="565" y="3056" text-anchor="middle" font-size="10" fill="#534ab7">order-confirmed not fan-out — fulfilment delayed</text>
+<text x="402" y="3076" font-size="10" font-weight="600" fill="#3c3489">Recovery:</text>
+<text x="565" y="3092" text-anchor="middle" font-size="10" fill="#534ab7">1. ISR=3 replica elected as new leader (&lt;30s)</text>
+<text x="565" y="3108" text-anchor="middle" font-size="10" fill="#534ab7">2. Producers buffer in memory; flush on reconnect</text>
+<text x="565" y="3124" text-anchor="middle" font-size="10" fill="#534ab7">3. All events replayed from last committed offset</text>
+<text x="565" y="3136" text-anchor="middle" font-size="9"  fill="#7f77dd">⚠ RTO: &lt;30s · RPO: 0 (ISR=3 guarantees durability)</text>
+
+<!-- ── ROW 3: Inventory / Stock Lock | Checkout mid-flight crash ── -->
+<rect x="20"  y="3160" width="350" height="212" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="195" y="3182" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Inventory Service / Stock Lock Failure</text>
+<text x="195" y="3200" text-anchor="middle" font-size="10" fill="#534ab7">Root: Redis SET NX contention / DB pool exhausted</text>
+<text x="32"  y="3220" font-size="10" font-weight="600" fill="#3c3489">Impact:</text>
+<text x="195" y="3236" text-anchor="middle" font-size="10" fill="#534ab7">Cannot atomically reserve stock — oversell risk</text>
+<text x="195" y="3252" text-anchor="middle" font-size="10" fill="#534ab7">Partial locks: some items reserved, others not</text>
+<text x="195" y="3268" text-anchor="middle" font-size="10" fill="#534ab7">Checkout Service must rollback ALL partial locks</text>
+<text x="32"  y="3288" font-size="10" font-weight="600" fill="#3c3489">Recovery (SAGA rollback):</text>
+<text x="195" y="3304" text-anchor="middle" font-size="10" fill="#534ab7">1. Any lock failure → release ALL acquired locks (atomic)</text>
+<text x="195" y="3320" text-anchor="middle" font-size="10" fill="#534ab7">2. Redis lock TTL (30s) auto-expires abandoned locks</text>
+<text x="195" y="3336" text-anchor="middle" font-size="10" fill="#534ab7">3. Return "Item unavailable" — user retries checkout</text>
+<text x="195" y="3352" text-anchor="middle" font-size="10" fill="#534ab7">4. PG advisory lock as fallback if Redis unavailable</text>
+<text x="195" y="3364" text-anchor="middle" font-size="9"  fill="#7f77dd">⚠ RTO: immediate rollback · No phantom stock deduction</text>
+
+<rect x="390" y="3160" width="350" height="212" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="565" y="3182" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Checkout Service Crash Mid-Flow</text>
+<text x="565" y="3200" text-anchor="middle" font-size="10" fill="#0f6e56">Root: Crash after stock lock but before payment</text>
+<text x="402" y="3220" font-size="10" font-weight="600" fill="#085041">Impact:</text>
+<text x="565" y="3236" text-anchor="middle" font-size="10" fill="#0f6e56">Stock reserved but payment not initiated</text>
+<text x="565" y="3252" text-anchor="middle" font-size="10" fill="#0f6e56">Price lock active but order not created</text>
+<text x="565" y="3268" text-anchor="middle" font-size="10" fill="#0f6e56">Rider stuck on "Processing…" — cart abandoned</text>
+<text x="402" y="3288" font-size="10" font-weight="600" fill="#085041">Recovery (TTL-based auto-cleanup):</text>
+<text x="565" y="3304" text-anchor="middle" font-size="10" fill="#0f6e56">1. Stock lock TTL = 30s → auto-released on expiry</text>
+<text x="565" y="3320" text-anchor="middle" font-size="10" fill="#0f6e56">2. Price lock TTL = 10min → expires, cart → ACTIVE</text>
+<text x="565" y="3336" text-anchor="middle" font-size="10" fill="#0f6e56">3. Kafka outbox: incomplete checkout → compensation event</text>
+<text x="565" y="3352" text-anchor="middle" font-size="10" fill="#0f6e56">4. User shown "Session expired — please retry checkout"</text>
+<text x="565" y="3364" text-anchor="middle" font-size="9"  fill="#3b6d11">⚠ RTO: 30s lock expiry · Cart fully restored, no loss</text>
+
+<!-- ── ROW 4: Payment Service crash | PostgreSQL crash ── -->
+<rect x="20"  y="3388" width="350" height="196" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="195" y="3410" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Payment Service / Gateway Crash</text>
+<text x="195" y="3428" text-anchor="middle" font-size="10" fill="#185fa5">Root: Razorpay timeout / idempotency race / UPI outage</text>
+<text x="32"  y="3448" font-size="10" font-weight="600" fill="#0c447c">Impact:</text>
+<text x="195" y="3464" text-anchor="middle" font-size="10" fill="#185fa5">Rider charged but order not confirmed (worst case)</text>
+<text x="195" y="3480" text-anchor="middle" font-size="10" fill="#185fa5">Or: charged, stock deducted, email not sent</text>
+<text x="195" y="3496" text-anchor="middle" font-size="10" fill="#185fa5">Risk: double charge on client retry without idempotency</text>
+<text x="32"  y="3516" font-size="10" font-weight="600" fill="#0c447c">Recovery (Fallback Chain):</text>
+<text x="195" y="3532" text-anchor="middle" font-size="10" fill="#185fa5">1. orderId as idempotency key → no double charge ever</text>
+<text x="195" y="3548" text-anchor="middle" font-size="10" fill="#185fa5">2. Primary PG fails → Secondary PG (PayU/CCAvenue)</text>
+<text x="195" y="3564" text-anchor="middle" font-size="10" fill="#185fa5">3. Secondary fails → wallet deduction → Kafka async queue</text>
+<text x="195" y="3576" text-anchor="middle" font-size="9"  fill="#185fa5">⚠ RTO: async · Stock released if all payment paths fail</text>
+
+<rect x="390" y="3388" width="350" height="196" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="565" y="3410" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">PostgreSQL Down</text>
+<text x="565" y="3428" text-anchor="middle" font-size="10" fill="#185fa5">Root: primary crash / disk full / slow query lock</text>
+<text x="402" y="3448" font-size="10" font-weight="600" fill="#0c447c">Impact:</text>
+<text x="565" y="3464" text-anchor="middle" font-size="10" fill="#185fa5">New orders cannot be persisted</text>
+<text x="565" y="3480" text-anchor="middle" font-size="10" fill="#185fa5">Price history and inventory ledger unavailable</text>
+<text x="565" y="3496" text-anchor="middle" font-size="10" fill="#185fa5">User accounts / coupon lookup fails</text>
+<text x="402" y="3516" font-size="10" font-weight="600" fill="#0c447c">Recovery:</text>
+<text x="565" y="3532" text-anchor="middle" font-size="10" fill="#185fa5">1. Aurora read replica promoted via failover (&lt;60s)</text>
+<text x="565" y="3548" text-anchor="middle" font-size="10" fill="#185fa5">2. Orders queued in Kafka outbox; replayed on recovery</text>
+<text x="565" y="3564" text-anchor="middle" font-size="10" fill="#185fa5">3. Cart reads: Redis (TTL 7d) covers the gap fully</text>
+<text x="565" y="3576" text-anchor="middle" font-size="9"  fill="#185fa5">⚠ RTO: &lt;60s Aurora failover · RPO: 0 (Kafka outbox)</text>
+
+<!-- ====== SECTION 8: PAYMENT FALLBACK CHAIN ====== -->
+<line x1="40" y1="3644" x2="720" y2="3644" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="3636" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— payment fallback chain (Chain of Responsibility) —</text>
+
+<rect x="20"  y="3652" width="154" height="96" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="97"  y="3672" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">Primary PG</text>
+<text x="97"  y="3690" text-anchor="middle" font-size="10" fill="#534ab7">Razorpay / Stripe</text>
+<text x="97"  y="3706" text-anchor="middle" font-size="10" fill="#534ab7">UPI / Card / NB</text>
+<text x="97"  y="3722" text-anchor="middle" font-size="10" fill="#534ab7">orderId idempotency</text>
+<text x="97"  y="3738" text-anchor="middle" font-size="10" fill="#534ab7">CB: 3 fails → OPEN</text>
+
+<line x1="174" y1="3700" x2="198" y2="3700" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="186" y="3690" text-anchor="middle" font-size="9" fill="#d85a30">fails</text>
+
+<rect x="198" y="3652" width="154" height="96" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="275" y="3672" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">Secondary PG</text>
+<text x="275" y="3690" text-anchor="middle" font-size="10" fill="#534ab7">PayU / CCAvenue</text>
+<text x="275" y="3706" text-anchor="middle" font-size="10" fill="#534ab7">Independent gateway</text>
+<text x="275" y="3722" text-anchor="middle" font-size="10" fill="#534ab7">Same orderId key</text>
+<text x="275" y="3738" text-anchor="middle" font-size="10" fill="#534ab7">No double charge</text>
+
+<line x1="352" y1="3700" x2="376" y2="3700" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="364" y="3690" text-anchor="middle" font-size="9" fill="#d85a30">fails</text>
+
+<rect x="376" y="3652" width="154" height="96" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="453" y="3672" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">Store Wallet</text>
+<text x="453" y="3690" text-anchor="middle" font-size="10" fill="#3b6d11">In-app balance</text>
+<text x="453" y="3706" text-anchor="middle" font-size="10" fill="#3b6d11">Gift cards / credits</text>
+<text x="453" y="3722" text-anchor="middle" font-size="10" fill="#3b6d11">No external call</text>
+<text x="453" y="3738" text-anchor="middle" font-size="10" fill="#3b6d11">Instant deduction</text>
+
+<line x1="530" y1="3700" x2="554" y2="3700" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="542" y="3690" text-anchor="middle" font-size="9" fill="#d85a30">fails</text>
+
+<rect x="554" y="3652" width="186" height="96" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="647" y="3672" text-anchor="middle" font-size="11" font-weight="700" fill="#633806">Kafka Async Queue</text>
+<text x="647" y="3690" text-anchor="middle" font-size="10" fill="#854f0b">Queue charge event</text>
+<text x="647" y="3706" text-anchor="middle" font-size="10" fill="#854f0b">Retry on recovery</text>
+<text x="647" y="3722" text-anchor="middle" font-size="10" fill="#854f0b">Order held PENDING</text>
+<text x="647" y="3738" text-anchor="middle" font-size="10" fill="#854f0b">"Payment processing"</text>
+
+<!-- ====== SECTION 9: DB DOWN TABLE ====== -->
+<line x1="40" y1="3812" x2="720" y2="3812" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="3804" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— database down: what each service does —</text>
+
+<rect x="20"  y="3820" width="720" height="28" rx="4" fill="#1e1208"/>
+<text x="130" y="3839" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">DATABASE</text>
+<text x="295" y="3839" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">FAILURE MODE</text>
+<text x="490" y="3839" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">FALLBACK ACTION</text>
+<text x="682" y="3839" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">USER IMPACT</text>
+
+<rect x="20"  y="3848" width="720" height="26" rx="0" fill="#eaf3de"/>
+<text x="130" y="3866" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Redis (Cart / Cache)</text>
+<text x="295" y="3866" text-anchor="middle" font-size="9" fill="#3b6d11">Node eviction / Sentinel lag</text>
+<text x="490" y="3866" text-anchor="middle" font-size="9" fill="#3b6d11">Sentinel promotes replica · Cart reads from PG fallback</text>
+<text x="682" y="3866" text-anchor="middle" font-size="9" fill="#3b6d11">Slower cart load; checkout blocked</text>
+
+<rect x="20"  y="3874" width="720" height="26" rx="0" fill="#f1efe8"/>
+<text x="130" y="3892" text-anchor="middle" font-size="9" font-weight="600" fill="#633806">PostgreSQL</text>
+<text x="295" y="3892" text-anchor="middle" font-size="9" fill="#854f0b">Primary crash / disk full</text>
+<text x="490" y="3892" text-anchor="middle" font-size="9" fill="#854f0b">Aurora failover (&lt;60s) · Orders queued in Kafka outbox</text>
+<text x="682" y="3892" text-anchor="middle" font-size="9" fill="#854f0b">New orders queued; cart still readable</text>
+
+<rect x="20"  y="3900" width="720" height="26" rx="0" fill="#eaf3de"/>
+<text x="130" y="3918" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Kafka</text>
+<text x="295" y="3918" text-anchor="middle" font-size="9" fill="#3b6d11">Broker crash / partition leader loss</text>
+<text x="490" y="3918" text-anchor="middle" font-size="9" fill="#3b6d11">ISR replica elected · price events buffered in producers</text>
+<text x="682" y="3918" text-anchor="middle" font-size="9" fill="#3b6d11">Price alerts delayed; cart still works</text>
+
+<rect x="20"  y="3926" width="720" height="26" rx="0" fill="#f1efe8"/>
+<text x="130" y="3944" text-anchor="middle" font-size="9" font-weight="600" fill="#3c3489">Cassandra</text>
+<text x="295" y="3944" text-anchor="middle" font-size="9" fill="#534ab7">Ring split / compaction OOM</text>
+<text x="490" y="3944" text-anchor="middle" font-size="9" fill="#534ab7">RF=3 survivors serve · hinted handoff on rejoin</text>
+<text x="682" y="3944" text-anchor="middle" font-size="9" fill="#534ab7">Analytics gap; cart ops unaffected</text>
+
+<rect x="20"  y="3952" width="720" height="26" rx="0" fill="#eaf3de"/>
+<text x="130" y="3970" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Pricing Service DB</text>
+<text x="295" y="3970" text-anchor="middle" font-size="9" fill="#3b6d11">Slow query / connection pool full</text>
+<text x="490" y="3970" text-anchor="middle" font-size="9" fill="#3b6d11">CB opens · Redis cached price served with disclaimer</text>
+<text x="682" y="3970" text-anchor="middle" font-size="9" fill="#3b6d11">Cart shows "Price may vary" banner</text>
+
+<rect x="20"  y="3978" width="720" height="26" rx="0" fill="#faece7"/>
+<text x="130" y="3996" text-anchor="middle" font-size="9" font-weight="600" fill="#712b13">Full DC failure</text>
+<text x="295" y="3996" text-anchor="middle" font-size="9" fill="#d85a30">All services unreachable</text>
+<text x="490" y="3996" text-anchor="middle" font-size="9" fill="#d85a30">DNS failover to standby region · Kafka geo-replicated</text>
+<text x="682" y="3996" text-anchor="middle" font-size="9" fill="#d85a30">Read-only cart; no checkout (&lt;2 min)</text>
+
+<!-- ====== SECTION 10: CRASH RECOVERY TIMELINE ====== -->
+<line x1="40" y1="4068" x2="720" y2="4068" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="4060" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— crash recovery timeline: t=0 crash → full recovery —</text>
+
+<rect x="20"  y="4076" width="720" height="196" rx="8" fill="#1e1208" stroke="#ba7517"/>
+
+<!-- Timeline bar -->
+<line x1="50"  y1="4192" x2="710" y2="4192" stroke="#f0a500" stroke-width="2.5"/>
+
+<!-- t=0 -->
+<line x1="50"  y1="4180" x2="50"  y2="4204" stroke="#d85a30" stroke-width="2.5"/>
+<text x="50"   y="4220" text-anchor="middle" font-size="9" fill="#d85a30">t=0</text>
+<text x="50"   y="4232" text-anchor="middle" font-size="8" fill="#aaa">CRASH</text>
+<text x="50"   y="4164" text-anchor="middle" font-size="8" fill="#aaa">Redis still</text>
+<text x="50"   y="4154" text-anchor="middle" font-size="8" fill="#aaa">serves cart data</text>
+
+<!-- t=5s -->
+<line x1="160" y1="4180" x2="160" y2="4204" stroke="#d85a30" stroke-width="2"/>
+<text x="160"  y="4220" text-anchor="middle" font-size="9" fill="#d85a30">t=5s</text>
+<text x="160"  y="4232" text-anchor="middle" font-size="8" fill="#aaa">CB opens</text>
+<text x="160"  y="4164" text-anchor="middle" font-size="8" fill="#aaa">Price cache</text>
+<text x="160"  y="4154" text-anchor="middle" font-size="8" fill="#aaa">served w/ banner</text>
+
+<!-- t=15s -->
+<line x1="280" y1="4180" x2="280" y2="4204" stroke="#ba7517" stroke-width="2"/>
+<text x="280"  y="4220" text-anchor="middle" font-size="9" fill="#ba7517">t=15s</text>
+<text x="280"  y="4232" text-anchor="middle" font-size="8" fill="#aaa">K8s terminates</text>
+<text x="280"  y="4164" text-anchor="middle" font-size="8" fill="#aaa">pod; LB reroutes</text>
+<text x="280"  y="4154" text-anchor="middle" font-size="8" fill="#aaa">to healthy pods</text>
+
+<!-- t=30s -->
+<line x1="400" y1="4180" x2="400" y2="4204" stroke="#7f77dd" stroke-width="2"/>
+<text x="400"  y="4220" text-anchor="middle" font-size="9" fill="#7f77dd">t=30s</text>
+<text x="400"  y="4232" text-anchor="middle" font-size="8" fill="#aaa">New pod starts</text>
+<text x="400"  y="4164" text-anchor="middle" font-size="8" fill="#aaa">Stock lock TTLs</text>
+<text x="400"  y="4154" text-anchor="middle" font-size="8" fill="#aaa">auto-expired</text>
+
+<!-- t=45s -->
+<line x1="520" y1="4180" x2="520" y2="4204" stroke="#185fa5" stroke-width="2"/>
+<text x="520"  y="4220" text-anchor="middle" font-size="9" fill="#185fa5">t=45s</text>
+<text x="520"  y="4232" text-anchor="middle" font-size="8" fill="#aaa">Readiness probe</text>
+<text x="520"  y="4164" text-anchor="middle" font-size="8" fill="#aaa">passes; LB</text>
+<text x="520"  y="4154" text-anchor="middle" font-size="8" fill="#aaa">re-adds pod</text>
+
+<!-- t=75s FULL RECOVERY -->
+<line x1="680" y1="4180" x2="680" y2="4204" stroke="#0f6e56" stroke-width="2.5"/>
+<text x="680"  y="4220" text-anchor="middle" font-size="9" fill="#0f6e56">t=75s</text>
+<text x="680"  y="4232" text-anchor="middle" font-size="8" fill="#0f6e56">CB → CLOSED</text>
+<text x="680"  y="4164" text-anchor="middle" font-size="8" fill="#0f6e56">FULL</text>
+<text x="680"  y="4154" text-anchor="middle" font-size="8" fill="#0f6e56">RECOVERY ✓</text>
+
+<text x="380" y="4258" text-anchor="middle" font-size="9" fill="#f0a500">t=0→t=75s: cart data safe in Redis · stock locks auto-expire at t=30s · Kafka events queued and replayed · no item lost from cart</text>
+<text x="380" y="4272" text-anchor="middle" font-size="9" fill="#aaa">Checkout blocked during outage (safe default) · idempotent retries on recovery · payment deduped on orderId</text>
+
+<!-- ====== SECTION 11: CHECKOUT MID-FLIGHT SAGA ====== -->
+<line x1="40" y1="4328" x2="720" y2="4328" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="4320" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— checkout mid-flight crash: SAGA compensation pattern —</text>
+
+<rect x="20"  y="4336" width="720" height="136" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="4358" text-anchor="middle" font-size="12" font-weight="700" fill="#2c2c2a">Why a checkout crash never leaves the system in a broken half-state</text>
+
+<rect x="32"  y="4372" width="210" height="88" rx="6" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="137" y="4392" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">Step 1 — Price Re-validate</text>
+<text x="137" y="4410" text-anchor="middle" font-size="9" fill="#3b6d11">Crash here → nothing locked</text>
+<text x="137" y="4426" text-anchor="middle" font-size="9" fill="#3b6d11">Cart stays ACTIVE; user retries</text>
+<text x="137" y="4442" text-anchor="middle" font-size="9" fill="#3b6d11">No compensation needed</text>
+<text x="137" y="4454" text-anchor="middle" font-size="9" fill="#3b6d11">Price re-read on next attempt</text>
+
+<rect x="258" y="4372" width="210" height="88" rx="6" fill="#faeeda" stroke="#ba7517"/>
+<text x="363" y="4392" text-anchor="middle" font-size="10" font-weight="700" fill="#633806">Step 2 — Stock Lock</text>
+<text x="363" y="4410" text-anchor="middle" font-size="9" fill="#854f0b">Crash here → partial locks held</text>
+<text x="363" y="4426" text-anchor="middle" font-size="9" fill="#854f0b">Redis TTL = 30s auto-releases</text>
+<text x="363" y="4442" text-anchor="middle" font-size="9" fill="#854f0b">SAGA rollback: compensate</text>
+<text x="363" y="4454" text-anchor="middle" font-size="9" fill="#854f0b">all acquired locks immediately</text>
+
+<rect x="484" y="4372" width="216" height="88" rx="6" fill="#eedefe" stroke="#7f77dd"/>
+<text x="592" y="4392" text-anchor="middle" font-size="10" font-weight="700" fill="#3c3489">Step 3 — Payment</text>
+<text x="592" y="4410" text-anchor="middle" font-size="9" fill="#534ab7">Crash after charge → orderId</text>
+<text x="592" y="4426" text-anchor="middle" font-size="9" fill="#534ab7">idempotency prevents double</text>
+<text x="592" y="4442" text-anchor="middle" font-size="9" fill="#534ab7">Kafka event confirms order</text>
+<text x="592" y="4454" text-anchor="middle" font-size="9" fill="#534ab7">Stock deducted on Kafka confirm</text>
+
+<!-- ====== SECTION 12: 5 CRITICAL FALLBACK DECISIONS ====== -->
+<line x1="40" y1="4532" x2="720" y2="4532" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="4524" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— the 5 critical fallback design decisions —</text>
+
+<rect x="20"  y="4540" width="720" height="60" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="4560" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">1. Stock lock TTL is mandatory — orphaned locks must auto-expire</text>
+<text x="380" y="4580" text-anchor="middle" font-size="11" fill="#0f6e56">Every Redis SET NX lock carries a 30-second TTL. If Checkout Service crashes after acquiring locks but before releasing them, the TTL ensures stock is not held hostage forever. Without TTL, a single crash permanently removes stock from the available pool — causing false "out of stock" for every subsequent buyer. TTL is the only safe default.</text>
+
+<rect x="20"  y="4612" width="720" height="60" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="4632" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">2. Price must be re-validated at checkout — never trust priceAtAdd blindly</text>
+<text x="380" y="4652" text-anchor="middle" font-size="11" fill="#854f0b">The price stored at add-to-cart time may be hours old. A flash sale could have ended, a pricing error corrected, or a legitimate surge applied. The Checkout Service always re-fetches live price and compares. Price drops are applied silently (good news). Price rises require re-confirmation. If Pricing Service is down, checkout is blocked — a stale price cannot be charged without validation.</text>
+
+<rect x="20"  y="4684" width="720" height="60" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="4704" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">3. Payment uses orderId as idempotency key — never tripId or sessionId</text>
+<text x="380" y="4724" text-anchor="middle" font-size="11" fill="#534ab7">If the payment gateway times out and the client retries, the exact same orderId is sent. The gateway deduplicates on orderId — the customer is never double-charged. This key is the same across all fallback levels: primary PG → secondary PG → wallet → Kafka queue. Without orderId idempotency, a network blip at payment time charges the card twice silently.</text>
+
+<rect x="20"  y="4756" width="720" height="60" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="4776" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">4. Redis cart data is the source of truth during Redis availability — PG is the backup</text>
+<text x="380" y="4796" text-anchor="middle" font-size="11" fill="#3b6d11">Cart sessions live in Redis (TTL 7d) for speed — 99% of all cart reads never touch PostgreSQL. But every cart mutation is also written to a PostgreSQL cart_backup table asynchronously via Kafka. If Redis is lost entirely, the cart is rebuilt from PostgreSQL on next login. User never sees an empty cart — at worst, they see a slightly stale version from the async write.</text>
+
+<rect x="20"  y="4828" width="720" height="60" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="380" y="4848" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">5. Checkout must fail safe — block on uncertainty, never proceed with unverified state</text>
+<text x="380" y="4868" text-anchor="middle" font-size="11" fill="#993c1d">If Pricing Service, Inventory Service, or PostgreSQL is down during checkout, the safe default is to BLOCK the checkout and show "Please try again" — not to proceed with cached/unverified data. Unlike adding to cart (low-risk, idempotent), checkout involves money and stock deduction. A false checkout is infinitely worse than a blocked one. Conservative rejection protects both user and inventory.</text>
+
+<!-- ── FINAL SUMMARY BOX ── -->
+<rect x="20"  y="4904" width="720" height="60" rx="8" fill="#1e1208" stroke="#ba7517"/>
+<text x="380" y="4926" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Cart data survives any single service crash. Stock locks auto-expire. Payment is idempotent on orderId. Checkout blocks on uncertainty — never proceeds blind.</text>
+<text x="380" y="4946" text-anchor="middle" font-size="11" fill="#aaa">Recovery SLA: Cart Svc &lt;30s · Redis &lt;15s · Kafka &lt;30s · PostgreSQL &lt;60s · Stock locks auto-release at t=30s · Full DC &lt;2min</text>
+
+</svg>
+</body></html>
