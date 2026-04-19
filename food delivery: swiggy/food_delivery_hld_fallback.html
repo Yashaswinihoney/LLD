@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>body{font-family:sans-serif;background:#f9f9f7;padding:24px;}svg{max-width:820px;display:block;margin:auto;}</style>
+</head><body>
+<svg viewBox="0 0 760 5120" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  <marker id="arrow-o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#ba7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  <marker id="arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<!-- ====== SECTION 1: SEARCH + BROWSE ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— search + browse flow —</text>
+
+<rect x="40"  y="32" width="180" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="130" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Swiggy App</text>
+<text x="130" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Search restaurants near me</text>
+
+<rect x="540" y="32" width="180" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="630" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Web Client</text>
+<text x="630" y="68" text-anchor="middle" font-size="11" fill="#5f5e5a">Browse menu + add to cart</text>
+
+<line x1="130" y1="84" x2="280" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="630" y1="84" x2="480" y2="132" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="240" y="132" width="280" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="154" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">API Gateway</text>
+<text x="380" y="170" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth (JWT), rate limiting, routing</text>
+
+<line x1="380" y1="184" x2="380" y2="216" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="210" y="216" width="340" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="238" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Restaurant Search Service</text>
+<text x="380" y="256" text-anchor="middle" font-size="11" fill="#0f6e56">GeoHash lookup — restaurants within 5km</text>
+<text x="380" y="272" text-anchor="middle" font-size="11" fill="#0f6e56">Filter: open now, cuisine, rating, ETA</text>
+
+<line x1="300" y1="280" x2="160" y2="328" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="280" x2="600" y2="328" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="148" y="310" font-size="10" text-anchor="end" fill="#888">cache hit</text>
+<text x="608" y="310" font-size="10" fill="#888">cache miss</text>
+
+<rect x="40"  y="328" width="210" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="145" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis Cache</text>
+<text x="145" y="366" text-anchor="middle" font-size="11" fill="#3b6d11">Restaurant list by GeoHash cell</text>
+
+<rect x="510" y="328" width="210" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="615" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Restaurant Service</text>
+<text x="615" y="366" text-anchor="middle" font-size="11" fill="#0f6e56">Query DB, populate Redis</text>
+
+<line x1="145" y1="380" x2="300" y2="424" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="615" y1="380" x2="460" y2="424" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="200" y="424" width="360" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="446" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Return restaurant list + ETA to user</text>
+<text x="380" y="462" text-anchor="middle" font-size="11" fill="#0f6e56">Menu images via CDN, ETAs from Delivery Service</text>
+
+<!-- ====== SECTION 2: ORDER PLACEMENT ====== -->
+<line x1="40" y1="524" x2="720" y2="524" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="516" text-anchor="middle" font-size="11" fill="#888">— order placement flow —</text>
+
+<line x1="380" y1="476" x2="380" y2="532" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<text x="396" y="509" font-size="10" fill="#888">POST /orders {restaurantId, items[], paymentMethod}</text>
+
+<rect x="200" y="532" width="360" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="554" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Order Service</text>
+<text x="380" y="572" text-anchor="middle" font-size="11" fill="#534ab7">Validate menu items — still available?</text>
+<text x="380" y="588" text-anchor="middle" font-size="11" fill="#534ab7">Calculate delivery fee via Pricing Service</text>
+
+<!-- item unavailable -->
+<line x1="200" y1="564" x2="100" y2="616" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="88" y="598" font-size="10" text-anchor="end" fill="#d85a30">item sold out</text>
+<rect x="20" y="616" width="160" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="100" y="638" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Reject order</text>
+
+<line x1="380" y1="596" x2="380" y2="644" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- PARALLEL: pricing + payment -->
+<line x1="300" y1="664" x2="160" y2="712" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="664" x2="600" y2="712" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="200" y="644" width="360" height="28" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="663" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Parallel: pricing + payment</text>
+
+<rect x="30"  y="712" width="240" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="150" y="734" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Pricing Service</text>
+<text x="150" y="750" text-anchor="middle" font-size="11" fill="#854f0b">Standard / Free / Surge delivery fee</text>
+
+<rect x="490" y="712" width="240" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="610" y="734" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Payment Service</text>
+<text x="610" y="750" text-anchor="middle" font-size="11" fill="#534ab7">UPI / Card / Wallet (idempotent)</text>
+
+<!-- payment fail -->
+<line x1="610" y1="764" x2="660" y2="816" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="580" y="816" width="170" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="665" y="838" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Abort order</text>
+
+<line x1="150" y1="764" x2="300" y2="832" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="490" y1="748" x2="380" y2="832" stroke="#0f6e56" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-g)"/>
+<text x="288" y="818" font-size="10" text-anchor="end" fill="#0f6e56">payment ok</text>
+
+<rect x="200" y="832" width="360" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="854" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Order confirmed — write to PostgreSQL</text>
+<text x="380" y="872" text-anchor="middle" font-size="11" fill="#0f6e56">Publish to Kafka: order-events topic</text>
+<text x="380" y="888" text-anchor="middle" font-size="11" fill="#0f6e56">Status: PLACED — fan out to consumers</text>
+
+<!-- kafka fan out -->
+<line x1="300" y1="896" x2="140" y2="944" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="896" x2="380" y2="944" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="896" x2="620" y2="944" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="944" width="200" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="120" y="966" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Notification Service</text>
+<text x="120" y="982" text-anchor="middle" font-size="10" fill="#534ab7">Push to user + restaurant</text>
+
+<rect x="280" y="944" width="200" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="966" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Restaurant App</text>
+<text x="380" y="982" text-anchor="middle" font-size="10" fill="#854f0b">New order alert — accept / reject</text>
+
+<rect x="540" y="944" width="200" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="640" y="966" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">Analytics Service</text>
+<text x="640" y="982" text-anchor="middle" font-size="10" fill="#0f6e56">Revenue, trends, peak tracking</text>
+
+<!-- ====== SECTION 3: DELIVERY FLOW ====== -->
+<line x1="40" y1="1052" x2="720" y2="1052" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1044" text-anchor="middle" font-size="11" fill="#888">— delivery agent dispatch + tracking flow —</text>
+
+<rect x="200" y="1060" width="360" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="1082" text-anchor="middle" font-size="13" font-weight="600" fill="#633806">Restaurant marks order READY</text>
+<text x="380" y="1098" text-anchor="middle" font-size="11" fill="#854f0b">Publishes ready event to Kafka</text>
+
+<line x1="380" y1="1112" x2="380" y2="1148" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="200" y="1148" width="360" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="1170" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Dispatch Service</text>
+<text x="380" y="1188" text-anchor="middle" font-size="11" fill="#0f6e56">Find nearest available agent (GeoHash)</text>
+<text x="380" y="1204" text-anchor="middle" font-size="11" fill="#0f6e56">Query agent locations from Redis</text>
+
+<!-- no agent -->
+<line x1="560" y1="1180" x2="640" y2="1232" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="560" y="1232" width="180" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="650" y="1250" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Queue order</text>
+<text x="650" y="1264" text-anchor="middle" font-size="10" fill="#993c1d">Retry when agent frees up</text>
+
+<line x1="380" y1="1212" x2="380" y2="1260" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="200" y="1260" width="360" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1282" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Agent assigned — PICKED_UP</text>
+<text x="380" y="1300" text-anchor="middle" font-size="11" fill="#185fa5">Agent app receives order via WebSocket</text>
+<text x="380" y="1316" text-anchor="middle" font-size="11" fill="#185fa5">Agent streams GPS every 5s → Location Service</text>
+
+<line x1="380" y1="1324" x2="380" y2="1360" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="200" y="1360" width="360" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="1382" text-anchor="middle" font-size="13" font-weight="600" fill="#27500a">Live tracking — user sees agent on map</text>
+<text x="380" y="1400" text-anchor="middle" font-size="11" fill="#3b6d11">Agent location in Redis (updated every 5s)</text>
+<text x="380" y="1416" text-anchor="middle" font-size="11" fill="#3b6d11">WebSocket push to user app</text>
+
+<line x1="380" y1="1424" x2="380" y2="1460" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="220" y="1460" width="320" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="1482" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Order DELIVERED — agent freed</text>
+<text x="380" y="1498" text-anchor="middle" font-size="11" fill="#0f6e56">Kafka event → review prompt sent to user</text>
+
+<!-- ====== DATA STORES ====== -->
+<line x1="40" y1="1564" x2="720" y2="1564" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1556" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1572" width="148" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="94"  y="1594" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="94"  y="1612" text-anchor="middle" font-size="10" fill="#3b6d11">Restaurant GeoHash</text>
+<text x="94"  y="1628" text-anchor="middle" font-size="10" fill="#3b6d11">Agent locations</text>
+<text x="94"  y="1644" text-anchor="middle" font-size="10" fill="#3b6d11">Menu availability</text>
+
+<rect x="186" y="1572" width="148" height="76" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="260" y="1594" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="260" y="1612" text-anchor="middle" font-size="10" fill="#185fa5">Orders, payments</text>
+<text x="260" y="1628" text-anchor="middle" font-size="10" fill="#185fa5">Restaurants, menus</text>
+<text x="260" y="1644" text-anchor="middle" font-size="10" fill="#185fa5">Users, agents</text>
+
+<rect x="352" y="1572" width="148" height="76" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="426" y="1594" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="426" y="1612" text-anchor="middle" font-size="10" fill="#534ab7">order-events</text>
+<text x="426" y="1628" text-anchor="middle" font-size="10" fill="#534ab7">dispatch-events</text>
+<text x="426" y="1644" text-anchor="middle" font-size="10" fill="#534ab7">notification-events</text>
+
+<rect x="518" y="1572" width="148" height="76" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="592" y="1594" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="592" y="1612" text-anchor="middle" font-size="10" fill="#854f0b">Order history</text>
+<text x="592" y="1628" text-anchor="middle" font-size="10" fill="#854f0b">Agent location logs</text>
+<text x="592" y="1644" text-anchor="middle" font-size="10" fill="#854f0b">Analytics data</text>
+
+
+<!-- ================================================================ -->
+<!-- =========  FALLBACK MECHANISM — STARTS HERE  =================== -->
+<!-- ================================================================ -->
+
+<!-- ── TITLE BANNER ── -->
+<rect x="0"   y="1716" width="760" height="52" rx="0" fill="#1a0d04"/>
+<rect x="0"   y="1716" width="6"   height="52" rx="0" fill="#d85a30"/>
+<text x="380" y="1740" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">FALLBACK MECHANISM — WHEN SWIGGY FAILS OR CRASHES</text>
+<text x="380" y="1758" text-anchor="middle" font-size="11" fill="#aaaaaa">3-Layer Defence: Circuit Breaker → Stale Cache → Graceful Degradation</text>
+
+<!-- ====== SECTION 4: 3-LAYER DEFENCE ====== -->
+<line x1="40" y1="1828" x2="720" y2="1828" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1820" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 3-layer defence (applied to every critical service) —</text>
+
+<!-- Layer 1 -->
+<rect x="20"  y="1836" width="224" height="144" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="132" y="1858" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Layer 1 · Circuit Breaker</text>
+<text x="132" y="1876" text-anchor="middle" font-size="10" fill="#993c1d">CLOSED → calls pass normally</text>
+<text x="132" y="1892" text-anchor="middle" font-size="10" fill="#993c1d">OPEN → 5 failures / 10s window</text>
+<text x="132" y="1908" text-anchor="middle" font-size="10" fill="#993c1d">→ fail-fast, return cached data</text>
+<text x="132" y="1924" text-anchor="middle" font-size="10" fill="#993c1d">HALF_OPEN → 1 probe after 30s</text>
+<text x="132" y="1940" text-anchor="middle" font-size="10" fill="#993c1d">success → CLOSED · fail → OPEN</text>
+<text x="132" y="1956" text-anchor="middle" font-size="10" fill="#993c1d">On: Search · Order · Dispatch</text>
+<text x="132" y="1972" text-anchor="middle" font-size="10" fill="#993c1d">Payment · Notification · Pricing</text>
+
+<!-- Layer 2 -->
+<rect x="268" y="1836" width="224" height="144" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1858" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Layer 2 · Stale Cache</text>
+<text x="380" y="1876" text-anchor="middle" font-size="10" fill="#185fa5">Redis holds restaurant list by</text>
+<text x="380" y="1892" text-anchor="middle" font-size="10" fill="#185fa5">GeoHash (TTL 2 min) — served</text>
+<text x="380" y="1908" text-anchor="middle" font-size="10" fill="#185fa5">when Restaurant Svc is down</text>
+<text x="380" y="1924" text-anchor="middle" font-size="10" fill="#185fa5">Agent last-known location (TTL 15s)</text>
+<text x="380" y="1940" text-anchor="middle" font-size="10" fill="#185fa5">serves live map on GPS blip</text>
+<text x="380" y="1956" text-anchor="middle" font-size="10" fill="#185fa5">Menu availability snapshot cached</text>
+<text x="380" y="1972" text-anchor="middle" font-size="10" fill="#185fa5">until Inventory Svc recovers</text>
+
+<!-- Layer 3 -->
+<rect x="516" y="1836" width="224" height="144" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="628" y="1858" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Layer 3 · Graceful Degrade</text>
+<text x="628" y="1876" text-anchor="middle" font-size="10" fill="#3b6d11">No agents nearby → widen radius</text>
+<text x="628" y="1892" text-anchor="middle" font-size="10" fill="#3b6d11">or show "High demand" ETA bump</text>
+<text x="628" y="1908" text-anchor="middle" font-size="10" fill="#3b6d11">Payment fails → retry chain</text>
+<text x="628" y="1924" text-anchor="middle" font-size="10" fill="#3b6d11">(UPI → card → wallet → COD)</text>
+<text x="628" y="1940" text-anchor="middle" font-size="10" fill="#3b6d11">GPS lost → dead-reckoning +</text>
+<text x="628" y="1956" text-anchor="middle" font-size="10" fill="#3b6d11">last-known pin with "Updating…"</text>
+<text x="628" y="1972" text-anchor="middle" font-size="10" fill="#3b6d11">Kafka buffers events: zero loss</text>
+
+<!-- ====== SECTION 5: CIRCUIT BREAKER STATE MACHINE ====== -->
+<line x1="40" y1="2040" x2="720" y2="2040" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2032" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— circuit breaker state machine (per microservice) —</text>
+
+<rect x="100" y="2048" width="560" height="232" rx="8" fill="#1a0d04" stroke="#d85a30"/>
+<text x="380" y="2072" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Circuit Breaker — wraps every external call (Hystrix / Resilience4j)</text>
+
+<!-- CLOSED -->
+<rect x="134" y="2092" width="120" height="44" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="194" y="2110" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">CLOSED</text>
+<text x="194" y="2126" text-anchor="middle" font-size="9"  fill="#3b6d11">All calls pass ✓</text>
+
+<!-- CLOSED → OPEN -->
+<line x1="254" y1="2114" x2="358" y2="2114" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="306" y="2106" text-anchor="middle" font-size="9" fill="#d85a30">≥5 failures / 10s</text>
+<text x="306" y="2126" text-anchor="middle" font-size="9" fill="#d85a30">or p99 latency &gt;1s</text>
+
+<!-- OPEN -->
+<rect x="358" y="2092" width="120" height="44" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="418" y="2110" text-anchor="middle" font-size="11" font-weight="700" fill="#712b13">OPEN</text>
+<text x="418" y="2126" text-anchor="middle" font-size="9"  fill="#993c1d">Fail-fast + fallback</text>
+
+<!-- OPEN → HALF_OPEN arc -->
+<path d="M418 2136 Q418 2210 306 2220 Q194 2230 194 2188" fill="none" stroke="#ba7517" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-o)"/>
+<text x="314" y="2242" text-anchor="middle" font-size="9" fill="#ba7517">30s timeout → probe</text>
+
+<!-- HALF_OPEN -->
+<rect x="134" y="2188" width="120" height="44" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="194" y="2206" text-anchor="middle" font-size="11" font-weight="700" fill="#633806">HALF_OPEN</text>
+<text x="194" y="2222" text-anchor="middle" font-size="9"  fill="#854f0b">1 trial request</text>
+
+<!-- HALF_OPEN → CLOSED success -->
+<line x1="254" y1="2206" x2="358" y2="2156" stroke="#0f6e56" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+<text x="342" y="2178" text-anchor="middle" font-size="9" fill="#0f6e56">success</text>
+<text x="342" y="2190" text-anchor="middle" font-size="9" fill="#0f6e56">→ CLOSED ✓</text>
+
+<!-- HALF_OPEN → OPEN fail -->
+<line x1="254" y1="2222" x2="358" y2="2222" stroke="#d85a30" stroke-width="1.5" marker-end="url(#arrow-r)"/>
+<text x="306" y="2214" text-anchor="middle" font-size="9" fill="#d85a30">fail → OPEN</text>
+
+<!-- When OPEN sidebar -->
+<rect x="506" y="2092" width="140" height="164" rx="8" fill="#2c1a08" stroke="#555"/>
+<text x="576" y="2112" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">When OPEN:</text>
+<text x="576" y="2130" text-anchor="middle" font-size="9"  fill="#ccc">• Serve Redis restaurant list</text>
+<text x="576" y="2146" text-anchor="middle" font-size="9"  fill="#ccc">• Use cached delivery ETA</text>
+<text x="576" y="2162" text-anchor="middle" font-size="9"  fill="#ccc">• Menu from cached snapshot</text>
+<text x="576" y="2178" text-anchor="middle" font-size="9"  fill="#ccc">• Agent map: last-known GPS</text>
+<text x="576" y="2194" text-anchor="middle" font-size="9"  fill="#ccc">• Order writes → Kafka queue</text>
+<text x="576" y="2210" text-anchor="middle" font-size="9"  fill="#ccc">• PagerDuty alert fires</text>
+<text x="576" y="2226" text-anchor="middle" font-size="9"  fill="#ccc">• Ops dashboard flags</text>
+<text x="576" y="2244" text-anchor="middle" font-size="9"  fill="#ccc">  service DEGRADED</text>
+
+<text x="380" y="2268" text-anchor="middle" font-size="10" fill="#888">CBs on: Search · Order Svc · Dispatch · Pricing · Payment · Notification · Redis · PostgreSQL · Cassandra</text>
+
+<!-- ====== SECTION 6: COMPONENT-SPECIFIC CRASH & RECOVERY ====== -->
+<line x1="40" y1="2296" x2="720" y2="2296" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2288" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— component-specific crash &amp; recovery —</text>
+
+<!-- ── ROW 1: Restaurant Search crash | Redis Location down ── -->
+<rect x="20"  y="2304" width="350" height="196" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="195" y="2326" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Restaurant Search Service Crash</text>
+<text x="195" y="2344" text-anchor="middle" font-size="10" fill="#0f6e56">Root: Elasticsearch OOM / GeoHash index fault</text>
+<text x="32"  y="2364" font-size="10" font-weight="600" fill="#085041">Impact:</text>
+<text x="195" y="2380" text-anchor="middle" font-size="10" fill="#0f6e56">User sees blank home screen — no restaurants</text>
+<text x="195" y="2396" text-anchor="middle" font-size="10" fill="#0f6e56">Menu browsing and ordering not possible</text>
+<text x="195" y="2412" text-anchor="middle" font-size="10" fill="#0f6e56">Repeat search requests pile up on LB</text>
+<text x="32"  y="2432" font-size="10" font-weight="600" fill="#085041">Recovery:</text>
+<text x="195" y="2448" text-anchor="middle" font-size="10" fill="#0f6e56">1. CB opens → Redis GeoHash cache served (TTL 2min)</text>
+<text x="195" y="2464" text-anchor="middle" font-size="10" fill="#0f6e56">2. LB routes to healthy pods; K8s restarts pod &lt;30s</text>
+<text x="195" y="2480" text-anchor="middle" font-size="10" fill="#0f6e56">3. Stale list shown with "Results may be limited" banner</text>
+<text x="195" y="2492" text-anchor="middle" font-size="9"  fill="#3b6d11">⚠ RTO: &lt;30s · UX: cached restaurants shown immediately</text>
+
+<rect x="390" y="2304" width="350" height="196" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="565" y="2326" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Redis (Agent Location) Down</text>
+<text x="565" y="2344" text-anchor="middle" font-size="10" fill="#3b6d11">Root: node eviction / Sentinel failover lag / OOM</text>
+<text x="402" y="2364" font-size="10" font-weight="600" fill="#27500a">Impact:</text>
+<text x="565" y="2380" text-anchor="middle" font-size="10" fill="#3b6d11">Dispatch cannot find nearby agents — orders queue</text>
+<text x="565" y="2396" text-anchor="middle" font-size="10" fill="#3b6d11">Live map goes stale — user sees frozen agent pin</text>
+<text x="565" y="2412" text-anchor="middle" font-size="10" fill="#3b6d11">Restaurant GeoHash cache also lost</text>
+<text x="402" y="2432" font-size="10" font-weight="600" fill="#27500a">Recovery:</text>
+<text x="565" y="2448" text-anchor="middle" font-size="10" fill="#3b6d11">1. Sentinel promotes replica (&lt;15s)</text>
+<text x="565" y="2464" text-anchor="middle" font-size="10" fill="#3b6d11">2. Dispatch: query Cassandra location history as fallback</text>
+<text x="565" y="2480" text-anchor="middle" font-size="10" fill="#3b6d11">3. Map shows last-known pin with "Updating…" label</text>
+<text x="565" y="2492" text-anchor="middle" font-size="9"  fill="#3b6d11">⚠ RTO: &lt;15s · Dispatch lags; existing trips unaffected</text>
+
+<!-- ── ROW 2: Order Service crash | Kafka crash ── -->
+<rect x="20"  y="2516" width="350" height="196" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="195" y="2538" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Order Service Crash</text>
+<text x="195" y="2556" text-anchor="middle" font-size="10" fill="#534ab7">Root: OOM spike / flash-sale traffic surge</text>
+<text x="32"  y="2576" font-size="10" font-weight="600" fill="#3c3489">Impact:</text>
+<text x="195" y="2592" text-anchor="middle" font-size="10" fill="#534ab7">POST /orders returns 503 — order not placed</text>
+<text x="195" y="2608" text-anchor="middle" font-size="10" fill="#534ab7">User sees "Something went wrong" on checkout</text>
+<text x="195" y="2624" text-anchor="middle" font-size="10" fill="#534ab7">In-flight confirmed orders: safe in PostgreSQL + Kafka</text>
+<text x="32"  y="2644" font-size="10" font-weight="600" fill="#3c3489">Recovery:</text>
+<text x="195" y="2660" text-anchor="middle" font-size="10" fill="#534ab7">1. LB routes to healthy pods instantly</text>
+<text x="195" y="2676" text-anchor="middle" font-size="10" fill="#534ab7">2. K8s restarts crashed pod (&lt;30s)</text>
+<text x="195" y="2692" text-anchor="middle" font-size="10" fill="#534ab7">3. Client retries with same orderId (idempotency key)</text>
+<text x="195" y="2704" text-anchor="middle" font-size="9"  fill="#7f77dd">⚠ RTO: &lt;30s · RPO: 0 — no duplicate order on retry</text>
+
+<rect x="390" y="2516" width="350" height="196" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="565" y="2538" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Kafka Broker Crash</text>
+<text x="565" y="2556" text-anchor="middle" font-size="10" fill="#534ab7">Root: disk full / broker OOM / network partition</text>
+<text x="402" y="2576" font-size="10" font-weight="600" fill="#3c3489">Impact:</text>
+<text x="565" y="2592" text-anchor="middle" font-size="10" fill="#534ab7">order-events not published → restaurant not notified</text>
+<text x="565" y="2608" text-anchor="middle" font-size="10" fill="#534ab7">dispatch-events stall — agent not assigned</text>
+<text x="565" y="2624" text-anchor="middle" font-size="10" fill="#534ab7">notification pipeline blocked — push not sent</text>
+<text x="402" y="2644" font-size="10" font-weight="600" fill="#3c3489">Recovery:</text>
+<text x="565" y="2660" text-anchor="middle" font-size="10" fill="#534ab7">1. ISR=3 replica elected as new leader (&lt;30s)</text>
+<text x="565" y="2676" text-anchor="middle" font-size="10" fill="#534ab7">2. Producers buffer in memory; flush on reconnect</text>
+<text x="565" y="2692" text-anchor="middle" font-size="10" fill="#534ab7">3. All events replayed from last committed offset</text>
+<text x="565" y="2704" text-anchor="middle" font-size="9"  fill="#7f77dd">⚠ RTO: &lt;30s · RPO: 0 (ISR=3) · Order not lost</text>
+
+<!-- ── ROW 3: Dispatch Service crash | Payment crash ── -->
+<rect x="20"  y="2728" width="350" height="208" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="195" y="2750" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Dispatch Service Crash</text>
+<text x="195" y="2768" text-anchor="middle" font-size="10" fill="#854f0b">Root: GeoHash query OOM / Redis connection drop</text>
+<text x="32"  y="2788" font-size="10" font-weight="600" fill="#633806">Impact:</text>
+<text x="195" y="2804" text-anchor="middle" font-size="10" fill="#854f0b">No agent assigned — order stuck in READY state</text>
+<text x="195" y="2820" text-anchor="middle" font-size="10" fill="#854f0b">Food cools at restaurant — rider ETA balloon</text>
+<text x="195" y="2836" text-anchor="middle" font-size="10" fill="#854f0b">Kafka dispatch-events queue builds up</text>
+<text x="32"  y="2856" font-size="10" font-weight="600" fill="#633806">Recovery:</text>
+<text x="195" y="2872" text-anchor="middle" font-size="10" fill="#854f0b">1. K8s restarts pod (&lt;30s); Kafka event replayed</text>
+<text x="195" y="2888" text-anchor="middle" font-size="10" fill="#854f0b">2. Dispatch resumes from Kafka offset — no order lost</text>
+<text x="195" y="2904" text-anchor="middle" font-size="10" fill="#854f0b">3. Widen agent search radius if surge-zone backlog</text>
+<text x="195" y="2920" text-anchor="middle" font-size="10" fill="#854f0b">4. User sees "Looking for agent" extended ETA</text>
+<text x="195" y="2928" text-anchor="middle" font-size="9"  fill="#ba7517">⚠ RTO: &lt;30s · Worst case: food cold, not cancelled</text>
+
+<rect x="390" y="2728" width="350" height="208" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="565" y="2750" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Payment Service / Gateway Crash</text>
+<text x="565" y="2768" text-anchor="middle" font-size="10" fill="#185fa5">Root: Razorpay timeout / UPI outage / idempotency bug</text>
+<text x="402" y="2788" font-size="10" font-weight="600" fill="#0c447c">Impact:</text>
+<text x="565" y="2804" text-anchor="middle" font-size="10" fill="#185fa5">User charged but order not confirmed (worst case)</text>
+<text x="565" y="2820" text-anchor="middle" font-size="10" fill="#185fa5">Or: payment OK but order-confirmed not published</text>
+<text x="565" y="2836" text-anchor="middle" font-size="10" fill="#185fa5">Risk: double charge on client retry without idempotency</text>
+<text x="402" y="2856" font-size="10" font-weight="600" fill="#0c447c">Recovery (Fallback Chain):</text>
+<text x="565" y="2872" text-anchor="middle" font-size="10" fill="#185fa5">1. orderId idempotency key → no double charge ever</text>
+<text x="565" y="2888" text-anchor="middle" font-size="10" fill="#185fa5">2. Primary PG fails → Secondary PG (PayU/Cashfree)</text>
+<text x="565" y="2904" text-anchor="middle" font-size="10" fill="#185fa5">3. Fails → Swiggy Money wallet → Kafka async retry</text>
+<text x="565" y="2920" text-anchor="middle" font-size="10" fill="#185fa5">4. COD offered if all digital paths fail</text>
+<text x="565" y="2928" text-anchor="middle" font-size="9"  fill="#185fa5">⚠ RTO: async · Kafka holds charge event for replay</text>
+
+<!-- ── ROW 4: PostgreSQL crash | Notification Service crash ── -->
+<rect x="20"  y="2952" width="350" height="180" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="195" y="2974" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">PostgreSQL (Orders DB) Down</text>
+<text x="195" y="2992" text-anchor="middle" font-size="10" fill="#185fa5">Root: primary crash / disk full / slow query lock</text>
+<text x="32"  y="3012" font-size="10" font-weight="600" fill="#0c447c">Impact:</text>
+<text x="195" y="3028" text-anchor="middle" font-size="10" fill="#185fa5">New orders cannot be persisted — placement fails</text>
+<text x="195" y="3044" text-anchor="middle" font-size="10" fill="#185fa5">Order status updates lost (PLACED → ACCEPTED)</text>
+<text x="195" y="3060" text-anchor="middle" font-size="10" fill="#185fa5">In-flight: Kafka event log is the source of truth</text>
+<text x="32"  y="3080" font-size="10" font-weight="600" fill="#0c447c">Recovery:</text>
+<text x="195" y="3096" text-anchor="middle" font-size="10" fill="#185fa5">1. Aurora read replica promoted via failover (&lt;60s)</text>
+<text x="195" y="3112" text-anchor="middle" font-size="10" fill="#185fa5">2. New orders queued in Kafka outbox; replayed on recovery</text>
+<text x="195" y="3124" text-anchor="middle" font-size="9"  fill="#185fa5">⚠ RTO: &lt;60s Aurora · RPO: 0 (Kafka outbox pattern)</text>
+
+<rect x="390" y="2952" width="350" height="180" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="565" y="2974" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Notification Service Crash</text>
+<text x="565" y="2992" text-anchor="middle" font-size="10" fill="#854f0b">Root: FCM quota hit / WebSocket server OOM</text>
+<text x="402" y="3012" font-size="10" font-weight="600" fill="#633806">Impact:</text>
+<text x="565" y="3028" text-anchor="middle" font-size="10" fill="#854f0b">User not notified of order confirmation / dispatch</text>
+<text x="565" y="3044" text-anchor="middle" font-size="10" fill="#854f0b">Restaurant not alerted of new order in-app</text>
+<text x="565" y="3060" text-anchor="middle" font-size="10" fill="#854f0b">Agent WebSocket push fails</text>
+<text x="402" y="3080" font-size="10" font-weight="600" fill="#633806">Recovery:</text>
+<text x="565" y="3096" text-anchor="middle" font-size="10" fill="#854f0b">1. Kafka notification-events buffer safely (&lt;30s recovery)</text>
+<text x="565" y="3112" text-anchor="middle" font-size="10" fill="#854f0b">2. Fallback: user polls GET /orders/{id} for status</text>
+<text x="565" y="3124" text-anchor="middle" font-size="9"  fill="#ba7517">⚠ RTO: &lt;30s · UX: delayed push; order not lost</text>
+
+<!-- ====== SECTION 7: PAYMENT FALLBACK CHAIN ====== -->
+<line x1="40" y1="3192" x2="720" y2="3192" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="3184" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— payment fallback chain (Chain of Responsibility) —</text>
+
+<rect x="20"  y="3200" width="154" height="96" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="97"  y="3220" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">Primary PG</text>
+<text x="97"  y="3238" text-anchor="middle" font-size="10" fill="#534ab7">Razorpay / Stripe</text>
+<text x="97"  y="3254" text-anchor="middle" font-size="10" fill="#534ab7">UPI / Card</text>
+<text x="97"  y="3270" text-anchor="middle" font-size="10" fill="#534ab7">orderId idempotency</text>
+<text x="97"  y="3286" text-anchor="middle" font-size="10" fill="#534ab7">CB: 3 fails → OPEN</text>
+
+<line x1="174" y1="3248" x2="198" y2="3248" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="186" y="3238" text-anchor="middle" font-size="9" fill="#d85a30">fails</text>
+
+<rect x="198" y="3200" width="154" height="96" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="275" y="3220" text-anchor="middle" font-size="11" font-weight="700" fill="#3c3489">Secondary PG</text>
+<text x="275" y="3238" text-anchor="middle" font-size="10" fill="#534ab7">PayU / Cashfree</text>
+<text x="275" y="3254" text-anchor="middle" font-size="10" fill="#534ab7">Independent gateway</text>
+<text x="275" y="3270" text-anchor="middle" font-size="10" fill="#534ab7">Same orderId key</text>
+<text x="275" y="3286" text-anchor="middle" font-size="10" fill="#534ab7">No double charge</text>
+
+<line x1="352" y1="3248" x2="376" y2="3248" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="364" y="3238" text-anchor="middle" font-size="9" fill="#d85a30">fails</text>
+
+<rect x="376" y="3200" width="154" height="96" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="453" y="3220" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">Swiggy Money</text>
+<text x="453" y="3238" text-anchor="middle" font-size="10" fill="#3b6d11">In-app wallet / credits</text>
+<text x="453" y="3254" text-anchor="middle" font-size="10" fill="#3b6d11">No external call</text>
+<text x="453" y="3270" text-anchor="middle" font-size="10" fill="#3b6d11">Instant deduction</text>
+<text x="453" y="3286" text-anchor="middle" font-size="10" fill="#3b6d11">Promo credits used first</text>
+
+<line x1="530" y1="3248" x2="554" y2="3248" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+<text x="542" y="3238" text-anchor="middle" font-size="9" fill="#d85a30">fails</text>
+
+<rect x="554" y="3200" width="186" height="96" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="647" y="3220" text-anchor="middle" font-size="11" font-weight="700" fill="#2c2c2a">Cash on Delivery</text>
+<text x="647" y="3238" text-anchor="middle" font-size="10" fill="#5f5e5a">Always-available fallback</text>
+<text x="647" y="3254" text-anchor="middle" font-size="10" fill="#5f5e5a">No digital infra needed</text>
+<text x="647" y="3270" text-anchor="middle" font-size="10" fill="#5f5e5a">Order proceeds; pay</text>
+<text x="647" y="3286" text-anchor="middle" font-size="10" fill="#5f5e5a">agent on delivery</text>
+
+<!-- ====== SECTION 8: DB DOWN TABLE ====== -->
+<line x1="40" y1="3360" x2="720" y2="3360" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="3352" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— database down: what each service does —</text>
+
+<rect x="20"  y="3368" width="720" height="28" rx="4" fill="#1a0d04"/>
+<text x="130" y="3387" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">DATABASE</text>
+<text x="296" y="3387" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">FAILURE MODE</text>
+<text x="490" y="3387" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">FALLBACK ACTION</text>
+<text x="680" y="3387" text-anchor="middle" font-size="10" font-weight="700" fill="#f0a500">USER IMPACT</text>
+
+<rect x="20"  y="3396" width="720" height="26" rx="0" fill="#eaf3de"/>
+<text x="130" y="3414" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Redis (GeoHash)</text>
+<text x="296" y="3414" text-anchor="middle" font-size="9" fill="#3b6d11">Node eviction / OOM</text>
+<text x="490" y="3414" text-anchor="middle" font-size="9" fill="#3b6d11">Sentinel promotes replica · cached restaurant list served</text>
+<text x="680" y="3414" text-anchor="middle" font-size="9" fill="#3b6d11">Stale restaurants; "Limited results" shown</text>
+
+<rect x="20"  y="3422" width="720" height="26" rx="0" fill="#f1efe8"/>
+<text x="130" y="3440" text-anchor="middle" font-size="9" font-weight="600" fill="#633806">PostgreSQL</text>
+<text x="296" y="3440" text-anchor="middle" font-size="9" fill="#854f0b">Primary crash / disk full</text>
+<text x="490" y="3440" text-anchor="middle" font-size="9" fill="#854f0b">Aurora replica promoted (&lt;60s) · orders queue in Kafka</text>
+<text x="680" y="3440" text-anchor="middle" font-size="9" fill="#854f0b">New orders queued; existing unaffected</text>
+
+<rect x="20"  y="3448" width="720" height="26" rx="0" fill="#eaf3de"/>
+<text x="130" y="3466" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Kafka</text>
+<text x="296" y="3466" text-anchor="middle" font-size="9" fill="#3b6d11">Broker crash / leader loss</text>
+<text x="490" y="3466" text-anchor="middle" font-size="9" fill="#3b6d11">ISR replica elected · producers buffer in memory</text>
+<text x="680" y="3466" text-anchor="middle" font-size="9" fill="#3b6d11">Notifications delayed; orders safe</text>
+
+<rect x="20"  y="3474" width="720" height="26" rx="0" fill="#f1efe8"/>
+<text x="130" y="3492" text-anchor="middle" font-size="9" font-weight="600" fill="#534ab7">Cassandra</text>
+<text x="296" y="3492" text-anchor="middle" font-size="9" fill="#534ab7">Ring split / compaction OOM</text>
+<text x="490" y="3492" text-anchor="middle" font-size="9" fill="#534ab7">RF=3 survivors serve · hinted handoff on rejoin</text>
+<text x="680" y="3492" text-anchor="middle" font-size="9" fill="#534ab7">Analytics gap; agent tracking unaffected</text>
+
+<rect x="20"  y="3500" width="720" height="26" rx="0" fill="#eaf3de"/>
+<text x="130" y="3518" text-anchor="middle" font-size="9" font-weight="600" fill="#27500a">Elasticsearch</text>
+<text x="296" y="3518" text-anchor="middle" font-size="9" fill="#3b6d11">Shard failure / index corrupt</text>
+<text x="490" y="3518" text-anchor="middle" font-size="9" fill="#3b6d11">CB opens · Redis GeoHash cache serves restaurant list</text>
+<text x="680" y="3518" text-anchor="middle" font-size="9" fill="#3b6d11">Search degraded; browse still works</text>
+
+<rect x="20"  y="3526" width="720" height="26" rx="0" fill="#faece7"/>
+<text x="130" y="3544" text-anchor="middle" font-size="9" font-weight="600" fill="#712b13">Full DC failure</text>
+<text x="296" y="3544" text-anchor="middle" font-size="9" fill="#d85a30">All services unreachable</text>
+<text x="490" y="3544" text-anchor="middle" font-size="9" fill="#d85a30">DNS failover to standby region · Kafka geo-replicated</text>
+<text x="680" y="3544" text-anchor="middle" font-size="9" fill="#d85a30">Read-only; no new orders (&lt;2min)</text>
+
+<!-- ====== SECTION 9: CRASH RECOVERY TIMELINE ====== -->
+<line x1="40" y1="3612" x2="720" y2="3612" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="3604" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— crash recovery timeline: t=0 crash → full recovery —</text>
+
+<rect x="20"  y="3620" width="720" height="196" rx="8" fill="#1a0d04" stroke="#d85a30"/>
+
+<!-- Timeline bar -->
+<line x1="50"  y1="3736" x2="710" y2="3736" stroke="#f0a500" stroke-width="2.5"/>
+
+<!-- t=0 -->
+<line x1="50"  y1="3724" x2="50"  y2="3748" stroke="#d85a30" stroke-width="2.5"/>
+<text x="50"   y="3764" text-anchor="middle" font-size="9" fill="#d85a30">t=0</text>
+<text x="50"   y="3776" text-anchor="middle" font-size="8" fill="#aaa">CRASH</text>
+<text x="50"   y="3708" text-anchor="middle" font-size="8" fill="#aaa">Kafka events</text>
+<text x="50"   y="3698" text-anchor="middle" font-size="8" fill="#aaa">queue safely</text>
+
+<!-- t=5s -->
+<line x1="162" y1="3724" x2="162" y2="3748" stroke="#d85a30" stroke-width="2"/>
+<text x="162"  y="3764" text-anchor="middle" font-size="9" fill="#d85a30">t=5s</text>
+<text x="162"  y="3776" text-anchor="middle" font-size="8" fill="#aaa">CB opens</text>
+<text x="162"  y="3708" text-anchor="middle" font-size="8" fill="#aaa">Redis cache</text>
+<text x="162"  y="3698" text-anchor="middle" font-size="8" fill="#aaa">serves results</text>
+
+<!-- t=15s -->
+<line x1="286" y1="3724" x2="286" y2="3748" stroke="#ba7517" stroke-width="2"/>
+<text x="286"  y="3764" text-anchor="middle" font-size="9" fill="#ba7517">t=15s</text>
+<text x="286"  y="3776" text-anchor="middle" font-size="8" fill="#aaa">K8s terminates</text>
+<text x="286"  y="3708" text-anchor="middle" font-size="8" fill="#aaa">pod; LB reroutes</text>
+<text x="286"  y="3698" text-anchor="middle" font-size="8" fill="#aaa">to healthy pods</text>
+
+<!-- t=30s -->
+<line x1="410" y1="3724" x2="410" y2="3748" stroke="#7f77dd" stroke-width="2"/>
+<text x="410"  y="3764" text-anchor="middle" font-size="9" fill="#7f77dd">t=30s</text>
+<text x="410"  y="3776" text-anchor="middle" font-size="8" fill="#aaa">New pod starts</text>
+<text x="410"  y="3708" text-anchor="middle" font-size="8" fill="#aaa">Redis / Kafka</text>
+<text x="410"  y="3698" text-anchor="middle" font-size="8" fill="#aaa">connections init</text>
+
+<!-- t=45s -->
+<line x1="534" y1="3724" x2="534" y2="3748" stroke="#185fa5" stroke-width="2"/>
+<text x="534"  y="3764" text-anchor="middle" font-size="9" fill="#185fa5">t=45s</text>
+<text x="534"  y="3776" text-anchor="middle" font-size="8" fill="#aaa">Readiness probe</text>
+<text x="534"  y="3708" text-anchor="middle" font-size="8" fill="#aaa">passes; LB</text>
+<text x="534"  y="3698" text-anchor="middle" font-size="8" fill="#aaa">re-adds pod</text>
+
+<!-- t=75s FULL RECOVERY -->
+<line x1="700" y1="3724" x2="700" y2="3748" stroke="#0f6e56" stroke-width="2.5"/>
+<text x="700"  y="3764" text-anchor="middle" font-size="9" fill="#0f6e56">t=75s</text>
+<text x="700"  y="3776" text-anchor="middle" font-size="8" fill="#0f6e56">CB → CLOSED</text>
+<text x="700"  y="3708" text-anchor="middle" font-size="8" fill="#0f6e56">FULL</text>
+<text x="700"  y="3698" text-anchor="middle" font-size="8" fill="#0f6e56">RECOVERY ✓</text>
+
+<text x="380" y="3800" text-anchor="middle" font-size="9" fill="#f0a500">t=0→t=75s: Redis serves stale restaurant list · agent GPS cached · Kafka holds all events · confirmed orders: never lost</text>
+<text x="380" y="3814" text-anchor="middle" font-size="9" fill="#aaa">New orders get "Please try again" · idempotent retry creates zero duplicates · dispatch resumes from Kafka offset on recovery</text>
+
+<!-- ====== SECTION 10: AGENT GPS LOSS ====== -->
+<line x1="40" y1="3872" x2="720" y2="3872" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="3864" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— agent GPS stream loss: dead reckoning fallback (unique to food delivery) —</text>
+
+<rect x="20"  y="3880" width="720" height="136" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="3902" text-anchor="middle" font-size="12" font-weight="700" fill="#2c2c2a">Why a dropped GPS ping never freezes the live map</text>
+
+<rect x="32"  y="3916" width="210" height="88" rx="6" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="137" y="3936" text-anchor="middle" font-size="10" font-weight="700" fill="#27500a">1 · Last-Known Position</text>
+<text x="137" y="3954" text-anchor="middle" font-size="9"  fill="#3b6d11">Redis GeoHash TTL = 15s</text>
+<text x="137" y="3970" text-anchor="middle" font-size="9"  fill="#3b6d11">No ping → show last pin with</text>
+<text x="137" y="3986" text-anchor="middle" font-size="9"  fill="#3b6d11">"Updating…" indicator</text>
+<text x="137" y="3996" text-anchor="middle" font-size="9"  fill="#3b6d11">User sees glide, not freeze</text>
+
+<rect x="268" y="3916" width="210" height="88" rx="6" fill="#faeeda" stroke="#ba7517"/>
+<text x="373" y="3936" text-anchor="middle" font-size="10" font-weight="700" fill="#633806">2 · Dead Reckoning</text>
+<text x="373" y="3954" text-anchor="middle" font-size="9"  fill="#854f0b">Use last heading + speed to</text>
+<text x="373" y="3970" text-anchor="middle" font-size="9"  fill="#854f0b">project position forward on map</text>
+<text x="373" y="3986" text-anchor="middle" font-size="9"  fill="#854f0b">Snap to road network via</text>
+<text x="373" y="3996" text-anchor="middle" font-size="9"  fill="#854f0b">GeoHash map-matching algo</text>
+
+<rect x="504" y="3916" width="210" height="88" rx="6" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="609" y="3936" text-anchor="middle" font-size="10" font-weight="700" fill="#0c447c">3 · Client-Side Smoothing</text>
+<text x="609" y="3954" text-anchor="middle" font-size="9"  fill="#185fa5">App interpolates frames between</text>
+<text x="609" y="3970" text-anchor="middle" font-size="9"  fill="#185fa5">received GPS pings (animation)</text>
+<text x="609" y="3986" text-anchor="middle" font-size="9"  fill="#185fa5">Scooter icon glides smoothly</text>
+<text x="609" y="3996" text-anchor="middle" font-size="9"  fill="#185fa5">even on sparse 5s-interval pings</text>
+
+<!-- ====== SECTION 11: 5 CRITICAL FALLBACK DECISIONS ====== -->
+<line x1="40" y1="4076" x2="720" y2="4076" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="4068" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— the 5 critical fallback design decisions —</text>
+
+<rect x="20"  y="4084" width="720" height="60" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="4104" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">1. Kafka offset committed AFTER PostgreSQL write — never before</text>
+<text x="380" y="4124" text-anchor="middle" font-size="11" fill="#0f6e56">If Order Service crashes after publishing to Kafka but before writing to PostgreSQL, the Kafka event is replayed and the DB write retried — order is recovered. If the offset is committed first, the event is never replayed and the order silently vanishes. Outbox pattern: DB write and Kafka publish in the same transaction via the transactional outbox table.</text>
+
+<rect x="20"  y="4156" width="720" height="60" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="4176" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">2. Dispatch must widen the search radius — never leave an order stranded</text>
+<text x="380" y="4196" text-anchor="middle" font-size="11" fill="#854f0b">If no agent is found within 2km (GeoHash cell), the Dispatch Service widens to 3km, then 5km, with increasing ETA estimates shown to the user. The order is never silently abandoned — it enters a retry queue. An unassigned order is far worse for the business than a slightly longer ETA; food gets cold but the relationship survives. After 15 min unassigned: restaurant notified, order may be cancelled with full refund.</text>
+
+<rect x="20"  y="4228" width="720" height="60" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="4248" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">3. Payment is idempotent on orderId — never the user session or request ID</text>
+<text x="380" y="4268" text-anchor="middle" font-size="11" fill="#534ab7">Gateway timeout on payment triggers client retry. The same orderId is sent — the gateway deduplicates. This holds across all fallback levels: primary PG, secondary PG, wallet, and Kafka async queue. A single orderId maps to exactly one charge regardless of retry count, network blip, or service restart. Without this: Rs. 500 biryani order becomes Rs. 1000 double charge at scale.</text>
+
+<rect x="20"  y="4300" width="720" height="60" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="4320" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">4. Agent location TTL = 15s — expired entry means agent is offline</text>
+<text x="380" y="4340" text-anchor="middle" font-size="11" fill="#3b6d11">Agent GPS entries in Redis have a strict 15-second TTL. If the agent app loses connectivity and stops streaming, the entry expires and the agent is treated as unavailable for dispatch. This prevents assigning new orders to a ghost agent who may have logged off or crashed. After TTL expiry the live map shows "Updating…" — the user sees a graceful indicator, not a frozen pin stuck at a wrong location.</text>
+
+<rect x="20"  y="4372" width="720" height="60" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="380" y="4392" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">5. Menu availability is validated at order time, not only at add-to-cart time</text>
+<text x="380" y="4412" text-anchor="middle" font-size="11" fill="#993c1d">An item may be marked available when added to cart but sold out by the time the order is placed (especially during peak lunch/dinner hours). Order Service re-validates every line item against the restaurant's live availability before accepting payment. If any item is now unavailable, the order is rejected with a clear per-item message — not a generic error. This prevents payment for items that cannot be fulfilled.</text>
+
+<!-- ── FINAL SUMMARY BOX ── -->
+<rect x="20"  y="4448" width="720" height="60" rx="8" fill="#1a0d04" stroke="#d85a30"/>
+<text x="380" y="4470" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Swiggy dispatches 3M+ orders/day. Any service crash must not cancel a confirmed order or double-charge a user.</text>
+<text x="380" y="4490" text-anchor="middle" font-size="11" fill="#aaa">Recovery SLA: Search &lt;30s · Redis &lt;15s · Kafka &lt;30s · PostgreSQL &lt;60s · Dispatch &lt;30s · Payment async · Full DC &lt;2min</text>
+
+</svg>
+</body></html>
