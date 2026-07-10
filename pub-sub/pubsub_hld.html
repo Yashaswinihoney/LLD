@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 3200" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#2c2c2a"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">PUB-SUB SYSTEM — HLD APPLICATION FLOW</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">Publish · Topics · Subscribe · Fan-out · Retry · Dead Letter · Replay</text>
+
+<!-- ====== SECTION 1: PUBLISHERS ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— publishers (Req 1 + 3: multiple publishers) —</text>
+
+<rect x="30"  y="80" width="152" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="106" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Order Service</text>
+<text x="106" y="118" text-anchor="middle" font-size="10" fill="#5f5e5a">topic: orders</text>
+<text x="106" y="132" text-anchor="middle" font-size="10" fill="#5f5e5a">REST POST /publish</text>
+
+<rect x="200" y="80" width="152" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="276" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Payment Service</text>
+<text x="276" y="118" text-anchor="middle" font-size="10" fill="#5f5e5a">topic: payments</text>
+<text x="276" y="132" text-anchor="middle" font-size="10" fill="#5f5e5a">SDK / gRPC</text>
+
+<rect x="370" y="80" width="152" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="446" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Market Feed</text>
+<text x="446" y="118" text-anchor="middle" font-size="10" fill="#5f5e5a">topic: stock-prices</text>
+<text x="446" y="132" text-anchor="middle" font-size="10" fill="#5f5e5a">WebSocket stream</text>
+
+<rect x="540" y="80" width="152" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="616" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">User Service</text>
+<text x="616" y="118" text-anchor="middle" font-size="10" fill="#5f5e5a">topic: user-events</text>
+<text x="616" y="132" text-anchor="middle" font-size="10" fill="#5f5e5a">Kafka producer SDK</text>
+
+<line x1="106" y1="136" x2="200" y2="188" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="276" y1="136" x2="320" y2="188" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="446" y1="136" x2="400" y2="188" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="616" y1="136" x2="560" y2="188" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 2: API GATEWAY + BROKER ====== -->
+<line x1="30" y1="176" x2="770" y2="176" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="170" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— broker entry point (API Gateway + Message Broker) —</text>
+
+<rect x="160" y="188" width="480" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="210" text-anchor="middle" font-size="13" font-weight="700" fill="#2c2c2a">API Gateway (REST / gRPC / WebSocket)</text>
+<text x="400" y="228" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth: API key / JWT per publisher · Rate limiting: 10,000 msgs/sec per publisher</text>
+<text x="400" y="244" text-anchor="middle" font-size="11" fill="#5f5e5a">Message size validation (max 256KB) · Schema validation (optional JSON Schema)</text>
+
+<line x1="400" y1="252" x2="400" y2="296" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 3: MESSAGE BROKER ====== -->
+<line x1="30" y1="284" x2="770" y2="284" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="278" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— message broker (Kafka) —</text>
+
+<rect x="80" y="296" width="640" height="112" rx="8" fill="#2c2c2a"/>
+<text x="400" y="320" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Message Broker (Apache Kafka)</text>
+<text x="400" y="340" text-anchor="middle" font-size="11" fill="#aaa">Receive publish request → route to topic → append to topic partition log</text>
+<text x="400" y="356" text-anchor="middle" font-size="11" fill="#aaa">Durable: messages written to disk, replicated across broker cluster (RF=3)</text>
+<text x="400" y="372" text-anchor="middle" font-size="11" fill="#aaa">Ordering: guaranteed within a partition (partitioned by key e.g. orderId)</text>
+<text x="400" y="388" text-anchor="middle" font-size="11" fill="#aaa">ACK modes: acks=0 (fire+forget) | acks=1 (leader) | acks=all (all replicas)</text>
+<text x="400" y="404" text-anchor="middle" font-size="11" fill="#aaa">Idempotent producer: enable.idempotence=true → exactly-once per partition</text>
+
+<!-- ====== SECTION 4: TOPICS ====== -->
+<line x1="30" y1="484" x2="770" y2="484" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="477" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— topics + partitions (Req 1 + 6) —</text>
+
+<!-- 4 topics -->
+<rect x="20"  y="492" width="170" height="104" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="105" y="514" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">orders</text>
+<text x="105" y="532" text-anchor="middle" font-size="10" fill="#534ab7">Standard topic</text>
+<text x="105" y="548" text-anchor="middle" font-size="10" fill="#534ab7">3 partitions</text>
+<text x="105" y="564" text-anchor="middle" font-size="10" fill="#534ab7">key: orderId</text>
+<text x="105" y="580" text-anchor="middle" font-size="10" fill="#534ab7">retention: 7 days</text>
+<text x="105" y="596" text-anchor="middle" font-size="10" fill="#534ab7">RF: 3</text>
+
+<rect x="208" y="492" width="170" height="104" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="293" y="514" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">payments</text>
+<text x="293" y="532" text-anchor="middle" font-size="10" fill="#534ab7">Standard topic</text>
+<text x="293" y="548" text-anchor="middle" font-size="10" fill="#534ab7">3 partitions</text>
+<text x="293" y="564" text-anchor="middle" font-size="10" fill="#534ab7">key: paymentId</text>
+<text x="293" y="580" text-anchor="middle" font-size="10" fill="#534ab7">retention: 30 days</text>
+<text x="293" y="596" text-anchor="middle" font-size="10" fill="#534ab7">RF: 3</text>
+
+<rect x="396" y="492" width="170" height="104" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="481" y="514" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">stock-prices</text>
+<text x="481" y="532" text-anchor="middle" font-size="10" fill="#534ab7">High-throughput</text>
+<text x="481" y="548" text-anchor="middle" font-size="10" fill="#534ab7">12 partitions</text>
+<text x="481" y="564" text-anchor="middle" font-size="10" fill="#534ab7">key: symbol</text>
+<text x="481" y="580" text-anchor="middle" font-size="10" fill="#534ab7">retention: 1 day</text>
+<text x="481" y="596" text-anchor="middle" font-size="10" fill="#534ab7">RF: 3</text>
+
+<rect x="584" y="492" width="196" height="104" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="682" y="514" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">user-events</text>
+<text x="682" y="532" text-anchor="middle" font-size="10" fill="#534ab7">Fan-out topic</text>
+<text x="682" y="548" text-anchor="middle" font-size="10" fill="#534ab7">6 partitions</text>
+<text x="682" y="564" text-anchor="middle" font-size="10" fill="#534ab7">key: userId</text>
+<text x="682" y="580" text-anchor="middle" font-size="10" fill="#534ab7">retention: 14 days</text>
+<text x="682" y="596" text-anchor="middle" font-size="10" fill="#534ab7">RF: 3</text>
+
+<!-- arrows to consumers -->
+<line x1="105" y1="596" x2="105" y2="644" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="293" y1="596" x2="293" y2="644" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="481" y1="596" x2="481" y2="644" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="682" y1="596" x2="682" y2="644" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 5: SUBSCRIBER CONSUMER GROUPS ====== -->
+<line x1="30" y1="632" x2="770" y2="632" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="626" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— subscriber consumer groups (Req 2 + 3: multiple subscribers) —</text>
+
+<!-- orders consumers -->
+<rect x="20"  y="644" width="170" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="105" y="666" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">orders consumers</text>
+<text x="105" y="684" text-anchor="middle" font-size="10" fill="#3b6d11">• InventoryService</text>
+<text x="105" y="700" text-anchor="middle" font-size="10" fill="#3b6d11">• EmailService</text>
+<text x="105" y="716" text-anchor="middle" font-size="10" fill="#3b6d11">• AnalyticsService</text>
+<text x="105" y="732" text-anchor="middle" font-size="10" fill="#3b6d11">• ShippingService</text>
+
+<!-- payments consumers -->
+<rect x="208" y="644" width="170" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="293" y="666" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">payments consumers</text>
+<text x="293" y="684" text-anchor="middle" font-size="10" fill="#3b6d11">• FraudDetection</text>
+<text x="293" y="700" text-anchor="middle" font-size="10" fill="#3b6d11">• LedgerService</text>
+<text x="293" y="716" text-anchor="middle" font-size="10" fill="#3b6d11">• EmailService</text>
+<text x="293" y="732" text-anchor="middle" font-size="10" fill="#3b6d11">• ReportingService</text>
+
+<!-- stock consumers -->
+<rect x="396" y="644" width="170" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="481" y="666" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">stock consumers</text>
+<text x="481" y="684" text-anchor="middle" font-size="10" fill="#3b6d11">• DashboardService</text>
+<text x="481" y="700" text-anchor="middle" font-size="10" fill="#3b6d11">• ChartService</text>
+<text x="481" y="716" text-anchor="middle" font-size="10" fill="#3b6d11">• AlertService</text>
+<text x="481" y="732" text-anchor="middle" font-size="10" fill="#3b6d11">• ML Pipeline</text>
+
+<!-- user-events consumers -->
+<rect x="584" y="644" width="196" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="682" y="666" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">user-events consumers</text>
+<text x="682" y="684" text-anchor="middle" font-size="10" fill="#3b6d11">• NotificationService</text>
+<text x="682" y="700" text-anchor="middle" font-size="10" fill="#3b6d11">• PersonalizeEngine</text>
+<text x="682" y="716" text-anchor="middle" font-size="10" fill="#3b6d11">• AnalyticsService</text>
+<text x="682" y="732" text-anchor="middle" font-size="10" fill="#3b6d11">• SearchIndexer</text>
+
+<!-- ====== SECTION 6: PUBLISH FLOW ====== -->
+<line x1="30" y1="816" x2="770" y2="816" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="809" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— publish flow end-to-end (Req 1 + 4 + 5) —</text>
+
+<rect x="30" y="824" width="740" height="52" rx="6" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="844" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">POST /api/publish  { topic, payload, key, priority }</text>
+<text x="400" y="860" text-anchor="middle" font-size="11" fill="#534ab7">API key validated → rate limit checked → dispatched to Kafka Producer</text>
+
+<line x1="400" y1="876" x2="400" y2="912" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="100" y="912" width="600" height="148" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="934" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Broker — Publish Steps</text>
+<text x="400" y="952" text-anchor="middle" font-size="11" fill="#0f6e56">1. Schema validate payload (if schema registry configured)</text>
+<text x="400" y="968" text-anchor="middle" font-size="11" fill="#0f6e56">2. Compute partition: hash(partitionKey) mod numPartitions</text>
+<text x="400" y="984" text-anchor="middle" font-size="11" fill="#0f6e56">3. Append message to partition log (WAL — Write-Ahead Log)</text>
+<text x="400" y="1000" text-anchor="middle" font-size="11" fill="#0f6e56">4. Replicate to follower brokers (RF=3, wait for acks=all if strong durability)</text>
+<text x="400" y="1016" text-anchor="middle" font-size="11" fill="#0f6e56">5. Return ACK to publisher with offset (partition + offset number)</text>
+<text x="400" y="1032" text-anchor="middle" font-size="11" fill="#0f6e56">6. Consumer groups poll their partition offset → process → commit offset</text>
+<text x="400" y="1048" text-anchor="middle" font-size="11" fill="#0f6e56">7. Consumer delivers to handler → ACK or NACK (retry / DLQ)</text>
+<text x="400" y="1060" text-anchor="middle" font-size="11" fill="#0f6e56">8. Fan-out: each consumer group is independent — N groups = N independent deliveries</text>
+
+<!-- ====== SECTION 7: FAN-OUT MODEL ====== -->
+<line x1="30" y1="1136" x2="770" y2="1136" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1129" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— fan-out: how one message reaches all subscribers (Req 4) —</text>
+
+<!-- one topic, multiple consumer groups -->
+<rect x="300" y="1144" width="200" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1162" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Topic: orders</text>
+<text x="400" y="1178" text-anchor="middle" font-size="11" fill="#534ab7">Partition 0 | 1 | 2</text>
+
+<!-- fan-out lines -->
+<line x1="300" y1="1166" x2="130" y2="1214" stroke="#0f6e56" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+<line x1="350" y1="1188" x2="280" y2="1214" stroke="#0f6e56" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+<line x1="400" y1="1188" x2="400" y2="1214" stroke="#0f6e56" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+<line x1="450" y1="1188" x2="520" y2="1214" stroke="#0f6e56" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+<line x1="500" y1="1166" x2="670" y2="1214" stroke="#0f6e56" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+
+<rect x="30"  y="1214" width="168" height="60" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="114" y="1236" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Consumer Group A</text>
+<text x="114" y="1252" text-anchor="middle" font-size="11" fill="#3b6d11">InventoryService</text>
+<text x="114" y="1268" text-anchor="middle" font-size="10" fill="#3b6d11">offset committed separately</text>
+
+<rect x="216" y="1214" width="168" height="60" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="300" y="1236" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Consumer Group B</text>
+<text x="300" y="1252" text-anchor="middle" font-size="11" fill="#3b6d11">EmailService</text>
+<text x="300" y="1268" text-anchor="middle" font-size="10" fill="#3b6d11">independent offset</text>
+
+<rect x="316" y="1214" width="168" height="60" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="1236" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Consumer Group C</text>
+<text x="400" y="1252" text-anchor="middle" font-size="11" fill="#3b6d11">AnalyticsService</text>
+<text x="400" y="1268" text-anchor="middle" font-size="10" fill="#3b6d11">can replay anytime</text>
+
+<rect x="416" y="1214" width="168" height="60" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="500" y="1236" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Consumer Group D</text>
+<text x="500" y="1252" text-anchor="middle" font-size="11" fill="#3b6d11">ShippingService</text>
+<text x="500" y="1268" text-anchor="middle" font-size="10" fill="#3b6d11">independent lag</text>
+
+<rect x="600" y="1214" width="168" height="60" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="684" y="1236" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Consumer Group E</text>
+<text x="684" y="1252" text-anchor="middle" font-size="11" fill="#3b6d11">FraudMonitor</text>
+<text x="684" y="1268" text-anchor="middle" font-size="10" fill="#3b6d11">reads same offsets</text>
+
+<!-- key insight -->
+<rect x="80" y="1288" width="640" height="36" rx="8" fill="#f9f9f7" stroke="#ccc"/>
+<text x="400" y="1310" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Each consumer group maintains its own offset → one slow subscriber never blocks another (Req 6)</text>
+
+<!-- ====== SECTION 8: CONCURRENCY MODEL ====== -->
+<line x1="30" y1="1348" x2="770" y2="1348" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1341" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— concurrency + thread safety (Req 5) —</text>
+
+<rect x="30"  y="1356" width="350" height="148" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="205" y="1378" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">LLD Concurrency Mechanisms</text>
+<text x="205" y="1398" text-anchor="middle" font-size="11" fill="#993c1d">ReentrantReadWriteLock on Topic</text>
+<text x="205" y="1414" text-anchor="middle" font-size="11" fill="#993c1d">Read lock: concurrent fan-out delivery</text>
+<text x="205" y="1430" text-anchor="middle" font-size="11" fill="#993c1d">Write lock: subscribe / unsubscribe only</text>
+<text x="205" y="1446" text-anchor="middle" font-size="11" fill="#993c1d">BlockingQueue per subscriber (backpressure)</text>
+<text x="205" y="1462" text-anchor="middle" font-size="11" fill="#993c1d">ConcurrentHashMap for topic + sub registry</text>
+<text x="205" y="1478" text-anchor="middle" font-size="11" fill="#993c1d">Single thread per subscriber (ordering)</text>
+<text x="205" y="1494" text-anchor="middle" font-size="11" fill="#993c1d">CopyOnWriteArrayList for message log</text>
+
+<rect x="420" y="1356" width="350" height="148" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="595" y="1378" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">HLD Concurrency (Kafka)</text>
+<text x="595" y="1398" text-anchor="middle" font-size="11" fill="#993c1d">Partitions = unit of parallelism</text>
+<text x="595" y="1414" text-anchor="middle" font-size="11" fill="#993c1d">One consumer per partition per group</text>
+<text x="595" y="1430" text-anchor="middle" font-size="11" fill="#993c1d">Offset commit = durable progress tracking</text>
+<text x="595" y="1446" text-anchor="middle" font-size="11" fill="#993c1d">Rebalancing on consumer join/leave</text>
+<text x="595" y="1462" text-anchor="middle" font-size="11" fill="#993c1d">ISR (In-Sync Replicas) for durability</text>
+<text x="595" y="1478" text-anchor="middle" font-size="11" fill="#993c1d">Leader election on broker failure</text>
+<text x="595" y="1494" text-anchor="middle" font-size="11" fill="#993c1d">Idempotent producers: exactly-once</text>
+
+<!-- ====== SECTION 9: RETRY + DLQ ====== -->
+<line x1="30" y1="1528" x2="770" y2="1528" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1521" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— retry + dead letter queue (Req 6: reliability) —</text>
+
+<rect x="30"  y="1536" width="350" height="116" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="205" y="1558" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Retry Strategy</text>
+<text x="205" y="1578" text-anchor="middle" font-size="11" fill="#854f0b">Consumer fails → NACK the message</text>
+<text x="205" y="1594" text-anchor="middle" font-size="11" fill="#854f0b">Retry topic: orders-retry-1 (delay 1s)</text>
+<text x="205" y="1610" text-anchor="middle" font-size="11" fill="#854f0b">Retry topic: orders-retry-2 (delay 30s)</text>
+<text x="205" y="1626" text-anchor="middle" font-size="11" fill="#854f0b">Retry topic: orders-retry-3 (delay 5min)</text>
+<text x="205" y="1642" text-anchor="middle" font-size="11" fill="#854f0b">Exponential backoff between attempts</text>
+
+<rect x="420" y="1536" width="350" height="116" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="595" y="1558" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Dead Letter Queue (DLQ)</text>
+<text x="595" y="1578" text-anchor="middle" font-size="11" fill="#993c1d">After max retries → orders-dlq topic</text>
+<text x="595" y="1594" text-anchor="middle" font-size="11" fill="#993c1d">Ops team reviews + manually re-processes</text>
+<text x="595" y="1610" text-anchor="middle" font-size="11" fill="#993c1d">DLQ alert: PagerDuty / Slack notification</text>
+<text x="595" y="1626" text-anchor="middle" font-size="11" fill="#993c1d">Replay API: push DLQ back to main topic</text>
+<text x="595" y="1642" text-anchor="middle" font-size="11" fill="#993c1d">Retention: 30 days (regulatory compliance)</text>
+
+<!-- ====== SECTION 10: TOPIC TYPES ====== -->
+<line x1="30" y1="1676" x2="770" y2="1676" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1669" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— topic types (Req 6: efficiency per use case) —</text>
+
+<rect x="20"  y="1684" width="180" height="120" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="110" y="1706" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">STANDARD</text>
+<text x="110" y="1724" text-anchor="middle" font-size="10" fill="#3b6d11">1–N partitions</text>
+<text x="110" y="1740" text-anchor="middle" font-size="10" fill="#3b6d11">Ordered per partition</text>
+<text x="110" y="1756" text-anchor="middle" font-size="10" fill="#3b6d11">Replay supported</text>
+<text x="110" y="1772" text-anchor="middle" font-size="10" fill="#3b6d11">Use: orders, payments</text>
+<text x="110" y="1788" text-anchor="middle" font-size="10" fill="#3b6d11">Durable log</text>
+
+<rect x="212" y="1684" width="180" height="120" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="302" y="1706" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">PARTITIONED</text>
+<text x="302" y="1724" text-anchor="middle" font-size="10" fill="#3b6d11">Many partitions (12+)</text>
+<text x="302" y="1740" text-anchor="middle" font-size="10" fill="#3b6d11">High throughput</text>
+<text x="302" y="1756" text-anchor="middle" font-size="10" fill="#3b6d11">Key-based routing</text>
+<text x="302" y="1772" text-anchor="middle" font-size="10" fill="#3b6d11">Use: stock prices</text>
+<text x="302" y="1788" text-anchor="middle" font-size="10" fill="#3b6d11">1M+ msgs/sec</text>
+
+<rect x="404" y="1684" width="180" height="120" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="494" y="1706" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">FANOUT</text>
+<text x="494" y="1724" text-anchor="middle" font-size="10" fill="#3b6d11">Broadcast to all</text>
+<text x="494" y="1740" text-anchor="middle" font-size="10" fill="#3b6d11">No retention (ephemeral)</text>
+<text x="494" y="1756" text-anchor="middle" font-size="10" fill="#3b6d11">No replay</text>
+<text x="494" y="1772" text-anchor="middle" font-size="10" fill="#3b6d11">Use: notifications</text>
+<text x="494" y="1788" text-anchor="middle" font-size="10" fill="#3b6d11">Low latency</text>
+
+<rect x="596" y="1684" width="184" height="120" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="688" y="1706" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">PRIORITY</text>
+<text x="688" y="1724" text-anchor="middle" font-size="10" fill="#3b6d11">Separate queues</text>
+<text x="688" y="1740" text-anchor="middle" font-size="10" fill="#3b6d11">per priority level</text>
+<text x="688" y="1756" text-anchor="middle" font-size="10" fill="#3b6d11">CRITICAL served first</text>
+<text x="688" y="1772" text-anchor="middle" font-size="10" fill="#3b6d11">Use: alerts, incidents</text>
+<text x="688" y="1788" text-anchor="middle" font-size="10" fill="#3b6d11">PriorityBlockingQueue</text>
+
+<!-- ====== SECTION 11: SCALABILITY ====== -->
+<line x1="30" y1="1828" x2="770" y2="1828" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1821" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— scalability architecture (Req 6 + 8 analogy) —</text>
+
+<rect x="30"  y="1836" width="350" height="124" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="205" y="1858" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Broker Cluster Scaling</text>
+<text x="205" y="1878" text-anchor="middle" font-size="11" fill="#534ab7">Add broker nodes → partition leadership spreads</text>
+<text x="205" y="1894" text-anchor="middle" font-size="11" fill="#534ab7">More partitions → more parallelism</text>
+<text x="205" y="1910" text-anchor="middle" font-size="11" fill="#534ab7">Each partition: sequential writes to OS page cache</text>
+<text x="205" y="1926" text-anchor="middle" font-size="11" fill="#534ab7">Zero-copy sendfile() for consumer reads</text>
+<text x="205" y="1942" text-anchor="middle" font-size="11" fill="#534ab7">Kafka: 1M+ msgs/sec per broker (commodity HW)</text>
+<text x="205" y="1956" text-anchor="middle" font-size="11" fill="#534ab7">Batching: producer + consumer batches</text>
+
+<rect x="420" y="1836" width="350" height="124" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="595" y="1858" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Consumer Scaling</text>
+<text x="595" y="1878" text-anchor="middle" font-size="11" fill="#534ab7">Add consumer instances → Kafka rebalances</text>
+<text x="595" y="1894" text-anchor="middle" font-size="11" fill="#534ab7">Max parallelism = partition count</text>
+<text x="595" y="1910" text-anchor="middle" font-size="11" fill="#534ab7">Slow consumer: doesn't affect publishers</text>
+<text x="595" y="1926" text-anchor="middle" font-size="11" fill="#534ab7">Consumer lag monitoring: JMX / Burrow</text>
+<text x="595" y="1942" text-anchor="middle" font-size="11" fill="#534ab7">Auto-scale consumers on lag threshold</text>
+<text x="595" y="1956" text-anchor="middle" font-size="11" fill="#534ab7">KEDA: K8s event-driven autoscaler</text>
+
+<!-- ====== SECTION 12: DATA STORES ====== -->
+<line x1="30" y1="1984" x2="770" y2="1984" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1977" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1992" width="175" height="164" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="107" y="2014" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Kafka (Log)</text>
+<text x="107" y="2032" text-anchor="middle" font-size="10" fill="#3b6d11">Durable message log</text>
+<text x="107" y="2048" text-anchor="middle" font-size="10" fill="#3b6d11">Partitioned + replicated</text>
+<text x="107" y="2064" text-anchor="middle" font-size="10" fill="#3b6d11">Append-only writes</text>
+<text x="107" y="2080" text-anchor="middle" font-size="10" fill="#3b6d11">Sequential I/O (fast)</text>
+<text x="107" y="2096" text-anchor="middle" font-size="10" fill="#3b6d11">Zero-copy reads</text>
+<text x="107" y="2112" text-anchor="middle" font-size="10" fill="#3b6d11">Configurable TTL</text>
+<text x="107" y="2128" text-anchor="middle" font-size="10" fill="#3b6d11">Time-travel replay</text>
+<text x="107" y="2144" text-anchor="middle" font-size="10" fill="#3b6d11">Exactly-once support</text>
+
+<rect x="211" y="1992" width="175" height="164" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="298" y="2014" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">ZooKeeper / KRaft</text>
+<text x="298" y="2032" text-anchor="middle" font-size="10" fill="#3b6d11">Broker metadata</text>
+<text x="298" y="2048" text-anchor="middle" font-size="10" fill="#3b6d11">Topic config</text>
+<text x="298" y="2064" text-anchor="middle" font-size="10" fill="#3b6d11">Partition leaders</text>
+<text x="298" y="2080" text-anchor="middle" font-size="10" fill="#3b6d11">Consumer offsets</text>
+<text x="298" y="2096" text-anchor="middle" font-size="10" fill="#3b6d11">ISR list per partition</text>
+<text x="298" y="2112" text-anchor="middle" font-size="10" fill="#3b6d11">Leader election</text>
+<text x="298" y="2128" text-anchor="middle" font-size="10" fill="#3b6d11">KRaft replacing ZK</text>
+<text x="298" y="2144" text-anchor="middle" font-size="10" fill="#3b6d11">(Kafka 3.3+)</text>
+
+<rect x="402" y="1992" width="175" height="164" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="489" y="2014" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Schema Registry</text>
+<text x="489" y="2032" text-anchor="middle" font-size="10" fill="#534ab7">Avro / JSON schema</text>
+<text x="489" y="2048" text-anchor="middle" font-size="10" fill="#534ab7">Schema versioning</text>
+<text x="489" y="2064" text-anchor="middle" font-size="10" fill="#534ab7">Forward compat check</text>
+<text x="489" y="2080" text-anchor="middle" font-size="10" fill="#534ab7">Publisher validates</text>
+<text x="489" y="2096" text-anchor="middle" font-size="10" fill="#534ab7">before publish</text>
+<text x="489" y="2112" text-anchor="middle" font-size="10" fill="#534ab7">Consumer deserialise</text>
+<text x="489" y="2128" text-anchor="middle" font-size="10" fill="#534ab7">without coord</text>
+<text x="489" y="2144" text-anchor="middle" font-size="10" fill="#534ab7">Confluent SR</text>
+
+<rect x="593" y="1992" width="187" height="164" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="686" y="2014" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Monitoring</text>
+<text x="686" y="2032" text-anchor="middle" font-size="10" fill="#854f0b">Consumer lag (Burrow)</text>
+<text x="686" y="2048" text-anchor="middle" font-size="10" fill="#854f0b">Throughput metrics</text>
+<text x="686" y="2064" text-anchor="middle" font-size="10" fill="#854f0b">Partition health</text>
+<text x="686" y="2080" text-anchor="middle" font-size="10" fill="#854f0b">DLQ queue depth</text>
+<text x="686" y="2096" text-anchor="middle" font-size="10" fill="#854f0b">Prometheus + Grafana</text>
+<text x="686" y="2112" text-anchor="middle" font-size="10" fill="#854f0b">JMX metrics export</text>
+<text x="686" y="2128" text-anchor="middle" font-size="10" fill="#854f0b">End-to-end latency</text>
+<text x="686" y="2144" text-anchor="middle" font-size="10" fill="#854f0b">Alerting on lag</text>
+
+<!-- ====== SECTION 13: LLD vs HLD ====== -->
+<line x1="30" y1="2180" x2="770" y2="2180" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2173" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— LLD vs HLD comparison —</text>
+
+<rect x="30"  y="2188" width="352" height="188" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="206" y="2210" text-anchor="middle" font-size="12" font-weight="700" fill="#2c2c2a">LLD (In-Process)</text>
+<text x="206" y="2230" text-anchor="middle" font-size="11" fill="#5f5e5a">Broker: Singleton in JVM</text>
+<text x="206" y="2246" text-anchor="middle" font-size="11" fill="#5f5e5a">Topic: CopyOnWriteArrayList log</text>
+<text x="206" y="2262" text-anchor="middle" font-size="11" fill="#5f5e5a">Fan-out: RW lock + direct deliver()</text>
+<text x="206" y="2278" text-anchor="middle" font-size="11" fill="#5f5e5a">Subscriber: BlockingQueue inbox</text>
+<text x="206" y="2294" text-anchor="middle" font-size="11" fill="#5f5e5a">Ordering: single thread per subscriber</text>
+<text x="206" y="2310" text-anchor="middle" font-size="11" fill="#5f5e5a">Retry: in-process with sleep()</text>
+<text x="206" y="2326" text-anchor="middle" font-size="11" fill="#5f5e5a">Replay: MessageCursor over list</text>
+<text x="206" y="2346" text-anchor="middle" font-size="11" fill="#5f5e5a">Scale: single machine, 100K msgs/sec</text>
+<text x="206" y="2366" text-anchor="middle" font-size="11" fill="#5f5e5a">Durability: in-memory (lost on restart)</text>
+
+<rect x="418" y="2188" width="352" height="188" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="594" y="2210" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">HLD (Distributed — Kafka)</text>
+<text x="594" y="2230" text-anchor="middle" font-size="11" fill="#0f6e56">Broker: Kafka cluster (3–100 nodes)</text>
+<text x="594" y="2246" text-anchor="middle" font-size="11" fill="#0f6e56">Topic: partitioned disk-backed log</text>
+<text x="594" y="2262" text-anchor="middle" font-size="11" fill="#0f6e56">Fan-out: consumer groups pull model</text>
+<text x="594" y="2278" text-anchor="middle" font-size="11" fill="#0f6e56">Subscriber: consumer group instances</text>
+<text x="594" y="2294" text-anchor="middle" font-size="11" fill="#0f6e56">Ordering: guaranteed per partition</text>
+<text x="594" y="2310" text-anchor="middle" font-size="11" fill="#0f6e56">Retry: retry topics + exponential backoff</text>
+<text x="594" y="2326" text-anchor="middle" font-size="11" fill="#0f6e56">Replay: seek to offset (any time)</text>
+<text x="594" y="2346" text-anchor="middle" font-size="11" fill="#0f6e56">Scale: 1M+ msgs/sec per broker</text>
+<text x="594" y="2366" text-anchor="middle" font-size="11" fill="#0f6e56">Durability: RF=3, WAL, disk persisted</text>
+
+<!-- ====== SECTION 14: REQUIREMENTS MAP ====== -->
+<line x1="30" y1="2400" x2="770" y2="2400" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2393" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— all 6 requirements → design decisions —</text>
+
+<rect x="30" y="2408" width="740" height="48" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2428" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Req 1: Publishers publish to specific topics</text>
+<text x="400" y="2446" text-anchor="middle" font-size="11" fill="#0f6e56">POST /api/publish with topic name. Broker validates topic exists, computes partition (hash(key) mod N), appends to partition log. ACK returned with offset. Publisher never knows who subscribes — fully decoupled.</text>
+
+<rect x="30" y="2468" width="740" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2488" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Req 2: Subscribers subscribe + receive messages</text>
+<text x="400" y="2506" text-anchor="middle" font-size="11" fill="#185fa5">Consumer groups poll their assigned partitions. Offset tracks position — commit only after successful processing. Replay from any offset (seek to beginning, seek to timestamp). Late subscribers get all historical messages within retention window.</text>
+
+<rect x="30" y="2528" width="740" height="48" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="2548" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Req 3: Multiple publishers and subscribers</text>
+<text x="400" y="2566" text-anchor="middle" font-size="11" fill="#854f0b">Any number of publishers write to any topic concurrently. Each consumer group is an independent subscriber — N consumer groups = N independent delivery streams from the same topic. No coordination needed between groups.</text>
+
+<rect x="30" y="2588" width="740" height="48" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2608" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Req 4: Real-time delivery to all subscribers</text>
+<text x="400" y="2626" text-anchor="middle" font-size="11" fill="#534ab7">Kafka consumer poll latency: 1–5ms with min.poll.interval=0. Push-based delivery in LLD (BlockingQueue). Pull-based in HLD (consumer polls). Fan-out: each consumer group reads independently — no head-of-line blocking between groups.</text>
+
+<rect x="30" y="2648" width="740" height="48" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2668" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Req 5: Concurrent access + thread safety</text>
+<text x="400" y="2686" text-anchor="middle" font-size="11" fill="#993c1d">LLD: ReentrantReadWriteLock on Topic (read=concurrent delivery, write=subscribe/unsubscribe). BlockingQueue per subscriber (bounded backpressure). Single thread per subscriber (message ordering). ConcurrentHashMap throughout.</text>
+
+<rect x="30" y="2708" width="740" height="48" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2728" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Req 6: Scalable + efficient message delivery</text>
+<text x="400" y="2746" text-anchor="middle" font-size="11" fill="#0f6e56">Partitions = parallelism unit. Add partitions → scale throughput linearly. Add consumer instances → scale consumption. Zero-copy I/O (sendfile). Sequential disk writes (OS page cache). Batching reduces per-message overhead 100x. Consumer lag auto-scaling via KEDA.</text>
+
+<!-- FINAL -->
+<rect x="30" y="2768" width="740" height="60" rx="8" fill="#2c2c2a"/>
+<text x="400" y="2790" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">The fundamental design: publisher and subscriber never know each other exists. The topic is the contract.</text>
+<text x="400" y="2810" text-anchor="middle" font-size="11" fill="#aaa">Each consumer group tracks its own offset → one slow subscriber never blocks another. Replay from any offset at any time.</text>
+
+<!-- PATTERN TABLE -->
+<rect x="30" y="2840" width="740" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="2860" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Singleton=MessageBroker · State=SubscriptionStatus(ACTIVE/PAUSED/CANCELLED) + MessageStatus(PENDING→DELIVERED/FAILED/DLQ)</text>
+<text x="400" y="2878" text-anchor="middle" font-size="11" fill="#5f5e5a">Strategy=DeliveryStrategy(Sync/Async) + RetryStrategy(Fixed/ExponentialBackoff) · Observer=Subscriber (pub-sub IS the Observer pattern)</text>
+<text x="400" y="2896" text-anchor="middle" font-size="10" fill="#888">Factory=TopicFactory(standard/partitioned/fanout/priority) · Builder=Message.Builder+Topic.Builder · Command=PublishCommand(execute+replay) · Iterator=MessageCursor(offset-based)</text>
+
+</svg>
+</body></html>

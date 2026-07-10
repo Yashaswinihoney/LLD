@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 3520" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#2c2c2a"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">LIVE LEADERBOARD SYSTEM — HLD APPLICATION FLOW</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">Score Updates · Top-N · Rank-Around-Me · Time Windows · Real-Time Push</text>
+
+<!-- ====== SECTION 1: CLIENT LAYER ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— client layer —</text>
+
+<rect x="30"  y="80" width="220" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="140" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Game / App Client</text>
+<text x="140" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">Submits score after each match</text>
+<text x="140" y="132" text-anchor="middle" font-size="11" fill="#5f5e5a">REST POST /scores</text>
+
+<rect x="290" y="80" width="220" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Leaderboard Dashboard</text>
+<text x="400" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">Watches top-N live</text>
+<text x="400" y="132" text-anchor="middle" font-size="11" fill="#5f5e5a">WebSocket for real-time rank shifts</text>
+
+<rect x="550" y="80" width="220" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="660" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Mobile App</text>
+<text x="660" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">"Where do I rank?" view</text>
+<text x="660" y="132" text-anchor="middle" font-size="11" fill="#5f5e5a">REST GET /rank/me</text>
+
+<line x1="140" y1="136" x2="260" y2="184" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="136" x2="400" y2="184" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="660" y1="136" x2="540" y2="184" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 2: CDN + LB ====== -->
+<line x1="30" y1="172" x2="770" y2="172" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="166" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— CDN + load balancer —</text>
+
+<rect x="160" y="184" width="480" height="80" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="206" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">CDN + Load Balancer</text>
+<text x="400" y="224" text-anchor="middle" font-size="11" fill="#854f0b">CDN caches the dashboard's static shell + assets — never the live ranking data itself</text>
+<text x="400" y="240" text-anchor="middle" font-size="11" fill="#854f0b">L7 Load Balancer: round-robin to stateless API pods, sticky IP-hash for WebSocket pods</text>
+<text x="400" y="256" text-anchor="middle" font-size="11" fill="#854f0b">Auto-scaled ahead of known traffic spikes (tournament finals, daily reset time)</text>
+
+<line x1="280" y1="264" x2="200" y2="312" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="520" y1="264" x2="600" y2="312" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 3: API GATEWAY ====== -->
+<line x1="30" y1="300" x2="770" y2="300" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="294" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— API gateway —</text>
+
+<rect x="120" y="312" width="560" height="68" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="334" text-anchor="middle" font-size="13" font-weight="700" fill="#2c2c2a">API Gateway</text>
+<text x="400" y="352" text-anchor="middle" font-size="11" fill="#5f5e5a">Auth (JWT/session) · per-user rate limit on score submission (max 1 / match, server-paced)</text>
+<text x="400" y="368" text-anchor="middle" font-size="11" fill="#5f5e5a">Routes: /scores → Score Service | /leaderboard, /rank → Leaderboard Service</text>
+
+<line x1="240" y1="380" x2="160" y2="428" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="560" y1="380" x2="640" y2="428" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 4: CORE SERVICES ====== -->
+<line x1="30" y1="416" x2="770" y2="416" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="410" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— core microservices —</text>
+
+<rect x="20"  y="428" width="234" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="137" y="450" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Score Service</text>
+<text x="137" y="468" text-anchor="middle" font-size="11" fill="#0f6e56">Validates + accepts score</text>
+<text x="137" y="484" text-anchor="middle" font-size="11" fill="#0f6e56">Anti-cheat sanity checks</text>
+<text x="137" y="500" text-anchor="middle" font-size="11" fill="#0f6e56">Writes to all relevant</text>
+<text x="137" y="516" text-anchor="middle" font-size="11" fill="#0f6e56">time-window leaderboards</text>
+
+<rect x="283" y="428" width="234" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="450" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Leaderboard Service</text>
+<text x="400" y="468" text-anchor="middle" font-size="11" fill="#0f6e56">Top-N queries</text>
+<text x="400" y="484" text-anchor="middle" font-size="11" fill="#0f6e56">Rank-around-me queries</text>
+<text x="400" y="500" text-anchor="middle" font-size="11" fill="#0f6e56">Time window selection</text>
+<text x="400" y="516" text-anchor="middle" font-size="11" fill="#0f6e56">(daily/weekly/all-time)</text>
+
+<rect x="546" y="428" width="234" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="663" y="450" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Push Service</text>
+<text x="663" y="468" text-anchor="middle" font-size="11" fill="#0f6e56">WebSocket fan-out of</text>
+<text x="663" y="484" text-anchor="middle" font-size="11" fill="#0f6e56">top-N changes to active</text>
+<text x="663" y="500" text-anchor="middle" font-size="11" fill="#0f6e56">dashboard viewers</text>
+<text x="663" y="516" text-anchor="middle" font-size="11" fill="#0f6e56">Throttled, not per-event</text>
+
+<!-- ====== SECTION 5: WHY REDIS ZSET ====== -->
+<line x1="30" y1="544" x2="770" y2="544" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="538" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— the core data structure: this single choice solves most of the problem —</text>
+
+<rect x="60" y="556" width="680" height="160" rx="8" fill="#2c2c2a"/>
+<text x="400" y="580" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Redis Sorted Set (ZSET) — one per leaderboard</text>
+<text x="400" y="600" text-anchor="middle" font-size="11" fill="#aaa">ZADD leaderboard:alltime {score} {userId} — insert or update a member's score, O(log N)</text>
+<text x="400" y="616" text-anchor="middle" font-size="11" fill="#aaa">ZREVRANGE leaderboard:alltime 0 9 WITHSCORES — top 10 players, O(log N + 10)</text>
+<text x="400" y="632" text-anchor="middle" font-size="11" fill="#aaa">ZREVRANK leaderboard:alltime {userId} — that user's exact global rank, O(log N)</text>
+<text x="400" y="648" text-anchor="middle" font-size="11" fill="#aaa">ZSCORE leaderboard:alltime {userId} — that user's current score, O(1)</text>
+<text x="400" y="664" text-anchor="middle" font-size="11" fill="#aaa">ZREVRANGE around a computed index — the "5 above and 5 below me" view</text>
+<text x="400" y="688" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Every leaderboard operation that matters is O(log N) — that's the entire design insight</text>
+
+<line x1="400" y1="716" x2="400" y2="756" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 6: SCORE UPDATE FLOW ====== -->
+<line x1="30" y1="744" x2="770" y2="744" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="738" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— score update flow: end of a match —</text>
+
+<rect x="30" y="756" width="740" height="52" rx="6" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="776" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">POST /api/scores  { matchId, userId, scoreDelta, sessionToken }</text>
+<text x="400" y="792" text-anchor="middle" font-size="11" fill="#534ab7">JWT validated → dispatched to Score Service</text>
+
+<line x1="400" y1="808" x2="400" y2="844" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="100" y="844" width="600" height="192" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="866" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Score Service — Processing Steps</text>
+<text x="400" y="884" text-anchor="middle" font-size="11" fill="#0f6e56">1. Validate sessionToken matches an active, server-recorded match — rejects scores with no matching session</text>
+<text x="400" y="900" text-anchor="middle" font-size="11" fill="#0f6e56">2. Sanity-check scoreDelta against game rules (e.g. max possible points per match) — reject outliers</text>
+<text x="400" y="916" text-anchor="middle" font-size="11" fill="#0f6e56">3. Compute the tie-break-safe score: combinedScore = (rawScore × 10¹³) + (MAX_TS − achievedAtEpoch)</text>
+<text x="400" y="932" text-anchor="middle" font-size="11" fill="#0f6e56">4. ZADD into every active window: leaderboard:alltime, leaderboard:daily:{date}, leaderboard:weekly:{week}</text>
+<text x="400" y="948" text-anchor="middle" font-size="11" fill="#0f6e56">5. Append-only write to PostgreSQL score_events (audit trail + recovery source if Redis is ever rebuilt)</text>
+<text x="400" y="964" text-anchor="middle" font-size="11" fill="#0f6e56">6. Publish score-updated to Kafka (key=leaderboardId) → async: push service, analytics, anti-cheat review</text>
+<text x="400" y="980" text-anchor="middle" font-size="11" fill="#0f6e56">7. Return 200 { newRank, newScore } to the client immediately — no need to wait on the async fan-out</text>
+<text x="400" y="996" text-anchor="middle" font-size="11" fill="#0f6e56">8. Push Service checks: did this update touch the visible top-N? → only then does it notify dashboard viewers</text>
+<text x="400" y="1012" text-anchor="middle" font-size="10" font-weight="600" fill="#085041">Step 8 matters at scale — without it, 50,000 score updates/sec would mean 50,000 pushes/sec to every viewer</text>
+
+<line x1="400" y1="1036" x2="400" y2="1076" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 7: TIE-BREAKING ====== -->
+<line x1="30" y1="1064" x2="770" y2="1064" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1058" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— tie-breaking: two players with the same score —</text>
+
+<rect x="30" y="1076" width="740" height="124" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="1098" text-anchor="middle" font-size="13" font-weight="700" fill="#712b13">Problem: Redis ZSET breaks ties between equal scores by member name (alphabetical) — meaningless for ranking</text>
+<text x="400" y="1118" text-anchor="middle" font-size="11" fill="#993c1d">Two players both score 1500. Whoever's userId sorts alphabetically first "wins" — not whoever achieved it first.</text>
+
+<text x="400" y="1144" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Solution: encode the tie-break rule directly into the stored score</text>
+<text x="400" y="1164" text-anchor="middle" font-size="11" fill="#993c1d">combinedScore = (rawScore × 10¹³) + (9999999999 − achievedAtEpochSeconds)</text>
+<text x="400" y="1182" text-anchor="middle" font-size="11" fill="#993c1d">Same rawScore → the player who achieved it EARLIER gets a larger combinedScore → ranks higher. Decode rawScore for display by integer division.</text>
+
+<line x1="400" y1="1200" x2="400" y2="1240" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 8: READ FLOWS — TOP N + RANK AROUND ME ====== -->
+<line x1="30" y1="1228" x2="770" y2="1228" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1222" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— read flows: top-N and "where do I rank" —</text>
+
+<rect x="30"  y="1240" width="350" height="148" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="205" y="1262" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Top-N (Dashboard view)</text>
+<text x="205" y="1282" text-anchor="middle" font-size="11" fill="#185fa5">GET /leaderboard?window=daily&amp;limit=50</text>
+<text x="205" y="1298" text-anchor="middle" font-size="11" fill="#185fa5">ZREVRANGE leaderboard:daily:{date} 0 49</text>
+<text x="205" y="1314" text-anchor="middle" font-size="11" fill="#185fa5">WITHSCORES → decode combinedScore back</text>
+<text x="205" y="1330" text-anchor="middle" font-size="11" fill="#185fa5">to rawScore for display</text>
+<text x="205" y="1346" text-anchor="middle" font-size="11" fill="#185fa5">Batch-fetch usernames/avatars from a</text>
+<text x="205" y="1362" text-anchor="middle" font-size="11" fill="#185fa5">Redis hash cache keyed by userId</text>
+<text x="205" y="1378" text-anchor="middle" font-size="10" font-weight="600" fill="#0c447c">Single Redis round trip, sub-millisecond</text>
+
+<rect x="420" y="1240" width="350" height="148" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="595" y="1262" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Rank-Around-Me (Mobile view)</text>
+<text x="595" y="1282" text-anchor="middle" font-size="11" fill="#185fa5">GET /rank/me?window=alltime</text>
+<text x="595" y="1298" text-anchor="middle" font-size="11" fill="#185fa5">1. ZREVRANK leaderboard:alltime {userId} → myIndex</text>
+<text x="595" y="1314" text-anchor="middle" font-size="11" fill="#185fa5">2. ZREVRANGE leaderboard:alltime (myIndex-5) (myIndex+5)</text>
+<text x="595" y="1330" text-anchor="middle" font-size="11" fill="#185fa5">3. Returns "5 players above and below" plus my row</text>
+<text x="595" y="1346" text-anchor="middle" font-size="11" fill="#185fa5">highlighted — exactly what the UI needs to render</text>
+<text x="595" y="1362" text-anchor="middle" font-size="11" fill="#185fa5">Two Redis calls, both O(log N), no DB involved</text>
+<text x="595" y="1378" text-anchor="middle" font-size="10" font-weight="600" fill="#0c447c">Works identically whether N is 10K or 100M users</text>
+
+<line x1="400" y1="1388" x2="400" y2="1428" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 9: TIME WINDOWS ====== -->
+<line x1="30" y1="1416" x2="770" y2="1416" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1410" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— time-windowed leaderboards: daily, weekly, all-time, side by side —</text>
+
+<rect x="80" y="1428" width="640" height="132" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="1450" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">One Score Update, Multiple ZSET Writes</text>
+<text x="400" y="1470" text-anchor="middle" font-size="11" fill="#854f0b">Every score update is ZADDed into N keys at once: leaderboard:alltime, leaderboard:weekly:2026-W26, leaderboard:daily:2026-06-29</text>
+<text x="400" y="1486" text-anchor="middle" font-size="11" fill="#854f0b">Each window is just a differently-keyed ZSET — no special logic, same O(log N) operations apply to all of them</text>
+<text x="400" y="1502" text-anchor="middle" font-size="11" fill="#854f0b">Daily keys carry a TTL (e.g. 3 days) so old daily leaderboards expire and clean themselves up automatically</text>
+<text x="400" y="1518" text-anchor="middle" font-size="11" fill="#854f0b">Weekly rollover at a fixed boundary (e.g. Monday 00:00 UTC) simply starts writing to a new key — no migration needed</text>
+<text x="400" y="1542" text-anchor="middle" font-size="10" font-weight="600" fill="#633806">"Reset the leaderboard" is just "start using a new key" — nothing is deleted, nothing blocks reads mid-rollover</text>
+
+<line x1="400" y1="1560" x2="400" y2="1600" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 10: REAL-TIME PUSH ====== -->
+<line x1="30" y1="1588" x2="770" y2="1588" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1582" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— real-time push to dashboard viewers (Req: live updates without polling) —</text>
+
+<rect x="80" y="1600" width="640" height="140" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1622" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Push Service — Throttled Fan-out</text>
+<text x="400" y="1642" text-anchor="middle" font-size="11" fill="#534ab7">Consumes score-updated from Kafka — does NOT push on every single event (would be 50K+ pushes/sec)</text>
+<text x="400" y="1658" text-anchor="middle" font-size="11" fill="#534ab7">Maintains an in-memory snapshot of the current top-N per leaderboard, diffs incoming updates against it</text>
+<text x="400" y="1674" text-anchor="middle" font-size="11" fill="#534ab7">Only an update that actually changes the visible top-N triggers a push — most updates from rank #50,000 never do</text>
+<text x="400" y="1690" text-anchor="middle" font-size="11" fill="#534ab7">Pushes are additionally batched on a 1-second tick — multiple top-N changes within that second arrive as one frame</text>
+<text x="400" y="1706" text-anchor="middle" font-size="11" fill="#534ab7">WebSocket connections are sharded the same way chat systems shard presence — Redis pub/sub routes to the right WS node</text>
+<text x="400" y="1726" text-anchor="middle" font-size="10" font-weight="600" fill="#3c3489">Viewers watching #1–50 see changes in ~1 second; nobody pays the cost of updates outside their visible range</text>
+
+<line x1="400" y1="1740" x2="400" y2="1780" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 11: CONCURRENCY ====== -->
+<line x1="30" y1="1768" x2="770" y2="1768" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1762" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— concurrency: do score updates need locking? —</text>
+
+<rect x="30" y="1780" width="740" height="116" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="1802" text-anchor="middle" font-size="13" font-weight="700" fill="#27500a">Mostly no — ZADD is already atomic, which removes the usual race condition entirely</text>
+<text x="400" y="1822" text-anchor="middle" font-size="11" fill="#3b6d11">Two players finishing matches in the same millisecond both call ZADD — Redis executes commands one at a time per</text>
+<text x="400" y="1838" text-anchor="middle" font-size="11" fill="#3b6d11">key internally, so there is no "read stock, then write" gap for a second writer to land in. Each ZADD simply applies in order.</text>
+<text x="400" y="1858" text-anchor="middle" font-size="11" fill="#3b6d11">The only real concurrency concern is double-counting the SAME match (e.g. a client retry after a timeout) — solved with</text>
+<text x="400" y="1874" text-anchor="middle" font-size="11" fill="#3b6d11">an idempotency key per (matchId, userId): SET NX before applying, so a retried submission is a safe no-op, not a double-add.</text>
+
+<line x1="400" y1="1896" x2="400" y2="1936" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 12: SCALE — SHARDING HUGE LEADERBOARDS ====== -->
+<line x1="30" y1="1924" x2="770" y2="1924" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1918" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— scale: when one ZSET isn't enough (100M+ player base) —</text>
+
+<rect x="30"  y="1936" width="350" height="140" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="205" y="1958" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Regional Sharding</text>
+<text x="205" y="1978" text-anchor="middle" font-size="11" fill="#185fa5">Split into leaderboard:alltime:{region}</text>
+<text x="205" y="1994" text-anchor="middle" font-size="11" fill="#185fa5">Most player-facing views are regional</text>
+<text x="205" y="2010" text-anchor="middle" font-size="11" fill="#185fa5">anyway ("top in your country")</text>
+<text x="205" y="2026" text-anchor="middle" font-size="11" fill="#185fa5">A single Redis instance comfortably</text>
+<text x="205" y="2042" text-anchor="middle" font-size="11" fill="#185fa5">holds tens of millions of ZSET members —</text>
+<text x="205" y="2058" text-anchor="middle" font-size="11" fill="#185fa5">sharding is about read locality, not capacity</text>
+
+<rect x="420" y="1936" width="350" height="140" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="595" y="1958" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Global Top-N Aggregation</text>
+<text x="595" y="1978" text-anchor="middle" font-size="11" fill="#185fa5">Each shard independently knows its own</text>
+<text x="595" y="1994" text-anchor="middle" font-size="11" fill="#185fa5">top 50 — cheap to compute per shard</text>
+<text x="595" y="2010" text-anchor="middle" font-size="11" fill="#185fa5">A lightweight aggregator merges shard</text>
+<text x="595" y="2026" text-anchor="middle" font-size="11" fill="#185fa5">top-50 lists into one global top-50,</text>
+<text x="595" y="2042" text-anchor="middle" font-size="11" fill="#185fa5">refreshed every few seconds</text>
+<text x="595" y="2058" text-anchor="middle" font-size="11" fill="#185fa5">Global EXACT rank for a random user</text>
+<text x="595" y="2074" text-anchor="middle" font-size="10" fill="#185fa5">is the one query that stays approximate</text>
+
+<line x1="400" y1="2076" x2="400" y2="2116" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 13: PERSISTENCE + RECOVERY ====== -->
+<line x1="30" y1="2104" x2="770" y2="2104" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2098" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— persistence: Redis is in memory, so what happens if it restarts? —</text>
+
+<rect x="80" y="2116" width="640" height="108" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2138" text-anchor="middle" font-size="13" font-weight="700" fill="#712b13">Redis AOF/RDB + PostgreSQL as the Rebuild Source</text>
+<text x="400" y="2158" text-anchor="middle" font-size="11" fill="#993c1d">Redis AOF (append-only file) persists every write to disk — a restart replays it, losing at most a fraction of a second</text>
+<text x="400" y="2174" text-anchor="middle" font-size="11" fill="#993c1d">PostgreSQL score_events is the durable, queryable backstop — if a ZSET is ever lost entirely, it can be rebuilt by</text>
+<text x="400" y="2190" text-anchor="middle" font-size="11" fill="#993c1d">replaying ZADDs from score_events in timestamp order. Redis replicas also stand by for instant failover.</text>
+
+<line x1="400" y1="2224" x2="400" y2="2264" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 14: DATA STORES ====== -->
+<line x1="30" y1="2252" x2="770" y2="2252" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2246" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="2264" width="234" height="172" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="137" y="2286" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="137" y="2304" text-anchor="middle" font-size="10" fill="#3b6d11">leaderboard:alltime (ZSET)</text>
+<text x="137" y="2320" text-anchor="middle" font-size="10" fill="#3b6d11">leaderboard:daily:{date} (ZSET, TTL)</text>
+<text x="137" y="2336" text-anchor="middle" font-size="10" fill="#3b6d11">leaderboard:weekly:{week} (ZSET)</text>
+<text x="137" y="2352" text-anchor="middle" font-size="10" fill="#3b6d11">user_profile:{id} (HASH cache)</text>
+<text x="137" y="2368" text-anchor="middle" font-size="10" fill="#3b6d11">idempotency:{matchId}:{userId}</text>
+<text x="137" y="2384" text-anchor="middle" font-size="10" fill="#3b6d11">rate limit counters</text>
+<text x="137" y="2400" text-anchor="middle" font-size="10" fill="#3b6d11">AOF persisted + replicated</text>
+<text x="137" y="2424" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">The live source of truth for ranks</text>
+
+<rect x="283" y="2264" width="234" height="172" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2286" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="400" y="2304" text-anchor="middle" font-size="10" fill="#185fa5">score_events (append-only)</text>
+<text x="400" y="2320" text-anchor="middle" font-size="10" fill="#185fa5">users / profiles</text>
+<text x="400" y="2336" text-anchor="middle" font-size="10" fill="#185fa5">matches</text>
+<text x="400" y="2352" text-anchor="middle" font-size="10" fill="#185fa5">anti_cheat_flags</text>
+<text x="400" y="2368" text-anchor="middle" font-size="10" fill="#185fa5">season_archive (closed windows)</text>
+<text x="400" y="2384" text-anchor="middle" font-size="10" fill="#185fa5">Durable audit trail</text>
+<text x="400" y="2400" text-anchor="middle" font-size="10" fill="#185fa5">Rebuild source for Redis</text>
+<text x="400" y="2424" text-anchor="middle" font-size="10" font-weight="600" fill="#0c447c">Never queried on the hot read path</text>
+
+<rect x="546" y="2264" width="234" height="172" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="663" y="2286" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="663" y="2304" text-anchor="middle" font-size="10" fill="#534ab7">score-updated</text>
+<text x="663" y="2320" text-anchor="middle" font-size="10" fill="#534ab7">match-completed</text>
+<text x="663" y="2336" text-anchor="middle" font-size="10" fill="#534ab7">anti-cheat-flagged</text>
+<text x="663" y="2352" text-anchor="middle" font-size="10" fill="#534ab7">season-rollover</text>
+<text x="663" y="2368" text-anchor="middle" font-size="10" fill="#534ab7">Partitioned by leaderboardId</text>
+<text x="663" y="2384" text-anchor="middle" font-size="10" fill="#534ab7">Decouples write path from</text>
+<text x="663" y="2400" text-anchor="middle" font-size="10" fill="#534ab7">push/analytics/anti-cheat</text>
+<text x="663" y="2424" text-anchor="middle" font-size="10" font-weight="600" fill="#3c3489">Score Service never waits on it</text>
+
+<!-- ====== SECTION 15: REQUIREMENTS MAP ====== -->
+<line x1="30" y1="2460" x2="770" y2="2460" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2453" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— core requirements → design decisions —</text>
+
+<rect x="30" y="2468" width="740" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2488" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Real-time score updates with immediate rank availability</text>
+<text x="400" y="2506" text-anchor="middle" font-size="11" fill="#0f6e56">ZADD is O(log N) and atomic. The client gets its new rank in the same response that confirms the score was accepted — no separate recomputation step exists.</text>
+
+<rect x="30" y="2528" width="740" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2548" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Top-N global leaderboard and "rank around me" views</text>
+<text x="400" y="2566" text-anchor="middle" font-size="11" fill="#185fa5">Both are direct ZSET range queries — ZREVRANGE for top-N, ZREVRANK + ZREVRANGE around the resulting index for rank-around-me. Both are O(log N), regardless of leaderboard size.</text>
+
+<rect x="30" y="2588" width="740" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="2608" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Multiple simultaneous time windows (daily, weekly, all-time)</text>
+<text x="400" y="2626" text-anchor="middle" font-size="11" fill="#854f0b">Each window is an independently-keyed ZSET written in the same update. Daily keys expire via TTL; weekly/season rollover is simply switching to a new key — no locking, no migration, no downtime.</text>
+
+<rect x="30" y="2648" width="740" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2668" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Real-time updates pushed to viewers without overwhelming them</text>
+<text x="400" y="2686" text-anchor="middle" font-size="11" fill="#534ab7">Push Service diffs against an in-memory top-N snapshot and only notifies on an actual visible change, batched on a 1-second tick — decoupling write volume from push volume.</text>
+
+<rect x="30" y="2708" width="740" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="2728" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Concurrent score submissions without corrupting rankings</text>
+<text x="400" y="2746" text-anchor="middle" font-size="11" fill="#3b6d11">ZADD's internal atomicity removes the classic read-then-write race entirely. An idempotency key per (matchId, userId) is the only extra guard needed, against client retries double-counting one match.</text>
+
+<rect x="30" y="2768" width="740" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2788" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Scale to a very large player base</text>
+<text x="400" y="2806" text-anchor="middle" font-size="11" fill="#185fa5">A single Redis ZSET already handles tens of millions of members; regional sharding beyond that is about read locality (players mostly want regional rankings) more than raw capacity limits.</text>
+
+<!-- FINAL -->
+<rect x="30" y="2836" width="740" height="64" rx="8" fill="#2c2c2a"/>
+<text x="400" y="2860" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">The hardest part of a leaderboard isn't the data structure — Redis already solved that with ZSET.</text>
+<text x="400" y="2880" text-anchor="middle" font-size="11" fill="#aaa">It's knowing WHEN to bother anyone: which score updates actually change what's on screen, and pushing only those.</text>
+<text x="400" y="2896" text-anchor="middle" font-size="11" fill="#aaa">Everything else — windows, tie-breaks, sharding — is bookkeeping around that one O(log N) structure.</text>
+
+<!-- ARCHITECTURE SUMMARY -->
+<rect x="30" y="2916" width="740" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="2936" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Core structure = Redis ZSET, one per time window · Tie-break = score encoded with timestamp for deterministic ordering</text>
+<text x="400" y="2954" text-anchor="middle" font-size="11" fill="#5f5e5a">Idempotency key = guards against retry double-counting · Diff-before-push = decouples write volume from notification volume</text>
+<text x="400" y="2972" text-anchor="middle" font-size="10" fill="#888">Append-only event log = durability + audit + Redis rebuild source · Regional sharding = read locality, not a capacity workaround</text>
+
+</svg>
+</body></html>

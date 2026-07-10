@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 4040" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#2c2c2a"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">LIVE STREAM COMMENTS — HLD APPLICATION FLOW</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">Ingest · Moderate · Fan-out · Batch · Late Join · Pin · Delete · Scale to 1M Viewers</text>
+
+<!-- ====== SECTION 1: CLIENT LAYER ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— who is connected and what they do —</text>
+
+<rect x="20"  y="80" width="168" height="68" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="104" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Viewer (browser)</text>
+<text x="104" y="118" text-anchor="middle" font-size="10" fill="#5f5e5a">Reads comments live</text>
+<text x="104" y="134" text-anchor="middle" font-size="10" fill="#5f5e5a">Posts comments via WS</text>
+
+<rect x="202" y="80" width="168" height="68" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="286" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Viewer (mobile)</text>
+<text x="286" y="118" text-anchor="middle" font-size="10" fill="#5f5e5a">React Native app</text>
+<text x="286" y="134" text-anchor="middle" font-size="10" fill="#5f5e5a">WS + push notifications</text>
+
+<rect x="384" y="80" width="168" height="68" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="468" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Streamer Dashboard</text>
+<text x="468" y="118" text-anchor="middle" font-size="10" fill="#5f5e5a">Pin / delete comments</text>
+<text x="468" y="134" text-anchor="middle" font-size="10" fill="#5f5e5a">Viewer count. analytics</text>
+
+<rect x="566" y="80" width="214" height="68" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="673" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Moderator Panel</text>
+<text x="673" y="118" text-anchor="middle" font-size="10" fill="#5f5e5a">Manual review queue</text>
+<text x="673" y="134" text-anchor="middle" font-size="10" fill="#5f5e5a">Ban / timeout / approve</text>
+
+<line x1="104" y1="148" x2="220" y2="196" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="286" y1="148" x2="325" y2="196" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="468" y1="148" x2="425" y2="196" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="673" y1="148" x2="580" y2="196" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 2: CDN + LB ====== -->
+<line x1="30" y1="184" x2="770" y2="184" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="178" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— CDN + load balancer —</text>
+
+<rect x="120" y="196" width="560" height="80" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="218" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">CDN + Load Balancer</text>
+<text x="400" y="236" text-anchor="middle" font-size="11" fill="#854f0b">CDN: serves static page shell, streamer thumbnail, cached VOD replay comments (TTL 30s)</text>
+<text x="400" y="252" text-anchor="middle" font-size="11" fill="#854f0b">Live comment feed: never cached at CDN — always origin. Comments stale in 1s = useless.</text>
+<text x="400" y="268" text-anchor="middle" font-size="11" fill="#854f0b">LB: REST → round-robin pods. WebSocket → IP-hash sticky (WS is stateful TCP, must stay on same server)</text>
+
+<line x1="280" y1="276" x2="180" y2="324" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="520" y1="276" x2="620" y2="324" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 3: API GATEWAY ====== -->
+<line x1="30" y1="312" x2="770" y2="312" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="306" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— API gateway —</text>
+
+<rect x="100" y="324" width="600" height="68" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="346" text-anchor="middle" font-size="13" font-weight="700" fill="#2c2c2a">API Gateway</text>
+<text x="400" y="364" text-anchor="middle" font-size="11" fill="#5f5e5a">JWT auth + per-user rate limit: 1 comment / 3s (sliding window token bucket in Redis)</text>
+<text x="400" y="380" text-anchor="middle" font-size="11" fill="#5f5e5a">Routes: POST /comments → Ingest Service | WS /stream/{id}/chat → WS Server Farm</text>
+
+<line x1="240" y1="392" x2="160" y2="436" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="560" y1="392" x2="640" y2="436" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 4: CORE SERVICES ====== -->
+<line x1="30" y1="424" x2="770" y2="424" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="418" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— core microservices —</text>
+
+<rect x="20"  y="436" width="212" height="96" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="126" y="458" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">Comment Ingest Service</text>
+<text x="126" y="476" text-anchor="middle" font-size="10" fill="#0f6e56">Validate + timestamp</text>
+<text x="126" y="492" text-anchor="middle" font-size="10" fill="#0f6e56">Assign sequence number</text>
+<text x="126" y="508" text-anchor="middle" font-size="10" fill="#0f6e56">Publish to Kafka</text>
+<text x="126" y="524" text-anchor="middle" font-size="10" fill="#0f6e56">Return ACK to poster</text>
+
+<rect x="244" y="436" width="212" height="96" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="350" y="458" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">Moderation Service</text>
+<text x="350" y="476" text-anchor="middle" font-size="10" fill="#0f6e56">ML spam/hate filter</text>
+<text x="350" y="492" text-anchor="middle" font-size="10" fill="#0f6e56">Blocklist keyword check</text>
+<text x="350" y="508" text-anchor="middle" font-size="10" fill="#0f6e56">Trust score gating</text>
+<text x="350" y="524" text-anchor="middle" font-size="10" fill="#0f6e56">Manual review queue</text>
+
+<rect x="468" y="436" width="146" height="96" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="541" y="458" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">Fan-out Service</text>
+<text x="541" y="476" text-anchor="middle" font-size="10" fill="#0f6e56">Batch 500ms window</text>
+<text x="541" y="492" text-anchor="middle" font-size="10" fill="#0f6e56">Diff-before-push</text>
+<text x="541" y="508" text-anchor="middle" font-size="10" fill="#0f6e56">Push vs pull split</text>
+<text x="541" y="524" text-anchor="middle" font-size="10" fill="#0f6e56">Redis pub/sub routing</text>
+
+<rect x="626" y="436" width="154" height="96" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="703" y="458" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">WS Server Farm</text>
+<text x="703" y="476" text-anchor="middle" font-size="10" fill="#0f6e56">Holds open sockets</text>
+<text x="703" y="492" text-anchor="middle" font-size="10" fill="#0f6e56">Subscribed to Redis</text>
+<text x="703" y="508" text-anchor="middle" font-size="10" fill="#0f6e56">pub/sub per stream</text>
+<text x="703" y="524" text-anchor="middle" font-size="10" fill="#0f6e56">Pushes batches</text>
+
+<!-- ====== SECTION 5: COMMENT SUBMISSION FLOW ====== -->
+<line x1="30" y1="600" x2="770" y2="600" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="594" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— comment submission flow: viewer types and sends —</text>
+
+<rect x="30" y="608" width="740" height="52" rx="6" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="628" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">WS SEND  { streamId, text, clientMsgId }  — over the already-open WebSocket connection</text>
+<text x="400" y="644" text-anchor="middle" font-size="11" fill="#534ab7">Auth from the session token on the WS handshake — no re-auth on each comment</text>
+
+<line x1="400" y1="660" x2="400" y2="696" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="80" y="696" width="640" height="196" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="718" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Comment Ingest Service — 8 Processing Steps</text>
+
+<rect x="100" y="728" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="743" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">1</text>
+<text x="133" y="743" font-size="10" fill="#085041"> Rate limit: Redis token bucket — GET rate:{userId} → if &gt; 1 comment in 3s → 429 Too Many Requests</text>
+
+<rect x="100" y="754" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="769" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">2</text>
+<text x="133" y="769" font-size="10" fill="#085041"> Validate: non-empty, max 500 chars, viewer is a member of this stream (not banned or timed-out)</text>
+
+<rect x="100" y="780" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="795" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3</text>
+<text x="133" y="795" font-size="10" fill="#085041"> Assign: serverTimestampMs = System.currentTimeMillis(), sequenceNum = INCR seq:{streamId} in Redis</text>
+
+<rect x="100" y="806" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="821" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">4</text>
+<text x="133" y="821" font-size="10" fill="#085041"> Moderation pre-check: fast blocklist lookup + ML score (synchronous, &lt;10ms). If BLOCKED → reject here.</text>
+
+<rect x="100" y="832" width="22" height="22" rx="11" fill="#1a8f5c"/>
+<text x="111" y="847" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">5</text>
+<text x="133" y="847" font-size="10" fill="#085041"> ACK to sender immediately: { ack: clientMsgId, serverMsgId, ts } — poster sees "sent" before fan-out completes</text>
+
+<rect x="100" y="858" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="873" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">6</text>
+<text x="133" y="873" font-size="10" fill="#085041"> Publish to Kafka: topic = stream-comments, key = streamId (guarantees ordering per stream)</text>
+
+<rect x="100" y="884" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="899" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">7</text>
+<text x="133" y="899" font-size="10" fill="#085041"> Persist to Cassandra: (streamId, sequenceNum, userId, text, ts, status) — append-only, queryable for history</text>
+
+<rect x="100" y="910" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="925" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">8</text>
+<text x="133" y="925" font-size="10" fill="#085041"> LPUSH recent:comments:{streamId} → keep last 200 comments in Redis list for late-joiner fast-load</text>
+
+<!-- moderation rejection branch -->
+<line x1="80" y1="806" x2="30" y2="852" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="0" y="852" width="78" height="44" rx="6" fill="#faece7" stroke="#993c1d"/>
+<text x="39" y="870" text-anchor="middle" font-size="9" font-weight="600" fill="#712b13">BLOCKED</text>
+<text x="39" y="884" text-anchor="middle" font-size="9" fill="#993c1d">Reason sent</text>
+<text x="39" y="896" text-anchor="middle" font-size="9" fill="#993c1d">to poster only</text>
+
+<line x1="400" y1="892" x2="400" y2="948" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Kafka -->
+<rect x="210" y="948" width="380" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="966" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Kafka — stream-comments topic</text>
+<text x="400" y="982" text-anchor="middle" font-size="11" fill="#534ab7">key=streamId → ordered per stream · partitioned for throughput · replayable for recovery</text>
+
+<line x1="200" y1="992" x2="120" y2="1040" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="350" y1="992" x2="310" y2="1040" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="450" y1="992" x2="490" y2="1040" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="600" y1="992" x2="680" y2="1040" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1040" width="160" height="60" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="100" y="1062" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Moderation Svc</text>
+<text x="100" y="1078" text-anchor="middle" font-size="10" fill="#3b6d11">Deep ML scan</text>
+<text x="100" y="1092" text-anchor="middle" font-size="10" fill="#3b6d11">async post-publish</text>
+
+<rect x="192" y="1040" width="160" height="60" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="272" y="1062" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Fan-out Service</text>
+<text x="272" y="1078" text-anchor="middle" font-size="10" fill="#3b6d11">Batch → push via</text>
+<text x="272" y="1092" text-anchor="middle" font-size="10" fill="#3b6d11">Redis pub/sub</text>
+
+<rect x="364" y="1040" width="160" height="60" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="444" y="1062" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Analytics</text>
+<text x="444" y="1078" text-anchor="middle" font-size="10" fill="#3b6d11">Comment rate/min</text>
+<text x="444" y="1092" text-anchor="middle" font-size="10" fill="#3b6d11">Engagement metrics</text>
+
+<rect x="536" y="1040" width="244" height="60" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="658" y="1062" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Search Indexer</text>
+<text x="658" y="1078" text-anchor="middle" font-size="10" fill="#3b6d11">Index for stream replay</text>
+<text x="658" y="1092" text-anchor="middle" font-size="10" fill="#3b6d11">+ audit trail in ES</text>
+
+<!-- ====== SECTION 6: FAN-OUT — THE HARDEST PROBLEM ====== -->
+<line x1="30" y1="1168" x2="770" y2="1168" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1161" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— fan-out: delivering one comment to a million viewers — the hardest problem —</text>
+
+<rect x="30" y="1176" width="740" height="80" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="1198" text-anchor="middle" font-size="13" font-weight="700" fill="#712b13">The problem: 1 comment posted → must reach 1,000,000 open WebSocket connections</text>
+<text x="400" y="1218" text-anchor="middle" font-size="11" fill="#993c1d">Naive approach: publish directly to all 1M sockets. At 100 comments/sec that is 100M WS writes/sec.</text>
+<text x="400" y="1238" text-anchor="middle" font-size="11" fill="#993c1d">Not feasible. Any single server holds ~50,000 sockets. 1M viewers = 20+ WS server pods. Must route comments across pods.</text>
+
+<line x1="400" y1="1256" x2="400" y2="1296" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Two fan-out paths -->
+<rect x="20"  y="1296" width="358" height="148" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="199" y="1318" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Small Stream (&lt;10K viewers) — PUSH</text>
+<text x="199" y="1338" text-anchor="middle" font-size="11" fill="#185fa5">Fan-out Service: PUBLISH to Redis channel stream:{id}</text>
+<text x="199" y="1354" text-anchor="middle" font-size="11" fill="#185fa5">Every WS server is SUBSCRIBED to that channel</text>
+<text x="199" y="1370" text-anchor="middle" font-size="11" fill="#185fa5">Each WS server pushes to its own local sockets</text>
+<text x="199" y="1386" text-anchor="middle" font-size="11" fill="#185fa5">Total fan-out: O(WS pods) Redis publishes — cheap</text>
+<text x="199" y="1402" text-anchor="middle" font-size="11" fill="#185fa5">Latency: &lt;200ms end-to-end from post to all viewers</text>
+<text x="199" y="1420" text-anchor="middle" font-size="10" font-weight="600" fill="#0c447c">Push to all — simple, fast, scales to ~10K viewers/stream</text>
+
+<rect x="422" y="1296" width="358" height="148" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="601" y="1318" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Large Stream (&gt;10K viewers) — HYBRID</text>
+<text x="601" y="1338" text-anchor="middle" font-size="11" fill="#854f0b">Push only to ACTIVE viewers (typed or clicked in last 60s)</text>
+<text x="601" y="1354" text-anchor="middle" font-size="11" fill="#854f0b">Passive viewers ("watching" only) → PULL mode</text>
+<text x="601" y="1370" text-anchor="middle" font-size="11" fill="#854f0b">Passive: poll GET /comments?after=lastSeq every 3s</text>
+<text x="601" y="1386" text-anchor="middle" font-size="11" fill="#854f0b">Switch: viewer becomes active → server flips to push</text>
+<text x="601" y="1402" text-anchor="middle" font-size="11" fill="#854f0b">Result: 1M viewers → only ~5% get real-time push (active)</text>
+<text x="601" y="1420" text-anchor="middle" font-size="10" font-weight="600" fill="#633806">95% passive viewers barely notice 3s polling delay</text>
+
+<line x1="199" y1="1444" x2="340" y2="1492" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="601" y1="1444" x2="460" y2="1492" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 7: BATCHING ====== -->
+<line x1="30" y1="1480" x2="770" y2="1480" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1474" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— comment batching: push once per 500ms, not once per comment —</text>
+
+<rect x="80" y="1492" width="640" height="120" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="1514" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Batching Window — Critical at Scale</text>
+<text x="400" y="1534" text-anchor="middle" font-size="11" fill="#0f6e56">Fan-out Service holds a 500ms rolling buffer per stream. At 100 comments/sec → 50 comments per batch.</text>
+<text x="400" y="1550" text-anchor="middle" font-size="11" fill="#0f6e56">One WS push per 500ms instead of 100 pushes/sec. Reduces WS frames by 100× — massive bandwidth saving.</text>
+<text x="400" y="1566" text-anchor="middle" font-size="11" fill="#0f6e56">Clients receive an array: [{ id, user, text, ts }, ...] and render the scroll atomically — no jank.</text>
+<text x="400" y="1582" text-anchor="middle" font-size="11" fill="#0f6e56">SCROLL CAPPING: if batch &gt; 30 comments, show latest 30 + "↑ X new messages" indicator above the visible window.</text>
+<text x="400" y="1598" text-anchor="middle" font-size="10" font-weight="600" fill="#085041">This is how YouTube / Twitch show comments in bursts — never 1-by-1 at high volume</text>
+
+<line x1="400" y1="1612" x2="400" y2="1652" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 8: MODERATION ====== -->
+<line x1="30" y1="1640" x2="770" y2="1640" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1634" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— moderation: two-layer pipeline (pre + post-publish) —</text>
+
+<rect x="20"  y="1652" width="366" height="144" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="203" y="1674" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Layer 1 — Pre-Publish (Synchronous, &lt;10ms)</text>
+<text x="203" y="1694" text-anchor="middle" font-size="11" fill="#993c1d">Exact blocklist: regex on slurs, phone numbers, URLs</text>
+<text x="203" y="1710" text-anchor="middle" font-size="11" fill="#993c1d">Fast ML: TF-Lite model, binary classify (spam/not)</text>
+<text x="203" y="1726" text-anchor="middle" font-size="11" fill="#993c1d">Trust gate: new account (&lt;7 days) + all-caps + link = hold</text>
+<text x="203" y="1742" text-anchor="middle" font-size="11" fill="#993c1d">User ban list: Redis SET banned:{streamId} lookup O(1)</text>
+<text x="203" y="1758" text-anchor="middle" font-size="11" fill="#993c1d">RESULT: BLOCKED → not published at all. Poster sees error.</text>
+<text x="203" y="1778" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">Goal: stop the obvious 90%. Fast enough to not slow the post path.</text>
+
+<rect x="414" y="1652" width="366" height="144" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="597" y="1674" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Layer 2 — Post-Publish (Async, full ML)</text>
+<text x="597" y="1694" text-anchor="middle" font-size="11" fill="#854f0b">Deep NLP model: BERT-based hate / harassment / NSFW</text>
+<text x="597" y="1710" text-anchor="middle" font-size="11" fill="#854f0b">Runs on Kafka consumer — does NOT block the post path</text>
+<text x="597" y="1726" text-anchor="middle" font-size="11" fill="#854f0b">If score &gt; threshold: PUBLISH delete-event to stream</text>
+<text x="597" y="1742" text-anchor="middle" font-size="11" fill="#854f0b">Clients receive { type:"delete", commentId } → remove from UI</text>
+<text x="597" y="1758" text-anchor="middle" font-size="11" fill="#854f0b">Persist in Cassandra with status=REMOVED, store reason</text>
+<text x="597" y="1778" text-anchor="middle" font-size="10" font-weight="600" fill="#633806">May appear briefly (ms) — acceptable trade-off for low latency.</text>
+
+<line x1="400" y1="1796" x2="400" y2="1836" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 9: LATE JOIN FLOW ====== -->
+<line x1="30" y1="1824" x2="770" y2="1824" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1818" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— late-join: viewer opens the stream mid-way, needs recent comments —</text>
+
+<rect x="40" y="1836" width="720" height="124" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1858" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Late-Join Flow — Two-Step Load + Subscribe</text>
+
+<rect x="60"  y="1872" width="22" height="22" rx="11" fill="#534ab7"/>
+<text x="71"  y="1887" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">1</text>
+<text x="93"  y="1887" font-size="10" fill="#534ab7"> Client opens stream → WS handshake → subscribed to live feed. NOT receiving comments yet.</text>
+
+<rect x="60"  y="1898" width="22" height="22" rx="11" fill="#534ab7"/>
+<text x="71"  y="1913" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">2</text>
+<text x="93"  y="1913" font-size="10" fill="#534ab7"> REST GET /streams/{id}/comments?limit=50 → Redis LRANGE recent:comments:{streamId} 0 49 → returns in &lt;2ms</text>
+
+<rect x="60"  y="1924" width="22" height="22" rx="11" fill="#534ab7"/>
+<text x="71"  y="1939" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3</text>
+<text x="93"  y="1939" font-size="10" fill="#534ab7"> Client renders past 50 comments. Then subscribes for live pushes from sequenceNum = (last received + 1)</text>
+
+<rect x="60"  y="1950" width="22" height="22" rx="11" fill="#534ab7"/>
+<text x="71"  y="1965" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">4</text>
+<text x="93"  y="1965" font-size="10" fill="#534ab7"> Catch-up gap (any comments published between REST call and WS subscription): fetch Cassandra for seq range</text>
+
+<text x="400" y="1984" text-anchor="middle" font-size="10" font-weight="600" fill="#3c3489">Result: viewer joins mid-stream and sees a natural comment flow with no visible gap or jump</text>
+
+<line x1="400" y1="1960" x2="400" y2="2008" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 10: SPECIAL FEATURES ====== -->
+<line x1="30" y1="1996" x2="770" y2="1996" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1990" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— special features: pin, delete, timeout, super chat —</text>
+
+<rect x="20"  y="2008" width="175" height="144" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="107" y="2030" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">Pin Comment</text>
+<text x="107" y="2050" text-anchor="middle" font-size="10" fill="#0f6e56">Streamer pins one comment</text>
+<text x="107" y="2066" text-anchor="middle" font-size="10" fill="#0f6e56">Redis: SET pinned:{streamId}</text>
+<text x="107" y="2082" text-anchor="middle" font-size="10" fill="#0f6e56">{ commentId, text, user }</text>
+<text x="107" y="2098" text-anchor="middle" font-size="10" fill="#0f6e56">Publish pin-event to Kafka</text>
+<text x="107" y="2114" text-anchor="middle" font-size="10" fill="#0f6e56">Fan-out WS push to ALL</text>
+<text x="107" y="2130" text-anchor="middle" font-size="10" fill="#0f6e56">active viewers instantly</text>
+<text x="107" y="2146" text-anchor="middle" font-size="10" fill="#0f6e56">Shown above chat box</text>
+
+<rect x="211" y="2008" width="175" height="144" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="298" y="2030" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Delete Comment</text>
+<text x="298" y="2050" text-anchor="middle" font-size="10" fill="#993c1d">Streamer/mod deletes</text>
+<text x="298" y="2066" text-anchor="middle" font-size="10" fill="#993c1d">Update Cassandra status</text>
+<text x="298" y="2082" text-anchor="middle" font-size="10" fill="#993c1d">= REMOVED</text>
+<text x="298" y="2098" text-anchor="middle" font-size="10" fill="#993c1d">Publish delete-event</text>
+<text x="298" y="2114" text-anchor="middle" font-size="10" fill="#993c1d">{ type:"delete", commentId }</text>
+<text x="298" y="2130" text-anchor="middle" font-size="10" fill="#993c1d">Clients receive → remove</text>
+<text x="298" y="2146" text-anchor="middle" font-size="10" fill="#993c1d">comment from visible UI</text>
+
+<rect x="402" y="2008" width="175" height="144" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="489" y="2030" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">User Timeout / Ban</text>
+<text x="489" y="2050" text-anchor="middle" font-size="10" fill="#854f0b">SADD banned:{streamId}</text>
+<text x="489" y="2066" text-anchor="middle" font-size="10" fill="#854f0b">{userId} TTL=duration</text>
+<text x="489" y="2082" text-anchor="middle" font-size="10" fill="#854f0b">Checked in rate-limit</text>
+<text x="489" y="2098" text-anchor="middle" font-size="10" fill="#854f0b">layer on next attempt</text>
+<text x="489" y="2114" text-anchor="middle" font-size="10" fill="#854f0b">WS push purge-event</text>
+<text x="489" y="2130" text-anchor="middle" font-size="10" fill="#854f0b">→ remove all of that</text>
+<text x="489" y="2146" text-anchor="middle" font-size="10" fill="#854f0b">user's visible comments</text>
+
+<rect x="593" y="2008" width="187" height="144" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="686" y="2030" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">Super Chat / Donation</text>
+<text x="686" y="2050" text-anchor="middle" font-size="10" fill="#185fa5">Paid comment — bypasses</text>
+<text x="686" y="2066" text-anchor="middle" font-size="10" fill="#185fa5">batching window</text>
+<text x="686" y="2082" text-anchor="middle" font-size="10" fill="#185fa5">Pushed immediately to</text>
+<text x="686" y="2098" text-anchor="middle" font-size="10" fill="#185fa5">all viewers (priority)</text>
+<text x="686" y="2114" text-anchor="middle" font-size="10" fill="#185fa5">Pinned for 30–120s</text>
+<text x="686" y="2130" text-anchor="middle" font-size="10" fill="#185fa5">based on amount</text>
+<text x="686" y="2146" text-anchor="middle" font-size="10" fill="#185fa5">Persisted + payment log</text>
+
+<!-- ====== SECTION 11: ORDERING ====== -->
+<line x1="30" y1="2220" x2="770" y2="2220" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2213" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— comment ordering: do you need strict global order? no — here's why —</text>
+
+<rect x="30" y="2228" width="740" height="112" rx="8" fill="#2c2c2a"/>
+<text x="400" y="2250" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Ordering in Live Chat: Approximate is Fine, and Here's Why</text>
+<text x="400" y="2270" text-anchor="middle" font-size="11" fill="#aaa">Two users post within 100ms of each other. Does it matter which appears first? No — humans can't read that fast anyway.</text>
+<text x="400" y="2286" text-anchor="middle" font-size="11" fill="#aaa">Mechanism: server-assigned sequenceNum (Redis INCR) gives total ordering on the ingest side. Within a 500ms batch,</text>
+<text x="400" y="2302" text-anchor="middle" font-size="11" fill="#aaa">comments are sorted by (sequenceNum) before sending. This gives a consistent, stable order across all viewers.</text>
+<text x="400" y="2318" text-anchor="middle" font-size="11" fill="#aaa">Kafka partition key = streamId ensures all comments for one stream flow through ONE partition — strict Kafka ordering.</text>
+<text x="400" y="2334" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Global strict order across partitions is not needed — live chat tolerance is &gt;1s. Strict order costs disproportionately.</text>
+
+<line x1="400" y1="2340" x2="400" y2="2380" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 12: WS SERVER ROUTING ====== -->
+<line x1="30" y1="2368" x2="770" y2="2368" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2362" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— WebSocket server routing: how a message published to Kafka reaches the right pods —</text>
+
+<rect x="40" y="2380" width="720" height="132" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2402" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Redis Pub/Sub as the Cross-Pod Router</text>
+<text x="400" y="2422" text-anchor="middle" font-size="11" fill="#534ab7">WS Server pods are stateless. Any viewer could be connected to any pod (LB routes new connections, IP-hash for existing).</text>
+<text x="400" y="2438" text-anchor="middle" font-size="11" fill="#534ab7">Every WS server pod SUBSCRIBES to Redis channel: stream:{streamId} on startup.</text>
+<text x="400" y="2454" text-anchor="middle" font-size="11" fill="#534ab7">Fan-out Service receives from Kafka → batch → PUBLISH to Redis channel stream:{streamId}</text>
+<text x="400" y="2470" text-anchor="middle" font-size="11" fill="#534ab7">Every WS pod receives the batch. Each pod checks its in-memory socket map: which of MY sockets are watching this stream?</text>
+<text x="400" y="2486" text-anchor="middle" font-size="11" fill="#534ab7">Pod pushes to ONLY its own sockets for that stream. No central registry of "who is where" needed.</text>
+<text x="400" y="2500" text-anchor="middle" font-size="10" font-weight="600" fill="#3c3489">Cost: N_pods Redis PUBLISH calls. At 20 WS pods = 20 publishes per stream per batch. Negligible.</text>
+
+<line x1="400" y1="2512" x2="400" y2="2552" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 13: DATA STORES ====== -->
+<line x1="30" y1="2540" x2="770" y2="2540" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2534" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="2552" width="175" height="200" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="107" y="2574" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="107" y="2592" text-anchor="middle" font-size="10" fill="#3b6d11">rate:{userId} token bucket</text>
+<text x="107" y="2608" text-anchor="middle" font-size="10" fill="#3b6d11">seq:{streamId} (INCR)</text>
+<text x="107" y="2624" text-anchor="middle" font-size="10" fill="#3b6d11">recent:comments:{id}</text>
+<text x="107" y="2640" text-anchor="middle" font-size="10" fill="#3b6d11">(LPUSH, last 200)</text>
+<text x="107" y="2656" text-anchor="middle" font-size="10" fill="#3b6d11">pinned:{streamId}</text>
+<text x="107" y="2672" text-anchor="middle" font-size="10" fill="#3b6d11">banned:{streamId} (SET)</text>
+<text x="107" y="2688" text-anchor="middle" font-size="10" fill="#3b6d11">pub/sub per stream</text>
+<text x="107" y="2704" text-anchor="middle" font-size="10" fill="#3b6d11">viewer_count:{id} INCR</text>
+<text x="107" y="2720" text-anchor="middle" font-size="10" fill="#3b6d11">active:{streamId} SET</text>
+<text x="107" y="2740" text-anchor="middle" font-size="10" fill="#3b6d11">TTL per key type</text>
+
+<rect x="211" y="2552" width="175" height="200" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="298" y="2574" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">Cassandra</text>
+<text x="298" y="2592" text-anchor="middle" font-size="10" fill="#185fa5">comments table</text>
+<text x="298" y="2608" text-anchor="middle" font-size="10" fill="#185fa5">Partition: streamId</text>
+<text x="298" y="2624" text-anchor="middle" font-size="10" fill="#185fa5">Cluster: sequenceNum</text>
+<text x="298" y="2640" text-anchor="middle" font-size="10" fill="#185fa5">Append-only writes</text>
+<text x="298" y="2656" text-anchor="middle" font-size="10" fill="#185fa5">O(1) insert per comment</text>
+<text x="298" y="2672" text-anchor="middle" font-size="10" fill="#185fa5">Range reads for VOD</text>
+<text x="298" y="2688" text-anchor="middle" font-size="10" fill="#185fa5">audit_events table</text>
+<text x="298" y="2704" text-anchor="middle" font-size="10" fill="#185fa5">(delete/ban/pin log)</text>
+<text x="298" y="2720" text-anchor="middle" font-size="10" fill="#185fa5">RF=3, multi-AZ</text>
+<text x="298" y="2740" text-anchor="middle" font-size="10" fill="#185fa5">Source of truth</text>
+
+<rect x="402" y="2552" width="175" height="200" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="489" y="2574" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="489" y="2592" text-anchor="middle" font-size="10" fill="#534ab7">stream-comments topic</text>
+<text x="489" y="2608" text-anchor="middle" font-size="10" fill="#534ab7">moderation-events</text>
+<text x="489" y="2624" text-anchor="middle" font-size="10" fill="#534ab7">delete-events</text>
+<text x="489" y="2640" text-anchor="middle" font-size="10" fill="#534ab7">pin-events</text>
+<text x="489" y="2656" text-anchor="middle" font-size="10" fill="#534ab7">ban-events</text>
+<text x="489" y="2672" text-anchor="middle" font-size="10" fill="#534ab7">analytics-events</text>
+<text x="489" y="2688" text-anchor="middle" font-size="10" fill="#534ab7">Partition by streamId</text>
+<text x="489" y="2704" text-anchor="middle" font-size="10" fill="#534ab7">Ordered per stream</text>
+<text x="489" y="2720" text-anchor="middle" font-size="10" fill="#534ab7">Replayable for crash</text>
+<text x="489" y="2740" text-anchor="middle" font-size="10" fill="#534ab7">recovery</text>
+
+<rect x="593" y="2552" width="187" height="200" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="686" y="2574" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Elasticsearch</text>
+<text x="686" y="2592" text-anchor="middle" font-size="10" fill="#854f0b">comments_index</text>
+<text x="686" y="2608" text-anchor="middle" font-size="10" fill="#854f0b">text, userId, streamId</text>
+<text x="686" y="2624" text-anchor="middle" font-size="10" fill="#854f0b">timestamp, status</text>
+<text x="686" y="2640" text-anchor="middle" font-size="10" fill="#854f0b">Used for: replay search</text>
+<text x="686" y="2656" text-anchor="middle" font-size="10" fill="#854f0b">("find when they said X")</text>
+<text x="686" y="2672" text-anchor="middle" font-size="10" fill="#854f0b">Mod audit search</text>
+<text x="686" y="2688" text-anchor="middle" font-size="10" fill="#854f0b">Synced via Kafka</text>
+<text x="686" y="2704" text-anchor="middle" font-size="10" fill="#854f0b">consumer &lt;2s lag</text>
+<text x="686" y="2720" text-anchor="middle" font-size="10" fill="#854f0b">Not in live read path</text>
+
+<!-- ====== SECTION 14: VOD REPLAY ====== -->
+<line x1="30" y1="2772" x2="770" y2="2772" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2766" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— VOD replay: showing comments at the right timestamp when watching a recording —</text>
+
+<rect x="80" y="2780" width="640" height="116" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2802" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Comment Replay for VOD (Recorded Stream)</text>
+<text x="400" y="2822" text-anchor="middle" font-size="11" fill="#0f6e56">Each comment in Cassandra has both: serverTimestampMs (wall clock) and streamOffsetMs (seconds into the stream).</text>
+<text x="400" y="2838" text-anchor="middle" font-size="11" fill="#0f6e56">streamOffsetMs = serverTimestampMs − streamStartTimestampMs. Computed at ingest time by Ingest Service.</text>
+<text x="400" y="2854" text-anchor="middle" font-size="11" fill="#0f6e56">VOD player at 5:32 into video → REST GET /vod/{id}/comments?offset=332000&amp;limit=50</text>
+<text x="400" y="2870" text-anchor="middle" font-size="11" fill="#0f6e56">Cassandra range query: WHERE streamId=X AND streamOffsetMs &gt;= 332000 AND &lt;= 337000 (5-sec window)</text>
+<text x="400" y="2886" text-anchor="middle" font-size="10" font-weight="600" fill="#085041">Comments appear on screen exactly as they did during the live stream — same scroll, same burst, same emotes</text>
+
+<!-- ====== SECTION 15: KEY DECISIONS ====== -->
+<line x1="30" y1="2916" x2="770" y2="2916" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2910" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 5 design decisions every interviewer asks about —</text>
+
+<rect x="30" y="2924" width="740" height="68" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2946" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">① WebSocket vs SSE vs polling — why WebSocket wins here</text>
+<text x="400" y="2966" text-anchor="middle" font-size="11" fill="#0f6e56">SSE is server-push only — you need the same connection for posting comments (bidirectional). Polling at 500ms costs 2 requests/sec × 1M viewers = 2M requests/sec continuously, even during slow chat. WebSocket stays open and sends only when there's data.</text>
+
+<rect x="30" y="3004" width="740" height="68" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="3026" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">② Why Cassandra and not PostgreSQL for comment storage</text>
+<text x="400" y="3046" text-anchor="middle" font-size="11" fill="#185fa5">A 12-hour stream at 100 comments/sec = 4.3M rows per stream. Multiple streams simultaneously. Cassandra's partition key = streamId means all writes for one stream go to the same set of nodes — O(1) append. PostgreSQL single-primary write bottleneck under this volume.</text>
+
+<rect x="30" y="3084" width="740" height="68" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="3106" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">③ Why the recent-comment Redis list exists alongside Cassandra</text>
+<text x="400" y="3126" text-anchor="middle" font-size="11" fill="#854f0b">Cassandra is durable but not designed for ultra-low-latency repeated reads. Every viewer joining a popular stream would hammer the same partition. Redis LRANGE (last 200 comments) returns in &lt;2ms with zero Cassandra load. It is a hot cache, not the source of truth.</text>
+
+<rect x="30" y="3164" width="740" height="68" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="3186" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">④ Pre-moderation vs post-moderation trade-off</text>
+<text x="400" y="3206" text-anchor="middle" font-size="11" fill="#534ab7">Pre-moderation (hold all until approved) = zero harmful content, but comments delayed 30–60s — kills the live feel. Post-moderation (publish first, delete if caught) = comments appear instantly, bad content visible for milliseconds before ML catches it. Live chat always uses post-moderation.</text>
+
+<rect x="30" y="3244" width="740" height="68" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="3266" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">⑤ How the push/pull threshold is decided at runtime</text>
+<text x="400" y="3286" text-anchor="middle" font-size="11" fill="#993c1d">Fan-out Service checks Redis: SCARD active:{streamId} (count of users who interacted in last 60s). Below threshold → pure push. Above → split: push to active SET members only, passive clients get a "poll_url" in their WS subscribe ACK and fall back to polling automatically.</text>
+
+<!-- FINAL INSIGHT BOX -->
+<rect x="30" y="3328" width="740" height="64" rx="8" fill="#2c2c2a"/>
+<text x="400" y="3352" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">The core architecture decision: publisher never waits for fan-out to complete.</text>
+<text x="400" y="3372" text-anchor="middle" font-size="11" fill="#aaa">Poster gets ACK the moment the comment hits Kafka. Fan-out, moderation, and persistence all happen async.</text>
+<text x="400" y="3388" text-anchor="middle" font-size="11" fill="#aaa">Redis pub/sub routes comments across WS pods without a central registry. Batching reduces WS frames by 100×. The hard part is not sending a comment — it is delivering it at scale without melting your infrastructure.</text>
+
+<!-- ARCHITECTURE SUMMARY -->
+<rect x="30" y="3408" width="740" height="80" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="3428" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Ingest: WS receive → rate limit (Redis) → pre-mod (fast ML) → ACK poster → Kafka publish → Cassandra persist → Redis list append</text>
+<text x="400" y="3448" text-anchor="middle" font-size="11" fill="#5f5e5a">Fan-out: Kafka → Fan-out Svc → batch (500ms) → Redis PUBLISH stream:{id} → all WS pods receive → push to their own sockets</text>
+<text x="400" y="3468" text-anchor="middle" font-size="11" fill="#5f5e5a">Post-mod: deep ML on Kafka consumer → delete-event → WS push to all viewers → comment removed from client UI</text>
+<text x="400" y="3488" text-anchor="middle" font-size="10" fill="#888">Late join: REST for last 200 from Redis → subscribe to live feed → Cassandra gap fill → seamless experience</text>
+
+</svg>
+</body></html>

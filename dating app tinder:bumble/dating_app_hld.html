@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 4320" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#2c2c2a"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">DATING APP (TINDER / BUMBLE) — HLD APPLICATION FLOW</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">Profile · Discovery · ELO Scoring · Swipe · Atomic Match · Chat · Geo · Safety</text>
+
+<!-- ====== SECTION 1: CLIENT LAYER ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— client layer —</text>
+
+<rect x="20"  y="80" width="230" height="60" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="135" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">iOS App</text>
+<text x="135" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">Swift — primary platform</text>
+<text x="135" y="134" text-anchor="middle" font-size="11" fill="#5f5e5a">REST + WebSocket (chat)</text>
+
+<rect x="285" y="80" width="230" height="60" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Android App</text>
+<text x="400" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">Kotlin — large user base</text>
+<text x="400" y="134" text-anchor="middle" font-size="11" fill="#5f5e5a">REST + FCM push + WS</text>
+
+<rect x="550" y="80" width="230" height="60" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="665" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Web App</text>
+<text x="665" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">React SPA (secondary)</text>
+<text x="665" y="134" text-anchor="middle" font-size="11" fill="#5f5e5a">REST + WebSocket</text>
+
+<line x1="135" y1="140" x2="260" y2="188" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="140" x2="400" y2="188" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="665" y1="140" x2="540" y2="188" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 2: CDN + LB + GATEWAY ====== -->
+<line x1="30" y1="176" x2="770" y2="176" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="170" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— CDN + load balancer + API gateway —</text>
+
+<rect x="80" y="188" width="640" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="210" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">CDN (CloudFront) + GeoDNS + Load Balancer (ALB)</text>
+<text x="400" y="228" text-anchor="middle" font-size="11" fill="#854f0b">CDN: profile photos, blurred preview thumbnails (TTL 24hr). REST: round-robin. WS (chat): IP-hash sticky.</text>
+
+<line x1="400" y1="240" x2="400" y2="272" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="120" y="272" width="560" height="60" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="294" text-anchor="middle" font-size="13" font-weight="700" fill="#2c2c2a">API Gateway</text>
+<text x="400" y="312" text-anchor="middle" font-size="11" fill="#5f5e5a">JWT / OAuth auth · per-user rate limit (100 swipes/day free, unlimited paid) · device fingerprint</text>
+<text x="400" y="326" text-anchor="middle" font-size="11" fill="#5f5e5a">Routes: /profile → Profile Svc | /discover → Discovery Svc | /swipe → Swipe Svc | /chat → WS</text>
+
+<line x1="175" y1="332" x2="100" y2="380" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="310" y1="332" x2="280" y2="380" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="450" y1="332" x2="470" y2="380" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="625" y1="332" x2="680" y2="380" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 3: CORE SERVICES ====== -->
+<line x1="30" y1="368" x2="770" y2="368" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="362" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— core microservices —</text>
+
+<rect x="20"  y="380" width="158" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="99" y="402" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">Profile Service</text>
+<text x="99" y="420" text-anchor="middle" font-size="10" fill="#0f6e56">Create / edit profile</text>
+<text x="99" y="436" text-anchor="middle" font-size="10" fill="#0f6e56">Photo upload + ML verify</text>
+<text x="99" y="452" text-anchor="middle" font-size="10" fill="#0f6e56">Preferences (age/dist)</text>
+<text x="99" y="468" text-anchor="middle" font-size="10" fill="#0f6e56">Verification badge</text>
+
+<rect x="192" y="380" width="158" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="271" y="402" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">Discovery Service</text>
+<text x="271" y="420" text-anchor="middle" font-size="10" fill="#0f6e56">Candidate ranking (ELO)</text>
+<text x="271" y="436" text-anchor="middle" font-size="10" fill="#0f6e56">Geo + preference filter</text>
+<text x="271" y="452" text-anchor="middle" font-size="10" fill="#0f6e56">Card stack generation</text>
+<text x="271" y="468" text-anchor="middle" font-size="10" fill="#0f6e56">Pre-fetched cache</text>
+
+<rect x="364" y="380" width="158" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="443" y="402" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">Swipe Service</text>
+<text x="443" y="420" text-anchor="middle" font-size="10" fill="#0f6e56">Record like / pass</text>
+<text x="443" y="436" text-anchor="middle" font-size="10" fill="#0f6e56">Atomic match detect</text>
+<text x="443" y="452" text-anchor="middle" font-size="10" fill="#0f6e56">Super Like logic</text>
+<text x="443" y="468" text-anchor="middle" font-size="10" fill="#0f6e56">ELO score update</text>
+
+<rect x="536" y="380" width="244" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="658" y="402" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">Chat / Match Service</text>
+<text x="658" y="420" text-anchor="middle" font-size="10" fill="#0f6e56">Create match record</text>
+<text x="658" y="436" text-anchor="middle" font-size="10" fill="#0f6e56">WebSocket messaging</text>
+<text x="658" y="452" text-anchor="middle" font-size="10" fill="#0f6e56">Bumble 24-hr timer</text>
+<text x="658" y="468" text-anchor="middle" font-size="10" fill="#0f6e56">Block / unmatch</text>
+
+<!-- ====== SECTION 4: PROFILE CREATION + PHOTO UPLOAD ====== -->
+<line x1="30" y1="556" x2="770" y2="556" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="549" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— profile creation + photo upload flow —</text>
+
+<rect x="30" y="564" width="740" height="180" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="586" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">Profile Setup — 7 Steps</text>
+
+<rect x="50" y="596" width="22" height="22" rx="11" fill="#185fa5"/>
+<text x="61" y="611" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">1</text>
+<text x="83" y="611" font-size="10" fill="#0c447c"> User signs up (phone/Google OAuth) → Profile Service creates user record in PostgreSQL, sets status=INCOMPLETE</text>
+
+<rect x="50" y="622" width="22" height="22" rx="11" fill="#185fa5"/>
+<text x="61" y="637" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">2</text>
+<text x="83" y="637" font-size="10" fill="#0c447c"> User fills: name, age, bio, gender, orientation, preferences (age range, max distance, gender sought)</text>
+
+<rect x="50" y="648" width="22" height="22" rx="11" fill="#185fa5"/>
+<text x="61" y="663" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3</text>
+<text x="83" y="663" font-size="10" fill="#0c447c"> Photo upload: client → REST PUT /photos → Photo Service → S3 (original). Async: ML pipeline triggered.</text>
+
+<rect x="50" y="674" width="22" height="22" rx="11" fill="#185fa5"/>
+<text x="61" y="689" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">4</text>
+<text x="83" y="689" font-size="10" fill="#0c447c"> ML Photo Pipeline (async): face-detect (must contain face) → NSFW filter → generate 3 CDN variants (thumbnail 150px, card 400px, full 800px)</text>
+
+<rect x="50" y="700" width="22" height="22" rx="11" fill="#185fa5"/>
+<text x="61" y="715" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">5</text>
+<text x="83" y="715" font-size="10" fill="#0c447c"> Photo approved → stored in CDN, URL written back to PostgreSQL. User must have ≥1 approved photo to go active.</text>
+
+<rect x="50" y="726" width="22" height="22" rx="11" fill="#185fa5"/>
+<text x="61" y="741" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">6</text>
+<text x="83" y="741" font-size="10" fill="#0c447c"> Location shared → GEOADD active_users:{city} {lat} {lng} {userId}. Profile status=ACTIVE. ELO score initialised = 1000.</text>
+
+<rect x="50" y="752" width="22" height="22" rx="11" fill="#185fa5"/>
+<text x="61" y="767" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">7</text>
+<text x="83" y="767" font-size="10" fill="#0c447c"> Profile indexed in Elasticsearch (age, city, gender, orientation) for fast discovery filtering. Card stack pre-built.</text>
+
+<line x1="400" y1="744" x2="400" y2="792" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 5: DISCOVERY — THE ELO ENGINE ====== -->
+<line x1="30" y1="780" x2="770" y2="780" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="774" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— discovery engine: who do you show me and in what order? —</text>
+
+<rect x="30" y="792" width="740" height="72" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="814" text-anchor="middle" font-size="13" font-weight="700" fill="#712b13">The core product problem: show me people I am likely to like, and who are likely to like me back</text>
+<text x="400" y="834" text-anchor="middle" font-size="11" fill="#993c1d">Showing irrelevant profiles wastes the user's 100 free swipes. Showing profiles I'll never match with is demoralising.</text>
+<text x="400" y="850" text-anchor="middle" font-size="11" fill="#993c1d">Tinder solved this with ELO (desirability score). Bumble adds recency and engagement signals on top.</text>
+
+<line x1="400" y1="864" x2="400" y2="904" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ELO Inputs -->
+<rect x="30" y="904" width="740" height="52" rx="8" fill="#2c2c2a"/>
+<text x="400" y="924" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Discovery Engine — Candidate Scoring Pipeline</text>
+<text x="400" y="942" text-anchor="middle" font-size="11" fill="#aaa">Every candidate in your geo+preference window is scored. Top-K are your card stack. Rebuilt every N swipes.</text>
+
+<line x1="400" y1="956" x2="400" y2="988" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Four inputs in 2x2 grid -->
+<rect x="20"  y="988" width="370" height="88" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="205" y="1010" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Signal 1: ELO Desirability Score</text>
+<text x="205" y="1028" text-anchor="middle" font-size="11" fill="#854f0b">Each user has a score 0–3000. Updated on every right swipe (score ↑) and left swipe (score ↓).</text>
+<text x="205" y="1044" text-anchor="middle" font-size="11" fill="#854f0b">Weighted by the swiper's own score — liked by a high-score user = bigger gain.</text>
+<text x="205" y="1060" text-anchor="middle" font-size="11" fill="#854f0b">You are shown primarily to users with similar ELO ± 200 pts. Like-attracts-like clustering.</text>
+
+<rect x="410" y="988" width="370" height="88" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="595" y="1010" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Signal 2: Geo + Hard Filters</text>
+<text x="595" y="1028" text-anchor="middle" font-size="11" fill="#854f0b">GEORADIUS active_users:{city} {myLat} {myLng} {maxDist}km → candidate list.</text>
+<text x="595" y="1044" text-anchor="middle" font-size="11" fill="#854f0b">Hard filter: age in [minAge, maxAge], gender/orientation match, not already swiped.</text>
+<text x="595" y="1060" text-anchor="middle" font-size="11" fill="#854f0b">Already-swiped users excluded via Redis SET: swiped:{myId} (Bloom filter at scale).</text>
+
+<rect x="20"  y="1084" width="370" height="88" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="205" y="1106" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Signal 3: Recency + Activity</text>
+<text x="205" y="1124" text-anchor="middle" font-size="11" fill="#534ab7">Last-active timestamp multiplier: active in last hour → 2×, last day → 1×, last week → 0.5×.</text>
+<text x="205" y="1140" text-anchor="middle" font-size="11" fill="#534ab7">New users get a "new member boost": inflated in candidate queues for first 24hrs.</text>
+<text x="205" y="1156" text-anchor="middle" font-size="11" fill="#534ab7">Boosts (paid feature) → 1hr of inflated placement. Temporarily 10× normal visibility.</text>
+
+<rect x="410" y="1084" width="370" height="88" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="595" y="1106" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Signal 4: Collaborative Filtering</text>
+<text x="595" y="1124" text-anchor="middle" font-size="11" fill="#534ab7">Users similar to you (liked same profiles) who liked X → X is ranked higher for you.</text>
+<text x="595" y="1140" text-anchor="middle" font-size="11" fill="#534ab7">Photo attractiveness ML score (trained on swipe outcomes per photo) — boosts card order.</text>
+<text x="595" y="1156" text-anchor="middle" font-size="11" fill="#534ab7">Mutual preference signals: X swiped your profile before you → shown near top of your stack.</text>
+
+<line x1="205" y1="1172" x2="360" y2="1216" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="595" y1="1172" x2="440" y2="1216" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Card stack output -->
+<rect x="160" y="1216" width="480" height="68" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="1238" text-anchor="middle" font-size="13" font-weight="700" fill="#27500a">Card Stack: Top-K Candidates (K=50), ranked and cached</text>
+<text x="400" y="1256" text-anchor="middle" font-size="11" fill="#3b6d11">Stored in Redis: deck:{userId} (LIST of userIds, ordered by score). Pre-fetched so first swipe is instant.</text>
+<text x="400" y="1272" text-anchor="middle" font-size="11" fill="#3b6d11">Client pre-loads next 10 cards in background. Deck rebuilt when &lt;5 cards remain.</text>
+
+<line x1="400" y1="1284" x2="400" y2="1324" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 6: SWIPE FLOW + ATOMIC MATCH DETECTION ====== -->
+<line x1="30" y1="1312" x2="770" y2="1312" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1306" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— swipe flow + atomic match detection: the most critical piece —</text>
+
+<rect x="30" y="1324" width="740" height="52" rx="6" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1344" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">POST /api/swipe  { targetUserId, direction: "like"|"pass", isSuper: false }</text>
+<text x="400" y="1360" text-anchor="middle" font-size="11" fill="#534ab7">Swipe Service receives → validates rate limit (swipes/day for free users)</text>
+
+<line x1="400" y1="1376" x2="400" y2="1412" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="80" y="1412" width="640" height="220" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="1434" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Swipe Service — 8 Steps (Left Swipe vs Right Swipe)</text>
+
+<rect x="100" y="1444" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="1459" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">1</text>
+<text x="133" y="1459" font-size="10" fill="#085041"> Check daily swipe limit: Redis INCR swipes:{userId}:{date}. Free user at 100 → 429 "Buy Premium to swipe more".</text>
+
+<rect x="100" y="1470" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="1485" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">2</text>
+<text x="133" y="1485" font-size="10" fill="#085041"> Record swipe in Redis: SADD swiped:{myId} {targetId} — so target never appears again in my deck.</text>
+
+<rect x="100" y="1496" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="1511" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3</text>
+<text x="133" y="1511" font-size="10" fill="#085041"> Persist swipe event asynchronously to PostgreSQL swipes table (userId, targetId, direction, ts).</text>
+
+<rect x="100" y="1522" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="1537" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">4</text>
+<text x="133" y="1537" font-size="10" fill="#085041"> LEFT SWIPE (pass): update ELO. target.eloScore -= ΔeloDelta(myElo). Publish analytics event. Done.</text>
+
+<rect x="100" y="1548" width="22" height="22" rx="11" fill="#1a8f5c"/>
+<text x="111" y="1563" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">5</text>
+<text x="133" y="1563" font-size="10" fill="#085041"> RIGHT SWIPE: check for mutual like — Redis SISMEMBER likes:{targetId} {myId}. O(1) lookup. Did they like me first?</text>
+
+<rect x="100" y="1574" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="1589" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">6</text>
+<text x="133" y="1589" font-size="10" fill="#085041"> NO mutual like: SADD likes:{myId} {targetId}. Update ELO (target.score ↑). Return { matched: false }. Done.</text>
+
+<rect x="100" y="1600" width="22" height="22" rx="11" fill="#d85a30"/>
+<text x="111" y="1615" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">7</text>
+<text x="133" y="1615" font-size="10" fill="#085041"> MUTUAL MATCH: create match record in PostgreSQL. SREM likes:{targetId} {myId} (cleanup). Open chat channel.</text>
+
+<rect x="100" y="1626" width="22" height="22" rx="11" fill="#d85a30"/>
+<text x="111" y="1641" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">8</text>
+<text x="133" y="1641" font-size="10" fill="#085041"> Publish match-event to Kafka → Notification Service: push to both users. Bumble: start 24hr timer for woman to message.</text>
+
+<!-- match/no-match fork -->
+<line x1="400" y1="1632" x2="240" y2="1672" stroke="#0f6e56" stroke-width="1" marker-end="url(#arrow-g)"/>
+<line x1="400" y1="1632" x2="560" y2="1672" stroke="#d85a30" stroke-width="1" marker-end="url(#arrow-r)"/>
+
+<rect x="80"  y="1672" width="320" height="44" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="240" y="1692" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">No match — deck continues</text>
+<text x="240" y="1708" text-anchor="middle" font-size="11" fill="#5f5e5a">ELO updated. Swipe recorded. Next card.</text>
+
+<rect x="400" y="1672" width="320" height="44" rx="8" fill="#1a8f5c"/>
+<text x="560" y="1692" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">✨ IT'S A MATCH! ✨</text>
+<text x="560" y="1708" text-anchor="middle" font-size="11" fill="#fff">Match screen shown. Chat unlocked.</text>
+
+<line x1="560" y1="1716" x2="560" y2="1760" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 7: ATOMIC MATCH RACE CONDITION ====== -->
+<line x1="30" y1="1748" x2="770" y2="1748" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1742" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— critical: preventing a double-match from two simultaneous right-swipes —</text>
+
+<rect x="30" y="1760" width="740" height="140" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="1782" text-anchor="middle" font-size="13" font-weight="700" fill="#712b13">Problem: Alice swipes right on Bob, Bob swipes right on Alice — AT THE SAME MILLISECOND</text>
+<text x="400" y="1802" text-anchor="middle" font-size="11" fill="#993c1d">Step 5 for Alice: SISMEMBER likes:Bob {Alice} → 0 (Bob hasn't liked yet) → SADD likes:Alice {Bob}</text>
+<text x="400" y="1818" text-anchor="middle" font-size="11" fill="#993c1d">Step 5 for Bob:  SISMEMBER likes:Alice {Bob} → 0 (Alice's SADD may not have run yet) → SADD likes:Bob {Alice}</text>
+<text x="400" y="1834" text-anchor="middle" font-size="11" fill="#993c1d">Both see "no mutual match". Neither match fires. Both likes sit in Redis forever. ❌</text>
+
+<text x="400" y="1858" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Solution: atomic check-and-set with Redis Lua or GETSET</text>
+<text x="400" y="1878" text-anchor="middle" font-size="11" fill="#993c1d">Lua script: GETSET likes:{minId}:{maxId} = "1" — if old value was already "1" → match. Atomic, single-threaded in Redis.</text>
+<text x="400" y="1894" text-anchor="middle" font-size="11" fill="#993c1d">Key: min(aliceId, bobId):max(aliceId, bobId) — canonical key regardless of who swipes first. Guaranteed exactly-once match.</text>
+
+<line x1="400" y1="1900" x2="400" y2="1940" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 8: CHAT FLOW ====== -->
+<line x1="30" y1="1928" x2="770" y2="1928" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1922" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— chat flow: messaging between matched users (same architecture as WhatsApp/Slack) —</text>
+
+<rect x="40" y="1940" width="720" height="148" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1962" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Chat Service — WebSocket Messaging</text>
+<text x="400" y="1982" text-anchor="middle" font-size="11" fill="#534ab7">1. Match created → chat channel opened. Both users connect via WebSocket on next app open.</text>
+<text x="400" y="1998" text-anchor="middle" font-size="11" fill="#534ab7">2. Message sent: WS frame → Chat Service → validate sender is part of this match → persist to Cassandra.</text>
+<text x="400" y="2014" text-anchor="middle" font-size="11" fill="#534ab7">3. ACK to sender. Publish to Kafka: chat-messages topic → Fan-out Service → push to receiver's WS.</text>
+<text x="400" y="2030" text-anchor="middle" font-size="11" fill="#534ab7">4. Receiver offline: FCM/APNs push notification → "You have a new message from your match!".</text>
+<text x="400" y="2046" text-anchor="middle" font-size="11" fill="#534ab7">5. Bumble-specific: if match is hetero and no message from woman in 24hr → match auto-expires. Cron job checks Redis TTL.</text>
+<text x="400" y="2062" text-anchor="middle" font-size="11" fill="#534ab7">6. Unmatch: match status = UNMATCHED. Chat channel closed. Messages retained (for safety reports) but hidden from UI.</text>
+<text x="400" y="2078" text-anchor="middle" font-size="10" font-weight="600" fill="#3c3489">Gifted messages (paid): bypass unmatch — allows one message even after being unmatched (controversial, Bumble-specific)</text>
+
+<line x1="400" y1="2088" x2="400" y2="2128" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 9: GEO + LOCATION UPDATE ====== -->
+<line x1="30" y1="2116" x2="770" y2="2116" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2110" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— geolocation: updating position without exposing exact address —</text>
+
+<rect x="30"  y="2128" width="358" height="124" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="209" y="2150" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Location Update Pipeline</text>
+<text x="209" y="2170" text-anchor="middle" font-size="11" fill="#185fa5">App sends GPS every 15 min (background) or on open.</text>
+<text x="209" y="2186" text-anchor="middle" font-size="11" fill="#185fa5">Location Service: GEOADD active_users:{city} {lat} {lng} {userId}</text>
+<text x="209" y="2202" text-anchor="middle" font-size="11" fill="#185fa5">Precision truncated to 1.1km grid cell — never exact.</text>
+<text x="209" y="2218" text-anchor="middle" font-size="11" fill="#185fa5">Profile shows "2 km away" — bin-rounded for privacy.</text>
+<text x="209" y="2234" text-anchor="middle" font-size="11" fill="#185fa5">Last active &gt;72hr: removed from GEO index. Undead profiles never shown.</text>
+
+<rect x="412" y="2128" width="358" height="124" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="591" y="2150" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Privacy: Approximate Distance Only</text>
+<text x="591" y="2170" text-anchor="middle" font-size="11" fill="#185fa5">Exact coordinates NEVER exposed to clients.</text>
+<text x="591" y="2186" text-anchor="middle" font-size="11" fill="#185fa5">Only "X km away" — rounded to nearest 1km.</text>
+<text x="591" y="2202" text-anchor="middle" font-size="11" fill="#185fa5">Stalking attack: moving to triangulate position.</text>
+<text x="591" y="2218" text-anchor="middle" font-size="11" fill="#185fa5">Defence: location snapped to city-block grid (H3 hex).</text>
+<text x="591" y="2234" text-anchor="middle" font-size="11" fill="#185fa5">Incognito mode (paid): invisible in geo queries.</text>
+
+<line x1="400" y1="2252" x2="400" y2="2292" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 10: SAFETY FEATURES ====== -->
+<line x1="30" y1="2280" x2="770" y2="2280" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2274" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— safety features: the features that make users trust the platform —</text>
+
+<rect x="20"  y="2292" width="234" height="128" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="127" y="2314" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Photo Verification</text>
+<text x="127" y="2334" text-anchor="middle" font-size="10" fill="#993c1d">User takes a selfie pose.</text>
+<text x="127" y="2350" text-anchor="middle" font-size="10" fill="#993c1d">ML: face-match selfie vs</text>
+<text x="127" y="2366" text-anchor="middle" font-size="10" fill="#993c1d">all profile photos.</text>
+<text x="127" y="2382" text-anchor="middle" font-size="10" fill="#993c1d">Match &gt; threshold → ✅</text>
+<text x="127" y="2398" text-anchor="middle" font-size="10" fill="#993c1d">blue checkmark on profile.</text>
+<text x="127" y="2414" text-anchor="middle" font-size="10" fill="#993c1d">Selfie not stored after match.</text>
+
+<rect x="268" y="2292" width="264" height="128" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2314" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Block + Report</text>
+<text x="400" y="2334" text-anchor="middle" font-size="10" fill="#993c1d">Block: SADD blocked:{myId} {userId}</text>
+<text x="400" y="2350" text-anchor="middle" font-size="10" fill="#993c1d">Blocked never appears in deck.</text>
+<text x="400" y="2366" text-anchor="middle" font-size="10" fill="#993c1d">Report: category + screenshot.</text>
+<text x="400" y="2382" text-anchor="middle" font-size="10" fill="#993c1d">Kafka: safety-reports topic</text>
+<text x="400" y="2398" text-anchor="middle" font-size="10" fill="#993c1d">ML auto-flags repeated reports.</text>
+<text x="400" y="2414" text-anchor="middle" font-size="10" fill="#993c1d">Human review for bans.</text>
+
+<rect x="546" y="2292" width="234" height="128" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="663" y="2314" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Message Safety</text>
+<text x="663" y="2334" text-anchor="middle" font-size="10" fill="#993c1d">ML scans messages for phone</text>
+<text x="663" y="2350" text-anchor="middle" font-size="10" fill="#993c1d">numbers, external links, NSFW.</text>
+<text x="663" y="2366" text-anchor="middle" font-size="10" fill="#993c1d">Flagged → added to review queue.</text>
+<text x="663" y="2382" text-anchor="middle" font-size="10" fill="#993c1d">Noonlight integration (Bumble):</text>
+<text x="663" y="2398" text-anchor="middle" font-size="10" fill="#993c1d">share date plan, check-in safety.</text>
+<text x="663" y="2414" text-anchor="middle" font-size="10" fill="#993c1d">Messages kept 90 days for reports.</text>
+
+<line x1="400" y1="2420" x2="400" y2="2460" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 11: KAFKA FAN-OUT ====== -->
+<line x1="30" y1="2448" x2="770" y2="2448" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2442" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— Kafka async fan-out: every event triggers these independently —</text>
+
+<rect x="160" y="2460" width="480" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2478" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Kafka — Topics: swipe-events · match-events · chat-messages · safety-reports</text>
+<text x="400" y="2496" text-anchor="middle" font-size="11" fill="#534ab7">Partitioned by userId — all events for one user in order</text>
+
+<line x1="200" y1="2504" x2="90"  y2="2552" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="300" y1="2504" x2="258" y2="2552" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="2504" x2="400" y2="2552" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="500" y1="2504" x2="542" y2="2552" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="600" y1="2504" x2="710" y2="2552" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="2552" width="136" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="88"  y="2574" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Notification Svc</text>
+<text x="88"  y="2590" text-anchor="middle" font-size="10" fill="#3b6d11">Push / APNs / FCM</text>
+<text x="88"  y="2606" text-anchor="middle" font-size="10" fill="#3b6d11">Match + message alerts</text>
+
+<rect x="170" y="2552" width="136" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="238" y="2574" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">ELO Update Svc</text>
+<text x="238" y="2590" text-anchor="middle" font-size="10" fill="#3b6d11">Recompute scores</text>
+<text x="238" y="2606" text-anchor="middle" font-size="10" fill="#3b6d11">async on each swipe</text>
+
+<rect x="320" y="2552" width="160" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="2574" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Analytics</text>
+<text x="400" y="2590" text-anchor="middle" font-size="10" fill="#3b6d11">Swipe rate, match rate</text>
+<text x="400" y="2606" text-anchor="middle" font-size="10" fill="#3b6d11">funnel, DAU/MAU</text>
+
+<rect x="494" y="2552" width="136" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="562" y="2574" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Safety Review</text>
+<text x="562" y="2590" text-anchor="middle" font-size="10" fill="#3b6d11">ML triage + human</text>
+<text x="562" y="2606" text-anchor="middle" font-size="10" fill="#3b6d11">moderation queue</text>
+
+<rect x="644" y="2552" width="136" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="712" y="2574" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">ML Training</text>
+<text x="712" y="2590" text-anchor="middle" font-size="10" fill="#3b6d11">Swipe data trains</text>
+<text x="712" y="2606" text-anchor="middle" font-size="10" fill="#3b6d11">photo + ELO models</text>
+
+<!-- ====== SECTION 12: DATA STORES ====== -->
+<line x1="30" y1="2640" x2="770" y2="2640" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2634" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="2648" width="185" height="212" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="112" y="2670" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="112" y="2688" text-anchor="middle" font-size="10" fill="#3b6d11">deck:{userId} (LIST)</text>
+<text x="112" y="2704" text-anchor="middle" font-size="10" fill="#3b6d11">likes:{userId} (SET)</text>
+<text x="112" y="2720" text-anchor="middle" font-size="10" fill="#3b6d11">swiped:{userId} (SET/BF)</text>
+<text x="112" y="2736" text-anchor="middle" font-size="10" fill="#3b6d11">blocked:{userId} (SET)</text>
+<text x="112" y="2752" text-anchor="middle" font-size="10" fill="#3b6d11">active_users:{city} GEO</text>
+<text x="112" y="2768" text-anchor="middle" font-size="10" fill="#3b6d11">elo:{userId} score</text>
+<text x="112" y="2784" text-anchor="middle" font-size="10" fill="#3b6d11">swipes:{userId}:{date}</text>
+<text x="112" y="2800" text-anchor="middle" font-size="10" fill="#3b6d11">boost:{userId} TTL</text>
+<text x="112" y="2816" text-anchor="middle" font-size="10" fill="#3b6d11">match:{id}:24h_timer TTL</text>
+<text x="112" y="2832" text-anchor="middle" font-size="10" fill="#3b6d11">match_lock:{min}:{max}</text>
+<text x="112" y="2848" text-anchor="middle" font-size="10" fill="#3b6d11">(atomic match detect)</text>
+
+<rect x="219" y="2648" width="185" height="212" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="311" y="2670" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="311" y="2688" text-anchor="middle" font-size="10" fill="#185fa5">users (profile, prefs)</text>
+<text x="311" y="2704" text-anchor="middle" font-size="10" fill="#185fa5">photos (url, status)</text>
+<text x="311" y="2720" text-anchor="middle" font-size="10" fill="#185fa5">swipes (audit log)</text>
+<text x="311" y="2736" text-anchor="middle" font-size="10" fill="#185fa5">matches (status, ts)</text>
+<text x="311" y="2752" text-anchor="middle" font-size="10" fill="#185fa5">subscriptions (tier)</text>
+<text x="311" y="2768" text-anchor="middle" font-size="10" fill="#185fa5">reports + bans</text>
+<text x="311" y="2784" text-anchor="middle" font-size="10" fill="#185fa5">elo_history</text>
+<text x="311" y="2800" text-anchor="middle" font-size="10" fill="#185fa5">Source of truth</text>
+<text x="311" y="2816" text-anchor="middle" font-size="10" fill="#185fa5">Read replicas for</text>
+<text x="311" y="2832" text-anchor="middle" font-size="10" fill="#185fa5">profile reads</text>
+
+<rect x="418" y="2648" width="185" height="212" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="510" y="2670" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Cassandra</text>
+<text x="510" y="2688" text-anchor="middle" font-size="10" fill="#534ab7">messages table</text>
+<text x="510" y="2704" text-anchor="middle" font-size="10" fill="#534ab7">Partition: matchId</text>
+<text x="510" y="2720" text-anchor="middle" font-size="10" fill="#534ab7">Cluster: timestamp</text>
+<text x="510" y="2736" text-anchor="middle" font-size="10" fill="#534ab7">Append-only writes</text>
+<text x="510" y="2752" text-anchor="middle" font-size="10" fill="#534ab7">High volume (billions</text>
+<text x="510" y="2768" text-anchor="middle" font-size="10" fill="#534ab7">of msgs total)</text>
+<text x="510" y="2784" text-anchor="middle" font-size="10" fill="#534ab7">Retained 90 days</text>
+<text x="510" y="2800" text-anchor="middle" font-size="10" fill="#534ab7">for safety reports</text>
+
+<rect x="617" y="2648" width="163" height="212" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="698" y="2670" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">S3 + Elasticsearch</text>
+<text x="698" y="2688" text-anchor="middle" font-size="10" fill="#854f0b">S3: profile photos</text>
+<text x="698" y="2704" text-anchor="middle" font-size="10" fill="#854f0b">3 CDN variants each</text>
+<text x="698" y="2720" text-anchor="middle" font-size="10" fill="#854f0b">ES: profile_index</text>
+<text x="698" y="2736" text-anchor="middle" font-size="10" fill="#854f0b">(age, city, gender,</text>
+<text x="698" y="2752" text-anchor="middle" font-size="10" fill="#854f0b">orientation, verified)</text>
+<text x="698" y="2768" text-anchor="middle" font-size="10" fill="#854f0b">Fast candidate filter</text>
+<text x="698" y="2784" text-anchor="middle" font-size="10" fill="#854f0b">before ELO ranking</text>
+<text x="698" y="2800" text-anchor="middle" font-size="10" fill="#854f0b">Synced via Kafka</text>
+
+<!-- ====== SECTION 13: REQUIREMENTS MAP ====== -->
+<line x1="30" y1="2880" x2="770" y2="2880" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2874" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— core requirements → design decisions —</text>
+
+<rect x="30" y="2888" width="740" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2908" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Show me people I'm likely to like — not random profiles</text>
+<text x="400" y="2926" text-anchor="middle" font-size="11" fill="#0f6e56">ELO score clusters users by revealed preference (who likes who). Geo + hard filters narrow the candidate pool. Collaborative filtering adds "people like you also liked X". Card stack pre-built and cached — first swipe is always instant.</text>
+
+<rect x="30" y="2948" width="740" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2968" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Detect a match the instant both users swipe right, even simultaneously</text>
+<text x="400" y="2986" text-anchor="middle" font-size="11" fill="#185fa5">Redis Lua GETSET on canonical key (min:max userId) is atomic and single-threaded. The race condition between two simultaneous right-swipes is eliminated at the Redis level — not the application level.</text>
+
+<rect x="30" y="3008" width="740" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="3028" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Handle millions of swipes per day without bottlenecks</text>
+<text x="400" y="3046" text-anchor="middle" font-size="11" fill="#854f0b">Swipe write path is minimal: rate check (Redis), record swipe (Redis SET), publish to Kafka. All expensive operations (ELO recompute, deck rebuild, ES update) are async Kafka consumers. The hot path is sub-10ms.</text>
+
+<rect x="30" y="3068" width="740" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="3088" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Know who is near me without exposing my exact location</text>
+<text x="400" y="3106" text-anchor="middle" font-size="11" fill="#534ab7">Coordinates snapped to H3 hexagonal grid (1.1km cell). Only binned distance shown in UI. Exact lat/lng never returned to clients. Triangulation attacks prevented because position is grid-locked, not floating point.</text>
+
+<rect x="30" y="3128" width="740" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="3148" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Trust that profiles are real people (photo verification, reports)</text>
+<text x="400" y="3166" text-anchor="middle" font-size="11" fill="#993c1d">ML face-match selfie vs all profile photos before granting verified badge. Reports go to Kafka — ML triages, humans review top-scored reports. Repeated reports auto-flag for ban review. Selfies deleted after match check.</text>
+
+<rect x="30" y="3188" width="740" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="3208" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Chat messages delivered in real-time to matched users only</text>
+<text x="400" y="3226" text-anchor="middle" font-size="11" fill="#0f6e56">Chat Service validates sender is part of the match before routing. Messages persisted to Cassandra (partitioned by matchId) before ACK. Offline users receive FCM push. Cassandra retained 90 days for safety evidence.</text>
+
+<!-- FINAL INSIGHT BOX -->
+<rect x="30" y="3256" width="740" height="64" rx="8" fill="#2c2c2a"/>
+<text x="400" y="3280" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">The core insight: Tinder's ELO is not about who is "attractive" — it is about mutual desirability.</text>
+<text x="400" y="3300" text-anchor="middle" font-size="11" fill="#aaa">A user who gets many right swipes from high-ELO users ranks higher than one who gets many swipes from low-ELO users.</text>
+<text x="400" y="3316" text-anchor="middle" font-size="11" fill="#aaa">The algorithm optimises for matches (mutual), not one-sided likes — because matches are what monetises.</text>
+
+<!-- PATTERN SUMMARY -->
+<rect x="30" y="3336" width="740" height="88" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="3356" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Profile: S3 photos → ML pipeline → CDN variants → ES index · Discovery: GEORADIUS → ELO rank → deck cache (Redis LIST)</text>
+<text x="400" y="3374" text-anchor="middle" font-size="11" fill="#5f5e5a">Swipe: rate limit (Redis) → like SET → Lua atomic match-check → Kafka publish → async ELO update</text>
+<text x="400" y="3392" text-anchor="middle" font-size="11" fill="#5f5e5a">Match: Cassandra chat table (partitioned by matchId) → WS fan-out → FCM offline · Bumble 24hr timer: Redis TTL per match</text>
+<text x="400" y="3410" text-anchor="middle" font-size="10" fill="#888">Location: H3 grid-snapped GEO index · Block: Redis SET · Report: Kafka → ML triage → human review · Photo verify: face-match ML, selfie deleted</text>
+
+</svg>
+</body></html>

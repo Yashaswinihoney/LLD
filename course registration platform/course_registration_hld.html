@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 3120" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#2c2c2a"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">COURSE REGISTRATION SYSTEM — HLD APPLICATION FLOW</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">Browse · Search · Enroll · Capacity · Concurrency · Waitlist · Notifications</text>
+
+<!-- ====== SECTION 1: CLIENT LAYER ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— client layer —</text>
+
+<rect x="30"  y="80" width="210" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="135" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Student Portal</text>
+<text x="135" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">Web App (React SPA)</text>
+<text x="135" y="132" text-anchor="middle" font-size="11" fill="#5f5e5a">Browse · Search · Enroll</text>
+
+<rect x="295" y="80" width="210" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Mobile App</text>
+<text x="400" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">iOS / Android</text>
+<text x="400" y="132" text-anchor="middle" font-size="11" fill="#5f5e5a">Register · View Schedule</text>
+
+<rect x="560" y="80" width="210" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="665" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Admin Portal</text>
+<text x="665" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">Faculty / Registrar</text>
+<text x="665" y="132" text-anchor="middle" font-size="11" fill="#5f5e5a">Manage courses · Reports</text>
+
+<line x1="135" y1="136" x2="270" y2="184" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="136" x2="400" y2="184" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="665" y1="136" x2="530" y2="184" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 2: CDN + DNS ====== -->
+<line x1="30" y1="172" x2="770" y2="172" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="166" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— CDN + DNS —</text>
+
+<rect x="160" y="184" width="480" height="76" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="206" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">CDN + DNS (Cloudflare / AWS CloudFront)</text>
+<text x="400" y="224" text-anchor="middle" font-size="11" fill="#854f0b">DNS resolves portal.university.edu → nearest PoP / region</text>
+<text x="400" y="240" text-anchor="middle" font-size="11" fill="#854f0b">CDN serves: static assets (JS, CSS), course catalog pages (TTL 5min), university branding</text>
+<text x="400" y="256" text-anchor="middle" font-size="11" fill="#854f0b">CDN does NOT cache: enrollment requests, real-time seat counts, student records</text>
+
+<!-- two paths -->
+<line x1="290" y1="260" x2="180" y2="308" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="510" y1="260" x2="620" y2="308" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="308" width="290" height="40" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="165" y="326" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cache HIT — static content from edge</text>
+<text x="165" y="342" text-anchor="middle" font-size="11" fill="#854f0b">Course images, university logo, JS bundles</text>
+
+<rect x="490" y="308" width="290" height="40" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="635" y="326" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">Cache MISS → Load Balancer</text>
+<text x="635" y="342" text-anchor="middle" font-size="11" fill="#185fa5">Dynamic API requests forwarded</text>
+
+<line x1="635" y1="348" x2="635" y2="392" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 3: LOAD BALANCER ====== -->
+<line x1="30" y1="380" x2="770" y2="380" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="374" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— load balancer —</text>
+
+<rect x="280" y="392" width="400" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="480" y="414" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">Load Balancer (AWS ALB / nginx)</text>
+<text x="480" y="432" text-anchor="middle" font-size="11" fill="#185fa5">Round-robin across API pods (stateless services)</text>
+<text x="480" y="448" text-anchor="middle" font-size="11" fill="#185fa5">Path routing: /api/courses → Course Service | /api/enrollments → Registration Service</text>
+
+<line x1="360" y1="456" x2="220" y2="504" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="480" y1="456" x2="480" y2="504" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="600" y1="456" x2="740" y2="504" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 4: API GATEWAY ====== -->
+<line x1="30" y1="492" x2="770" y2="492" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="486" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— API gateway —</text>
+
+<rect x="140" y="504" width="520" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="526" text-anchor="middle" font-size="13" font-weight="700" fill="#2c2c2a">API Gateway</text>
+<text x="400" y="544" text-anchor="middle" font-size="11" fill="#5f5e5a">JWT auth (student ID token) · Rate limiting (30 enroll req/min per student)</text>
+<text x="400" y="560" text-anchor="middle" font-size="11" fill="#5f5e5a">Request queuing during registration rush (virtual queue — Req 5 fairness)</text>
+
+<line x1="240" y1="568" x2="160" y2="616" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="568" x2="400" y2="616" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="560" y1="568" x2="640" y2="616" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 5: CORE SERVICES ====== -->
+<line x1="30" y1="604" x2="770" y2="604" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="598" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— core microservices —</text>
+
+<rect x="20"  y="616" width="224" height="96" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="132" y="638" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Course Service</text>
+<text x="132" y="656" text-anchor="middle" font-size="11" fill="#0f6e56">Req 1: list all courses</text>
+<text x="132" y="672" text-anchor="middle" font-size="11" fill="#0f6e56">Req 2: course details</text>
+<text x="132" y="688" text-anchor="middle" font-size="11" fill="#0f6e56">Req 3: search by code/name</text>
+<text x="132" y="704" text-anchor="middle" font-size="11" fill="#0f6e56">Real-time seat counts</text>
+
+<rect x="288" y="616" width="224" height="96" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="638" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Registration Service</text>
+<text x="400" y="656" text-anchor="middle" font-size="11" fill="#0f6e56">Req 1: enroll / drop</text>
+<text x="400" y="672" text-anchor="middle" font-size="11" fill="#0f6e56">Req 4: capacity check</text>
+<text x="400" y="688" text-anchor="middle" font-size="11" fill="#0f6e56">Req 5+6: concurrent-safe</text>
+<text x="400" y="704" text-anchor="middle" font-size="11" fill="#0f6e56">Strategy validation</text>
+
+<rect x="556" y="616" width="224" height="96" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="668" y="638" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Notification Service</text>
+<text x="668" y="656" text-anchor="middle" font-size="11" fill="#0f6e56">Req 1: confirm email</text>
+<text x="668" y="672" text-anchor="middle" font-size="11" fill="#0f6e56">Waitlist alerts</text>
+<text x="668" y="688" text-anchor="middle" font-size="11" fill="#0f6e56">Drop confirmations</text>
+<text x="668" y="704" text-anchor="middle" font-size="11" fill="#0f6e56">Kafka consumer</text>
+
+<!-- ====== SECTION 6: ENROLLMENT FLOW — MAIN ====== -->
+<line x1="30" y1="780" x2="770" y2="780" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="773" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— enrollment flow (Req 1 + 4 + 5 + 6) —</text>
+
+<!-- step boxes -->
+<rect x="30" y="788" width="740" height="52" rx="6" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="808" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">POST /api/enrollments  { studentId, courseCode }</text>
+<text x="400" y="824" text-anchor="middle" font-size="11" fill="#534ab7">Auth header validated by API Gateway · Request dispatched to Registration Service</text>
+
+<line x1="400" y1="840" x2="400" y2="876" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Registration Service box -->
+<rect x="120" y="876" width="560" height="148" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="898" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Registration Service — Enrollment Steps</text>
+<text x="400" y="916" text-anchor="middle" font-size="11" fill="#0f6e56">1. Validate student: ACTIVE status, membership in institution</text>
+<text x="400" y="932" text-anchor="middle" font-size="11" fill="#0f6e56">2. Idempotency: check if already enrolled (Redis cache lookup)</text>
+<text x="400" y="948" text-anchor="middle" font-size="11" fill="#0f6e56">3. Strategy validation: credit limit check · schedule conflict check</text>
+<text x="400" y="964" text-anchor="middle" font-size="11" fill="#0f6e56">4. Acquire per-course distributed lock (Redis SET NX)</text>
+<text x="400" y="980" text-anchor="middle" font-size="11" fill="#0f6e56">5. Capacity check: currentEnrollment &lt; maxCapacity?</text>
+<text x="400" y="996" text-anchor="middle" font-size="11" fill="#0f6e56">6. Persist enrollment record to PostgreSQL · update Redis seat count</text>
+<text x="400" y="1012" text-anchor="middle" font-size="11" fill="#0f6e56">7. Publish event to Kafka · release distributed lock</text>
+<text x="400" y="1024" text-anchor="middle" font-size="11" fill="#0f6e56">8. Return 201 ENROLLED or 202 WAITLISTED to client</text>
+
+<!-- rejection branch -->
+<line x1="120" y1="940" x2="48" y2="1000" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="0"  y="1000" width="110" height="64" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="55" y="1022" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">Rejected</text>
+<text x="55" y="1038" text-anchor="middle" font-size="10" fill="#993c1d">400 Bad Request</text>
+<text x="55" y="1052" text-anchor="middle" font-size="10" fill="#993c1d">reason in body</text>
+
+<line x1="400" y1="1024" x2="400" y2="1072" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- outcomes -->
+<line x1="310" y1="1092" x2="180" y2="1136" stroke="#0f6e56" stroke-width="1" marker-end="url(#arrow-g)"/>
+<line x1="490" y1="1092" x2="620" y2="1136" stroke="#d85a30" stroke-width="1" marker-end="url(#arrow-r)"/>
+
+<rect x="200" y="1072" width="400" height="28" rx="6" fill="#f9f9f7" stroke="#ccc"/>
+<text x="400" y="1090" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Capacity available?</text>
+
+<rect x="20"  y="1136" width="284" height="44" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="162" y="1158" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">✓ ENROLLED (201)</text>
+<text x="162" y="1174" text-anchor="middle" font-size="11" fill="#3b6d11">Status = ENROLLED → Kafka event</text>
+
+<rect x="496" y="1136" width="284" height="44" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="638" y="1158" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">⏳ WAITLISTED (202)</text>
+<text x="638" y="1174" text-anchor="middle" font-size="11" fill="#854f0b">Position in queue → Kafka event</text>
+
+<!-- ====== SECTION 7: CONCURRENCY — CORE ====== -->
+<line x1="30" y1="1244" x2="770" y2="1244" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1237" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— concurrency safety (Req 5 + 6) — the hardest part —</text>
+
+<rect x="30" y="1252" width="740" height="148" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="1274" text-anchor="middle" font-size="13" font-weight="700" fill="#712b13">Problem: 500 students try to register for CS-301 (capacity=30) at 9:00 AM</text>
+
+<!-- problem scenario -->
+<text x="400" y="1294" text-anchor="middle" font-size="11" fill="#993c1d">Without locking: Thread A reads count=29 → Thread B reads count=29 →</text>
+<text x="400" y="1310" text-anchor="middle" font-size="11" fill="#993c1d">Both see "29 &lt; 30" → Both enroll → count becomes 31 → OVER-ENROLLED ❌</text>
+
+<!-- solution -->
+<text x="400" y="1334" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Solution: Redis distributed lock (SET NX) per courseCode</text>
+<text x="400" y="1352" text-anchor="middle" font-size="11" fill="#993c1d">SET lock:CS-301 "server-1" NX PX 5000  →  only ONE server holds the lock at a time</text>
+<text x="400" y="1368" text-anchor="middle" font-size="11" fill="#993c1d">All 500 requests queue at the lock → served in FIFO order → exactly 30 enrolled, rest waitlisted</text>
+<text x="400" y="1384" text-anchor="middle" font-size="11" fill="#993c1d">Lock released immediately after DB write + cache update (~5ms) → high throughput preserved</text>
+
+<!-- solution boxes -->
+<line x1="200" y1="1400" x2="100" y2="1444" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="1400" x2="400" y2="1444" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="600" y1="1400" x2="700" y2="1444" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="30"  y="1388" width="740" height="12" rx="4" fill="#f1efe8" stroke="#888780"/>
+
+<rect x="20"  y="1444" width="210" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="125" y="1466" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis SET NX lock</text>
+<text x="125" y="1484" text-anchor="middle" font-size="11" fill="#3b6d11">Per course, TTL=5s</text>
+<text x="125" y="1500" text-anchor="middle" font-size="11" fill="#3b6d11">Atomic CAS operation</text>
+
+<rect x="295" y="1444" width="210" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="1466" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">DB transaction</text>
+<text x="400" y="1484" text-anchor="middle" font-size="11" fill="#3b6d11">SELECT FOR UPDATE</text>
+<text x="400" y="1500" text-anchor="middle" font-size="11" fill="#3b6d11">Pessimistic locking</text>
+
+<rect x="570" y="1444" width="210" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="675" y="1466" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis counter</text>
+<text x="675" y="1484" text-anchor="middle" font-size="11" fill="#3b6d11">DECR seat:CS-301</text>
+<text x="675" y="1500" text-anchor="middle" font-size="11" fill="#3b6d11">Atomic, no race</text>
+
+<!-- ====== SECTION 8: SEARCH FLOW ====== -->
+<line x1="30" y1="1572" x2="770" y2="1572" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1565" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— course search flow (Req 3) —</text>
+
+<rect x="30"  y="1580" width="350" height="112" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="205" y="1602" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Search by Code</text>
+<text x="205" y="1622" text-anchor="middle" font-size="11" fill="#534ab7">GET /api/courses?code=CS-301</text>
+<text x="205" y="1638" text-anchor="middle" font-size="11" fill="#534ab7">Layer 1: Redis cache lookup O(1)</text>
+<text x="205" y="1654" text-anchor="middle" font-size="11" fill="#534ab7">Cache miss → PostgreSQL exact match</text>
+<text x="205" y="1670" text-anchor="middle" font-size="11" fill="#534ab7">Result cached in Redis (TTL 5min)</text>
+<text x="205" y="1686" text-anchor="middle" font-size="11" fill="#534ab7">Seat count always fresh from Redis</text>
+
+<rect x="420" y="1580" width="350" height="112" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="595" y="1602" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Search by Name</text>
+<text x="595" y="1622" text-anchor="middle" font-size="11" fill="#534ab7">GET /api/courses?name=machine+learning</text>
+<text x="595" y="1638" text-anchor="middle" font-size="11" fill="#534ab7">Elasticsearch full-text search</text>
+<text x="595" y="1654" text-anchor="middle" font-size="11" fill="#534ab7">Supports partial match, typo-tolerance</text>
+<text x="595" y="1670" text-anchor="middle" font-size="11" fill="#534ab7">Filter: dept / type / credits / available</text>
+<text x="595" y="1686" text-anchor="middle" font-size="11" fill="#534ab7">Results cached in Redis (TTL 5min)</text>
+
+<!-- ====== SECTION 9: KAFKA FAN-OUT ====== -->
+<line x1="30" y1="1760" x2="770" y2="1760" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1753" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— post-enrollment fan-out via Kafka —</text>
+
+<rect x="220" y="1768" width="360" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1786" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Kafka — enrollment-events topic</text>
+<text x="400" y="1802" text-anchor="middle" font-size="11" fill="#534ab7">Partitioned by courseCode — ordered per course</text>
+
+<line x1="200" y1="1812" x2="100" y2="1860" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="320" y1="1812" x2="270" y2="1860" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="1812" x2="400" y2="1860" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="480" y1="1812" x2="530" y2="1860" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="600" y1="1812" x2="700" y2="1860" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1860" width="140" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="90" y="1882" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Email Notif</text>
+<text x="90" y="1898" text-anchor="middle" font-size="10" fill="#3b6d11">Enroll confirm</text>
+<text x="90" y="1914" text-anchor="middle" font-size="10" fill="#3b6d11">+ schedule PDF</text>
+
+<rect x="178" y="1860" width="140" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="248" y="1882" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Analytics</text>
+<text x="248" y="1898" text-anchor="middle" font-size="10" fill="#3b6d11">Enroll counts</text>
+<text x="248" y="1914" text-anchor="middle" font-size="10" fill="#3b6d11">Popular courses</text>
+
+<rect x="336" y="1860" width="128" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="1882" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Roster Update</text>
+<text x="400" y="1898" text-anchor="middle" font-size="10" fill="#3b6d11">Instructor</text>
+<text x="400" y="1914" text-anchor="middle" font-size="10" fill="#3b6d11">notified</text>
+
+<rect x="482" y="1860" width="140" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="552" y="1882" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Search Index</text>
+<text x="552" y="1898" text-anchor="middle" font-size="10" fill="#3b6d11">Update seat</text>
+<text x="552" y="1914" text-anchor="middle" font-size="10" fill="#3b6d11">availability</text>
+
+<rect x="640" y="1860" width="140" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="710" y="1882" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Waitlist Svc</text>
+<text x="710" y="1898" text-anchor="middle" font-size="10" fill="#3b6d11">On drop: notify</text>
+<text x="710" y="1914" text-anchor="middle" font-size="10" fill="#3b6d11">next in queue</text>
+
+<!-- ====== SECTION 10: WAITLIST FLOW ====== -->
+<line x1="30" y1="1992" x2="770" y2="1992" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1985" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— waitlist flow (capacity full case) —</text>
+
+<rect x="30"  y="2000" width="350" height="116" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="205" y="2022" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Course Full → Join Waitlist</text>
+<text x="205" y="2042" text-anchor="middle" font-size="11" fill="#993c1d">currentEnrollment == maxCapacity</text>
+<text x="205" y="2058" text-anchor="middle" font-size="11" fill="#993c1d">Student added to Redis ZSET queue</text>
+<text x="205" y="2074" text-anchor="middle" font-size="11" fill="#993c1d">score = enqueue timestamp (FIFO order)</text>
+<text x="205" y="2090" text-anchor="middle" font-size="11" fill="#993c1d">Position shown: ZRANK → "You are #8"</text>
+<text x="205" y="2106" text-anchor="middle" font-size="11" fill="#993c1d">Email + in-app notification sent</text>
+
+<rect x="420" y="2000" width="350" height="116" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="595" y="2022" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Seat Opens → Auto-Promote</text>
+<text x="595" y="2042" text-anchor="middle" font-size="11" fill="#3b6d11">Student drops → Kafka: enrollment-dropped</text>
+<text x="595" y="2058" text-anchor="middle" font-size="11" fill="#3b6d11">Waitlist Service: ZPOPMIN queue:CS-301</text>
+<text x="595" y="2074" text-anchor="middle" font-size="11" fill="#3b6d11">Next student auto-enrolled atomically</text>
+<text x="595" y="2090" text-anchor="middle" font-size="11" fill="#3b6d11">Enrollment record updated WAITLISTED→ENROLLED</text>
+<text x="595" y="2106" text-anchor="middle" font-size="11" fill="#3b6d11">Email + SMS: "You've been enrolled in CS-301!"</text>
+
+<!-- ====== SECTION 11: ENROLLMENT STRATEGY (REQ 7) ====== -->
+<line x1="30" y1="2180" x2="770" y2="2180" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2173" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— enrollment validation strategies (Req 7: extensible) —</text>
+
+<rect x="20"  y="2188" width="228" height="120" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="134" y="2210" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Standard</text>
+<text x="134" y="2230" text-anchor="middle" font-size="11" fill="#0f6e56">Active student check</text>
+<text x="134" y="2246" text-anchor="middle" font-size="11" fill="#0f6e56">Duplicate enrollment check</text>
+<text x="134" y="2262" text-anchor="middle" font-size="11" fill="#0f6e56">No credit/conflict rules</text>
+<text x="134" y="2278" text-anchor="middle" font-size="11" fill="#0f6e56">Use: open registration</text>
+<text x="134" y="2300" text-anchor="middle" font-size="10" fill="#3b6d11">Req 7: new strategy in 1 class</text>
+
+<rect x="286" y="2188" width="228" height="120" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2210" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Credit Limit</text>
+<text x="400" y="2230" text-anchor="middle" font-size="11" fill="#0f6e56">Standard + credit cap</text>
+<text x="400" y="2246" text-anchor="middle" font-size="11" fill="#0f6e56">Total credits ≤ maxCredits</text>
+<text x="400" y="2262" text-anchor="middle" font-size="11" fill="#0f6e56">Per-student semester limit</text>
+<text x="400" y="2278" text-anchor="middle" font-size="11" fill="#0f6e56">Use: standard semester reg</text>
+<text x="400" y="2300" text-anchor="middle" font-size="10" fill="#3b6d11">No Registration Service change</text>
+
+<rect x="552" y="2188" width="228" height="120" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="666" y="2210" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Conflict Check</text>
+<text x="666" y="2230" text-anchor="middle" font-size="11" fill="#0f6e56">CreditLimit + time slots</text>
+<text x="666" y="2246" text-anchor="middle" font-size="11" fill="#0f6e56">Detect schedule overlap</text>
+<text x="666" y="2262" text-anchor="middle" font-size="11" fill="#0f6e56">Cross-check all enrolled</text>
+<text x="666" y="2278" text-anchor="middle" font-size="11" fill="#0f6e56">Use: full reg validation</text>
+<text x="666" y="2300" text-anchor="middle" font-size="10" fill="#3b6d11">Swap at runtime, zero downtime</text>
+
+<!-- ====== SECTION 12: DATA STORES ====== -->
+<line x1="30" y1="2376" x2="770" y2="2376" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2369" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="2384" width="175" height="160" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="107" y="2406" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="107" y="2424" text-anchor="middle" font-size="10" fill="#3b6d11">lock:CS-301 (SET NX)</text>
+<text x="107" y="2440" text-anchor="middle" font-size="10" fill="#3b6d11">seat:CS-301 (counter)</text>
+<text x="107" y="2456" text-anchor="middle" font-size="10" fill="#3b6d11">waitlist:CS-301 (ZSET)</text>
+<text x="107" y="2472" text-anchor="middle" font-size="10" fill="#3b6d11">course:{code} cache</text>
+<text x="107" y="2488" text-anchor="middle" font-size="10" fill="#3b6d11">student:{id} session</text>
+<text x="107" y="2504" text-anchor="middle" font-size="10" fill="#3b6d11">Rate limit counters</text>
+<text x="107" y="2520" text-anchor="middle" font-size="10" fill="#3b6d11">Idempotency keys</text>
+<text x="107" y="2536" text-anchor="middle" font-size="10" fill="#3b6d11">Virtual queue ZSET</text>
+
+<rect x="211" y="2384" width="175" height="160" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="298" y="2406" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="298" y="2424" text-anchor="middle" font-size="10" fill="#185fa5">students</text>
+<text x="298" y="2440" text-anchor="middle" font-size="10" fill="#185fa5">courses</text>
+<text x="298" y="2456" text-anchor="middle" font-size="10" fill="#185fa5">enrollments</text>
+<text x="298" y="2472" text-anchor="middle" font-size="10" fill="#185fa5">instructors</text>
+<text x="298" y="2488" text-anchor="middle" font-size="10" fill="#185fa5">waitlist_entries</text>
+<text x="298" y="2504" text-anchor="middle" font-size="10" fill="#185fa5">schedules (time slots)</text>
+<text x="298" y="2520" text-anchor="middle" font-size="10" fill="#185fa5">audit_log</text>
+<text x="298" y="2536" text-anchor="middle" font-size="10" fill="#185fa5">Source of truth</text>
+
+<rect x="402" y="2384" width="175" height="160" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="489" y="2406" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="489" y="2424" text-anchor="middle" font-size="10" fill="#534ab7">enrollment-events</text>
+<text x="489" y="2440" text-anchor="middle" font-size="10" fill="#534ab7">drop-events</text>
+<text x="489" y="2456" text-anchor="middle" font-size="10" fill="#534ab7">waitlist-events</text>
+<text x="489" y="2472" text-anchor="middle" font-size="10" fill="#534ab7">notification-events</text>
+<text x="489" y="2488" text-anchor="middle" font-size="10" fill="#534ab7">analytics-events</text>
+<text x="489" y="2504" text-anchor="middle" font-size="10" fill="#534ab7">Partitioned by</text>
+<text x="489" y="2520" text-anchor="middle" font-size="10" fill="#534ab7">courseCode</text>
+<text x="489" y="2536" text-anchor="middle" font-size="10" fill="#534ab7">Async fan-out</text>
+
+<rect x="593" y="2384" width="187" height="160" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="686" y="2406" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Elasticsearch</text>
+<text x="686" y="2424" text-anchor="middle" font-size="10" fill="#854f0b">course_index</text>
+<text x="686" y="2440" text-anchor="middle" font-size="10" fill="#854f0b">name, code, dept</text>
+<text x="686" y="2456" text-anchor="middle" font-size="10" fill="#854f0b">instructor name</text>
+<text x="686" y="2472" text-anchor="middle" font-size="10" fill="#854f0b">credits, type</text>
+<text x="686" y="2488" text-anchor="middle" font-size="10" fill="#854f0b">Full-text search</text>
+<text x="686" y="2504" text-anchor="middle" font-size="10" fill="#854f0b">Faceted filters</text>
+<text x="686" y="2520" text-anchor="middle" font-size="10" fill="#854f0b">Synced from PG</text>
+<text x="686" y="2536" text-anchor="middle" font-size="10" fill="#854f0b">via Kafka consumer</text>
+
+<!-- ====== SECTION 13: REQUIREMENTS MAP ====== -->
+<line x1="30" y1="2608" x2="770" y2="2608" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2601" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— all 7 requirements → design decisions —</text>
+
+<rect x="30" y="2616" width="740" height="48" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2636" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Req 1: Students register + view courses</text>
+<text x="400" y="2652" text-anchor="middle" font-size="11" fill="#0f6e56">POST /enrollments to register. GET /students/{id}/enrollments to view schedule. Enrollment records in PostgreSQL. Active enrollments cached in Redis per student.</text>
+
+<rect x="30" y="2676" width="740" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2696" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Req 2: Course has code, name, instructor, max capacity</text>
+<text x="400" y="2712" text-anchor="middle" font-size="11" fill="#185fa5">Stored in PostgreSQL courses table. Synced to Elasticsearch for search. Seat count in Redis (seat:{courseCode}) for real-time availability — updated atomically on each enrollment.</text>
+
+<rect x="30" y="2736" width="740" height="48" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="2756" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Req 3: Search by code / name</text>
+<text x="400" y="2772" text-anchor="middle" font-size="11" fill="#854f0b">Code search: Redis hash O(1) lookup, cache miss → PostgreSQL exact match. Name search: Elasticsearch full-text with partial match + typo tolerance. Both cache results in Redis TTL=5min.</text>
+
+<rect x="30" y="2796" width="740" height="48" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2816" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Req 4: Prevent over-enrollment (capacity enforcement)</text>
+<text x="400" y="2832" text-anchor="middle" font-size="11" fill="#534ab7">Redis DECR seat:{code} — atomic, returns new value. If value &lt; 0: INCR back (undo) → WAITLIST. PostgreSQL enrollment count as source-of-truth. Redis as fast gate.</text>
+
+<rect x="30" y="2856" width="740" height="48" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2876" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Req 5 + 6: Concurrent requests + data consistency + no race conditions</text>
+<text x="400" y="2892" text-anchor="middle" font-size="11" fill="#993c1d">Redis SET NX distributed lock per courseCode (TTL=5s). PostgreSQL SELECT FOR UPDATE inside transaction. FIFO fair=true ReentrantLock in-process. All three layers prevent any race condition.</text>
+
+<rect x="30" y="2916" width="740" height="48" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2936" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Req 7: Extensible design</text>
+<text x="400" y="2952" text-anchor="middle" font-size="11" fill="#0f6e56">Strategy pattern: add new enrollment rules (priority for seniors, prerequisites) without touching Registration Service. Observer pattern: add new notification channels (push, WhatsApp) without changing Enrollment flow. Factory: add new course types (blended, workshop) in one class.</text>
+
+<!-- FINAL -->
+<rect x="30" y="2976" width="740" height="60" rx="8" fill="#2c2c2a"/>
+<text x="400" y="2998" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">The hardest problem: 1000 students all hit "Register" for CS-101 the moment registration opens.</text>
+<text x="400" y="3018" text-anchor="middle" font-size="11" fill="#aaa">Redis SET NX per course (atomic lock) + DECR seat counter (atomic operation) + PostgreSQL transaction = exactly max-capacity enrolled, rest waitlisted, zero double-enrollment.</text>
+
+<!-- PATTERN TABLE -->
+<rect x="30" y="3048" width="740" height="60" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="3068" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Singleton=RegistrationService+CourseCatalog · State=EnrollmentStatus(PENDING→ENROLLED/WAITLISTED→DROPPED)</text>
+<text x="400" y="3086" text-anchor="middle" font-size="11" fill="#5f5e5a">Strategy=EnrollmentStrategy(Standard/CreditLimit/ConflictCheck) · Observer=RegistrationEventObserver(Email/Analytics)</text>
+<text x="400" y="3104" text-anchor="middle" font-size="10" fill="#888">Factory=CourseFactory · Builder=Course.Builder+Student.Builder · Command=EnrollCommand(execute+undo) · Iterator=CatalogSearch</text>
+
+</svg>
+</body></html>

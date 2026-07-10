@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 3360" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#2c2c2a"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">DIGITAL WALLET SYSTEM — HLD APPLICATION FLOW</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">Account · Payment Methods · Transfer · History · Multi-Currency · Security · Concurrency</text>
+
+<!-- ====== SECTION 1: CLIENT LAYER ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— client layer —</text>
+
+<rect x="30"  y="80" width="200" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="130" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Mobile App</text>
+<text x="130" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">iOS / Android</text>
+<text x="130" y="132" text-anchor="middle" font-size="11" fill="#5f5e5a">REST + Push Notifications</text>
+
+<rect x="300" y="80" width="200" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Web App</text>
+<text x="400" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">React SPA</text>
+<text x="400" y="132" text-anchor="middle" font-size="11" fill="#5f5e5a">REST + WebSocket</text>
+
+<rect x="570" y="80" width="200" height="56" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="670" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Merchant SDK</text>
+<text x="670" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">Partner Integrations</text>
+<text x="670" y="132" text-anchor="middle" font-size="11" fill="#5f5e5a">REST API</text>
+
+<line x1="130" y1="136" x2="270" y2="184" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="136" x2="400" y2="184" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="670" y1="136" x2="530" y2="184" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 2: CDN + DNS ====== -->
+<line x1="30" y1="172" x2="770" y2="172" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="166" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— CDN + DNS (global routing + TLS) —</text>
+
+<rect x="140" y="184" width="520" height="88" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="206" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">CDN + DNS (Cloudflare / AWS CloudFront)</text>
+<text x="400" y="224" text-anchor="middle" font-size="11" fill="#854f0b">GeoDNS: wallet.platform.com → nearest PoP (Mumbai / Singapore / Frankfurt / New York)</text>
+<text x="400" y="240" text-anchor="middle" font-size="11" fill="#854f0b">TLS 1.3 termination at CDN edge — all traffic encrypted in transit (Req 6)</text>
+<text x="400" y="256" text-anchor="middle" font-size="11" fill="#854f0b">CDN serves: static assets only (JS/CSS, app shell). ALL financial APIs bypass CDN entirely.</text>
+<text x="400" y="272" text-anchor="middle" font-size="11" fill="#854f0b">Financial APIs NEVER cached — balance, transfer, history always hit origin fresh</text>
+
+<line x1="400" y1="272" x2="400" y2="316" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 3: WAF + DDOS ====== -->
+<line x1="30" y1="304" x2="770" y2="304" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="298" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— WAF + DDoS protection (Req 6) —</text>
+
+<rect x="160" y="316" width="480" height="64" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="338" text-anchor="middle" font-size="13" font-weight="700" fill="#712b13">WAF + DDoS Protection (Cloudflare / AWS Shield)</text>
+<text x="400" y="356" text-anchor="middle" font-size="11" fill="#993c1d">Block: SQL injection, XSS, credential stuffing, OWASP Top 10</text>
+<text x="400" y="372" text-anchor="middle" font-size="11" fill="#993c1d">Rate limiting at edge: 100 req/min per IP — bot traffic dropped before reaching servers</text>
+
+<line x1="400" y1="380" x2="400" y2="420" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 4: LOAD BALANCER ====== -->
+<line x1="30" y1="408" x2="770" y2="408" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="402" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— load balancer —</text>
+
+<rect x="200" y="420" width="400" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="442" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">Load Balancer (AWS ALB / nginx)</text>
+<text x="400" y="460" text-anchor="middle" font-size="11" fill="#185fa5">Round-robin across stateless API pods (auto-scaled 2–50 instances)</text>
+<text x="400" y="476" text-anchor="middle" font-size="11" fill="#185fa5">/api/wallets → Wallet Service | /api/transfers → Transfer Service | /api/fx → Currency Service</text>
+
+<line x1="280" y1="484" x2="160" y2="532" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="484" x2="400" y2="532" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="520" y1="484" x2="640" y2="532" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 5: API GATEWAY ====== -->
+<line x1="30" y1="520" x2="770" y2="520" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="514" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— API gateway (auth · rate limit · fraud gate) —</text>
+
+<rect x="100" y="532" width="600" height="76" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="554" text-anchor="middle" font-size="13" font-weight="700" fill="#2c2c2a">API Gateway</text>
+<text x="400" y="572" text-anchor="middle" font-size="11" fill="#5f5e5a">OAuth2 + JWT auth (access token 15min, refresh 7days) · mTLS for Merchant SDK</text>
+<text x="400" y="588" text-anchor="middle" font-size="11" fill="#5f5e5a">Rate limiting: 50 transfers/min per user · 200 reads/min · burst protection</text>
+<text x="400" y="600" text-anchor="middle" font-size="11" fill="#5f5e5a">Device fingerprint check · IP reputation lookup · KYC status gate (unverified → block transfers)</text>
+
+<line x1="220" y1="608" x2="130" y2="656" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="608" x2="400" y2="656" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="580" y1="608" x2="670" y2="656" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 6: CORE SERVICES ====== -->
+<line x1="30" y1="644" x2="770" y2="644" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="638" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— core microservices —</text>
+
+<rect x="20"  y="656" width="224" height="96" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="132" y="678" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Wallet Service</text>
+<text x="132" y="696" text-anchor="middle" font-size="11" fill="#0f6e56">Req 1: create account</text>
+<text x="132" y="712" text-anchor="middle" font-size="11" fill="#0f6e56">Req 2: payment methods</text>
+<text x="132" y="728" text-anchor="middle" font-size="11" fill="#0f6e56">Balance management</text>
+<text x="132" y="744" text-anchor="middle" font-size="11" fill="#0f6e56">KYC status gate</text>
+
+<rect x="288" y="656" width="224" height="96" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="678" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Transfer Service</text>
+<text x="400" y="696" text-anchor="middle" font-size="11" fill="#0f6e56">Req 3: fund transfers</text>
+<text x="400" y="712" text-anchor="middle" font-size="11" fill="#0f6e56">Req 7: concurrent-safe</text>
+<text x="400" y="728" text-anchor="middle" font-size="11" fill="#0f6e56">Idempotency dedup</text>
+<text x="400" y="744" text-anchor="middle" font-size="11" fill="#0f6e56">Saga orchestration</text>
+
+<rect x="556" y="656" width="224" height="96" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="668" y="678" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Currency Service</text>
+<text x="668" y="696" text-anchor="middle" font-size="11" fill="#0f6e56">Req 5: multi-currency</text>
+<text x="668" y="712" text-anchor="middle" font-size="11" fill="#0f6e56">Live FX rates (forex API)</text>
+<text x="668" y="728" text-anchor="middle" font-size="11" fill="#0f6e56">Rate caching (TTL 60s)</text>
+<text x="668" y="744" text-anchor="middle" font-size="11" fill="#0f6e56">Conversion strategy</text>
+
+<!-- ====== SECTION 7: TRANSFER FLOW ====== -->
+<line x1="30" y1="824" x2="770" y2="824" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="817" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— fund transfer flow (Req 3 + 6 + 7) — the core flow —</text>
+
+<rect x="30" y="832" width="740" height="52" rx="6" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="852" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">POST /api/transfers  { fromWalletId, toWalletId, amount, currency, idempotencyKey }</text>
+<text x="400" y="868" text-anchor="middle" font-size="11" fill="#534ab7">JWT validated · KYC gate passed · dispatched to Transfer Service</text>
+
+<line x1="400" y1="884" x2="400" y2="920" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="80" y="920" width="640" height="196" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="942" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Transfer Service — Processing Steps</text>
+<text x="400" y="960" text-anchor="middle" font-size="11" fill="#0f6e56">1. Idempotency check: Redis GET idempotency:{key} — if exists return cached result</text>
+<text x="400" y="976" text-anchor="middle" font-size="11" fill="#0f6e56">2. Validate: both wallets ACTIVE + KYC VERIFIED, from ≠ to, amount > 0</text>
+<text x="400" y="992" text-anchor="middle" font-size="11" fill="#0f6e56">3. Fraud check: velocity + amount rules → HIGH risk → PENDING_REVIEW, block</text>
+<text x="400" y="1008" text-anchor="middle" font-size="11" fill="#0f6e56">4. Currency conversion (if cross-currency): fetch rate → compute toAmount + fee</text>
+<text x="400" y="1024" text-anchor="middle" font-size="11" fill="#0f6e56">5. Acquire distributed locks: Redis SET NX lock:wallet:{from} AND lock:wallet:{to}</text>
+<text x="400" y="1040" text-anchor="middle" font-size="11" fill="#0f6e56">6. DB transaction: record txn INITIATED → debit sender → credit receiver → COMPLETED</text>
+<text x="400" y="1056" text-anchor="middle" font-size="11" fill="#0f6e56">7. Release locks · update Redis balance cache · cache idempotency result (TTL 24hr)</text>
+<text x="400" y="1072" text-anchor="middle" font-size="11" fill="#0f6e56">8. Publish txn-completed to Kafka → async: notify + audit + analytics + statement</text>
+<text x="400" y="1084" text-anchor="middle" font-size="11" fill="#0f6e56">9. Return 200 { txnRef, status: COMPLETED, newBalance }</text>
+
+<!-- failure branch -->
+<line x1="80" y1="980" x2="24" y2="1040" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="0" y="1040" width="84" height="52" rx="6" fill="#faece7" stroke="#993c1d"/>
+<text x="42" y="1062" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">FAILED</text>
+<text x="42" y="1078" text-anchor="middle" font-size="10" fill="#993c1d">release locks</text>
+<text x="42" y="1090" text-anchor="middle" font-size="10" fill="#993c1d">no debit</text>
+
+<line x1="400" y1="1116" x2="400" y2="1164" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Kafka -->
+<rect x="220" y="1164" width="360" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1182" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Kafka — txn-events topic</text>
+<text x="400" y="1198" text-anchor="middle" font-size="11" fill="#534ab7">Partitioned by walletId — ordered per wallet</text>
+
+<line x1="180" y1="1208" x2="90"  y2="1256" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="290" y1="1208" x2="240" y2="1256" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="1208" x2="400" y2="1256" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="510" y1="1208" x2="560" y2="1256" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="620" y1="1208" x2="710" y2="1256" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1256" width="140" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="90" y="1278" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">SMS + Push</text>
+<text x="90" y="1294" text-anchor="middle" font-size="10" fill="#3b6d11">Debit/Credit</text>
+<text x="90" y="1310" text-anchor="middle" font-size="10" fill="#3b6d11">alert sent</text>
+
+<rect x="178" y="1256" width="140" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="248" y="1278" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Audit Log</text>
+<text x="248" y="1294" text-anchor="middle" font-size="10" fill="#3b6d11">Immutable</text>
+<text x="248" y="1310" text-anchor="middle" font-size="10" fill="#3b6d11">record</text>
+
+<rect x="336" y="1256" width="128" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="1278" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Statement</text>
+<text x="400" y="1294" text-anchor="middle" font-size="10" fill="#3b6d11">Append to</text>
+<text x="400" y="1310" text-anchor="middle" font-size="10" fill="#3b6d11">history</text>
+
+<rect x="482" y="1256" width="140" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="552" y="1278" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Analytics</text>
+<text x="552" y="1294" text-anchor="middle" font-size="10" fill="#3b6d11">Volume +</text>
+<text x="552" y="1310" text-anchor="middle" font-size="10" fill="#3b6d11">revenue track</text>
+
+<rect x="640" y="1256" width="140" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="710" y="1278" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Fraud Engine</text>
+<text x="710" y="1294" text-anchor="middle" font-size="10" fill="#3b6d11">Post-txn ML</text>
+<text x="710" y="1310" text-anchor="middle" font-size="10" fill="#3b6d11">pattern check</text>
+
+<!-- ====== SECTION 8: CONCURRENCY SAFETY ====== -->
+<line x1="30" y1="1388" x2="770" y2="1388" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1381" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— concurrency safety (Req 7) — the hardest part in fintech —</text>
+
+<rect x="30" y="1396" width="740" height="148" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="1418" text-anchor="middle" font-size="13" font-weight="700" fill="#712b13">Problem: Alice sends to Bob AND Carol simultaneously — balance might go negative</text>
+<text x="400" y="1438" text-anchor="middle" font-size="11" fill="#993c1d">Thread A reads balance=₹5000 → Thread B reads balance=₹5000 → both debit ₹4000 → balance goes to ₹1000 twice → sent ₹8000 from ₹5000 ❌</text>
+
+<text x="400" y="1466" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Four-layer defence (each one independently sufficient, together bulletproof):</text>
+
+<rect x="50"  y="1476" width="150" height="56" rx="6" fill="#fff" stroke="#993c1d"/>
+<text x="125" y="1496" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">Redis SET NX</text>
+<text x="125" y="1512" text-anchor="middle" font-size="10" fill="#993c1d">lock:wallet:{id}</text>
+<text x="125" y="1524" text-anchor="middle" font-size="10" fill="#993c1d">TTL=10s per op</text>
+
+<rect x="220" y="1476" width="150" height="56" rx="6" fill="#fff" stroke="#993c1d"/>
+<text x="295" y="1496" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">DB Transaction</text>
+<text x="295" y="1512" text-anchor="middle" font-size="10" fill="#993c1d">SELECT FOR UPDATE</text>
+<text x="295" y="1524" text-anchor="middle" font-size="10" fill="#993c1d">balance row lock</text>
+
+<rect x="390" y="1476" width="150" height="56" rx="6" fill="#fff" stroke="#993c1d"/>
+<text x="465" y="1496" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">In-Process Lock</text>
+<text x="465" y="1512" text-anchor="middle" font-size="10" fill="#993c1d">ReentrantLock</text>
+<text x="465" y="1524" text-anchor="middle" font-size="10" fill="#993c1d">fair=true, per wallet</text>
+
+<rect x="560" y="1476" width="180" height="56" rx="6" fill="#fff" stroke="#993c1d"/>
+<text x="650" y="1496" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">Idempotency Key</text>
+<text x="650" y="1512" text-anchor="middle" font-size="10" fill="#993c1d">Redis putIfAbsent</text>
+<text x="650" y="1524" text-anchor="middle" font-size="10" fill="#993c1d">dedup same request</text>
+
+<!-- ====== SECTION 9: MULTI-CURRENCY FLOW ====== -->
+<line x1="30" y1="1604" x2="770" y2="1604" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1597" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— multi-currency + FX conversion (Req 5) —</text>
+
+<rect x="30"  y="1612" width="350" height="128" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="205" y="1634" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Currency Service</text>
+<text x="205" y="1654" text-anchor="middle" font-size="11" fill="#0f6e56">Live rates pulled from Open Exchange API</text>
+<text x="205" y="1670" text-anchor="middle" font-size="11" fill="#0f6e56">Cached in Redis (TTL 60s) — stale rate = loss</text>
+<text x="205" y="1686" text-anchor="middle" font-size="11" fill="#0f6e56">Conversion: amount × (from_rate / to_rate)</text>
+<text x="205" y="1702" text-anchor="middle" font-size="11" fill="#0f6e56">Fee: 0.5–1.5% on cross-currency transfers</text>
+<text x="205" y="1718" text-anchor="middle" font-size="11" fill="#0f6e56">Amounts stored in paise/cents (no float ops)</text>
+<text x="205" y="1734" text-anchor="middle" font-size="11" fill="#0f6e56">Strategy: pluggable (live / cached / fixed)</text>
+
+<rect x="420" y="1612" width="350" height="128" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="595" y="1634" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Supported Currencies</text>
+<text x="595" y="1656" text-anchor="middle" font-size="11" fill="#0f6e56">INR / USD / EUR / GBP / AED / JPY / SGD</text>
+<text x="595" y="1672" text-anchor="middle" font-size="11" fill="#0f6e56">Each wallet has a primary currency</text>
+<text x="595" y="1688" text-anchor="middle" font-size="11" fill="#0f6e56">Multi-currency wallets: one balance per currency</text>
+<text x="595" y="1704" text-anchor="middle" font-size="11" fill="#0f6e56">Statement shows converted INR equivalent</text>
+<text x="595" y="1720" text-anchor="middle" font-size="11" fill="#0f6e56">FX rate locked at transfer time (not settlement)</text>
+<text x="595" y="1736" text-anchor="middle" font-size="11" fill="#0f6e56">Regulatory: RBI/FEMA compliance for outward</text>
+
+<!-- ====== SECTION 10: SECURITY LAYERS ====== -->
+<line x1="30" y1="1808" x2="770" y2="1808" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1801" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— security architecture (Req 6) —</text>
+
+<rect x="30"  y="1816" width="228" height="148" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="144" y="1838" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Data Security</text>
+<text x="144" y="1858" text-anchor="middle" font-size="11" fill="#993c1d">TLS 1.3 in transit</text>
+<text x="144" y="1874" text-anchor="middle" font-size="11" fill="#993c1d">AES-256 at rest</text>
+<text x="144" y="1890" text-anchor="middle" font-size="11" fill="#993c1d">Card PAN tokenized</text>
+<text x="144" y="1906" text-anchor="middle" font-size="11" fill="#993c1d">Bank acc encrypted</text>
+<text x="144" y="1922" text-anchor="middle" font-size="11" fill="#993c1d">HSM key management</text>
+<text x="144" y="1938" text-anchor="middle" font-size="11" fill="#993c1d">PCI-DSS compliant</text>
+<text x="144" y="1954" text-anchor="middle" font-size="11" fill="#993c1d">No PAN stored raw</text>
+
+<rect x="286" y="1816" width="228" height="148" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="1838" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Auth Security</text>
+<text x="400" y="1858" text-anchor="middle" font-size="11" fill="#993c1d">OAuth2 + JWT (15min)</text>
+<text x="400" y="1874" text-anchor="middle" font-size="11" fill="#993c1d">Refresh token (7 days)</text>
+<text x="400" y="1890" text-anchor="middle" font-size="11" fill="#993c1d">MFA: OTP + biometric</text>
+<text x="400" y="1906" text-anchor="middle" font-size="11" fill="#993c1d">mTLS for partner SDK</text>
+<text x="400" y="1922" text-anchor="middle" font-size="11" fill="#993c1d">Device fingerprinting</text>
+<text x="400" y="1938" text-anchor="middle" font-size="11" fill="#993c1d">Session invalidation</text>
+<text x="400" y="1954" text-anchor="middle" font-size="11" fill="#993c1d">Suspicious IP block</text>
+
+<rect x="542" y="1816" width="228" height="148" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="656" y="1838" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Fraud Detection</text>
+<text x="656" y="1858" text-anchor="middle" font-size="11" fill="#993c1d">Velocity check (txns/min)</text>
+<text x="656" y="1874" text-anchor="middle" font-size="11" fill="#993c1d">Large amount flag</text>
+<text x="656" y="1890" text-anchor="middle" font-size="11" fill="#993c1d">New device + large txn</text>
+<text x="656" y="1906" text-anchor="middle" font-size="11" fill="#993c1d">Unusual geography</text>
+<text x="656" y="1922" text-anchor="middle" font-size="11" fill="#993c1d">ML model (post-txn)</text>
+<text x="656" y="1938" text-anchor="middle" font-size="11" fill="#993c1d">PENDING_REVIEW queue</text>
+<text x="656" y="1954" text-anchor="middle" font-size="11" fill="#993c1d">Wallet freeze on HIGH</text>
+
+<!-- ====== SECTION 11: TRANSACTION STATE MACHINE ====== -->
+<line x1="30" y1="2032" x2="770" y2="2032" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2025" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— transaction state machine (Req 3 + 7) —</text>
+
+<rect x="30" y="2040" width="740" height="80" rx="8" fill="#f9f9f7" stroke="#ccc"/>
+
+<rect x="50"  y="2060" width="96" height="36" rx="18" fill="#888780"/>
+<text x="98" y="2082" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">INITIATED</text>
+
+<line x1="146" y1="2078" x2="176" y2="2078" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="176" y="2060" width="100" height="36" rx="18" fill="#185fa5"/>
+<text x="226" y="2082" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">PROCESSING</text>
+
+<line x1="276" y1="2078" x2="304" y2="2078" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="304" y="2060" width="108" height="36" rx="18" fill="#1a8f5c"/>
+<text x="358" y="2082" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">COMPLETED ✓</text>
+
+<line x1="294" y1="2096" x2="294" y2="2096"/>
+<!-- FAILED path -->
+<path d="M 226 2096 Q 226 2116 370 2116 Q 514 2116 514 2096" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arrow-r)"/>
+
+<rect x="468" y="2060" width="80" height="36" rx="18" fill="#d85a30"/>
+<text x="508" y="2082" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">FAILED</text>
+
+<!-- REVERSED -->
+<rect x="600" y="2060" width="96" height="36" rx="18" fill="#c4820a"/>
+<text x="648" y="2082" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">REVERSED</text>
+<line x1="412" y1="2078" x2="598" y2="2078" stroke="#c4820a" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow)"/>
+<text x="504" y="2070" text-anchor="middle" font-size="9" fill="#c4820a">dispute/chargeback</text>
+
+<!-- PENDING_REVIEW -->
+<rect x="468" y="2016" width="124" height="28" rx="14" fill="#888780"/>
+<text x="530" y="2034" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">PENDING_REVIEW</text>
+<line x1="358" y1="2060" x2="530" y2="2044" stroke="#888" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow)"/>
+<text x="420" y="2050" text-anchor="middle" font-size="9" fill="#888">fraud flag</text>
+
+<!-- ====== SECTION 12: STATEMENT + HISTORY ====== -->
+<line x1="30" y1="2192" x2="770" y2="2192" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2185" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— transaction history + statement (Req 4) —</text>
+
+<rect x="160" y="2200" width="480" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2222" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Statement Service</text>
+<text x="400" y="2240" text-anchor="middle" font-size="11" fill="#534ab7">GET /api/wallets/{id}/statement?from=2024-01-01&amp;to=2024-01-31&amp;type=TRANSFER</text>
+<text x="400" y="2256" text-anchor="middle" font-size="11" fill="#534ab7">Recent (last 30 days): Redis sorted set by timestamp — sub-millisecond</text>
+<text x="400" y="2272" text-anchor="middle" font-size="11" fill="#534ab7">Older history: Cassandra (partitioned by walletId, clustered by timestamp)</text>
+<text x="400" y="2288" text-anchor="middle" font-size="11" fill="#534ab7">Filter: by type (CREDIT/DEBIT/TRANSFER), status, date range, amount range</text>
+<text x="400" y="2300" text-anchor="middle" font-size="11" fill="#534ab7">Cursor-based pagination — no OFFSET on large history tables</text>
+
+<!-- ====== SECTION 13: DATA STORES ====== -->
+<line x1="30" y1="2372" x2="770" y2="2372" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2365" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="2380" width="175" height="188" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="107" y="2402" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="107" y="2420" text-anchor="middle" font-size="10" fill="#3b6d11">lock:wallet:{id} SET NX</text>
+<text x="107" y="2436" text-anchor="middle" font-size="10" fill="#3b6d11">balance:{walletId} cache</text>
+<text x="107" y="2452" text-anchor="middle" font-size="10" fill="#3b6d11">idempotency:{key}</text>
+<text x="107" y="2468" text-anchor="middle" font-size="10" fill="#3b6d11">fx:rate:{from}:{to}</text>
+<text x="107" y="2484" text-anchor="middle" font-size="10" fill="#3b6d11">txn:recent:{walletId}</text>
+<text x="107" y="2500" text-anchor="middle" font-size="10" fill="#3b6d11">fraud:velocity:{userId}</text>
+<text x="107" y="2516" text-anchor="middle" font-size="10" fill="#3b6d11">session tokens</text>
+<text x="107" y="2532" text-anchor="middle" font-size="10" fill="#3b6d11">rate limit counters</text>
+<text x="107" y="2548" text-anchor="middle" font-size="10" fill="#3b6d11">OTP cache TTL 5min</text>
+
+<rect x="211" y="2380" width="175" height="188" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="298" y="2402" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="298" y="2420" text-anchor="middle" font-size="10" fill="#185fa5">wallets</text>
+<text x="298" y="2436" text-anchor="middle" font-size="10" fill="#185fa5">users + KYC</text>
+<text x="298" y="2452" text-anchor="middle" font-size="10" fill="#185fa5">payment_methods</text>
+<text x="298" y="2468" text-anchor="middle" font-size="10" fill="#185fa5">transactions</text>
+<text x="298" y="2484" text-anchor="middle" font-size="10" fill="#185fa5">wallet_balances</text>
+<text x="298" y="2500" text-anchor="middle" font-size="10" fill="#185fa5">idempotency_log</text>
+<text x="298" y="2516" text-anchor="middle" font-size="10" fill="#185fa5">audit_trail</text>
+<text x="298" y="2532" text-anchor="middle" font-size="10" fill="#185fa5">fraud_flags</text>
+<text x="298" y="2548" text-anchor="middle" font-size="10" fill="#185fa5">Source of truth</text>
+
+<rect x="402" y="2380" width="175" height="188" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="489" y="2402" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="489" y="2420" text-anchor="middle" font-size="10" fill="#534ab7">txn-completed</text>
+<text x="489" y="2436" text-anchor="middle" font-size="10" fill="#534ab7">txn-failed</text>
+<text x="489" y="2452" text-anchor="middle" font-size="10" fill="#534ab7">txn-reversed</text>
+<text x="489" y="2468" text-anchor="middle" font-size="10" fill="#534ab7">fraud-alert</text>
+<text x="489" y="2484" text-anchor="middle" font-size="10" fill="#534ab7">wallet-created</text>
+<text x="489" y="2500" text-anchor="middle" font-size="10" fill="#534ab7">kyc-updated</text>
+<text x="489" y="2516" text-anchor="middle" font-size="10" fill="#534ab7">analytics-events</text>
+<text x="489" y="2532" text-anchor="middle" font-size="10" fill="#534ab7">Partitioned by</text>
+<text x="489" y="2548" text-anchor="middle" font-size="10" fill="#534ab7">walletId</text>
+
+<rect x="593" y="2380" width="187" height="188" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="686" y="2402" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Cassandra</text>
+<text x="686" y="2420" text-anchor="middle" font-size="10" fill="#854f0b">Transaction history</text>
+<text x="686" y="2436" text-anchor="middle" font-size="10" fill="#854f0b">Partition: walletId</text>
+<text x="686" y="2452" text-anchor="middle" font-size="10" fill="#854f0b">Cluster: timestamp</text>
+<text x="686" y="2468" text-anchor="middle" font-size="10" fill="#854f0b">O(1) append writes</text>
+<text x="686" y="2484" text-anchor="middle" font-size="10" fill="#854f0b">Fast range reads</text>
+<text x="686" y="2500" text-anchor="middle" font-size="10" fill="#854f0b">Unlimited history</text>
+<text x="686" y="2516" text-anchor="middle" font-size="10" fill="#854f0b">No joins needed</text>
+<text x="686" y="2532" text-anchor="middle" font-size="10" fill="#854f0b">TTL for archival</text>
+<text x="686" y="2548" text-anchor="middle" font-size="10" fill="#854f0b">High write throughput</text>
+
+<!-- ====== SECTION 14: REQUIREMENTS MAP ====== -->
+<line x1="30" y1="2636" x2="770" y2="2636" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2629" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— all 8 requirements → design decisions —</text>
+
+<rect x="30" y="2644" width="740" height="48" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2664" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Req 1: Create account + manage personal info</text>
+<text x="400" y="2682" text-anchor="middle" font-size="11" fill="#0f6e56">POST /api/wallets creates wallet record in PostgreSQL. KYC status = PENDING until documents verified. Until KYC = VERIFIED: top-up allowed, transfers blocked. Profile updates via PATCH /api/users/{id}.</text>
+
+<rect x="30" y="2704" width="740" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2724" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Req 2: Add / remove payment methods</text>
+<text x="400" y="2742" text-anchor="middle" font-size="11" fill="#185fa5">Card PAN never stored — tokenised by PCI vault (Razorpay/Stripe vault). Bank account numbers AES-256 encrypted. POST /api/wallets/{id}/methods to add. DELETE to remove. First method auto-set as default.</text>
+
+<rect x="30" y="2764" width="740" height="48" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="2784" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Req 3: Fund transfers (wallet→wallet, wallet→external)</text>
+<text x="400" y="2802" text-anchor="middle" font-size="11" fill="#854f0b">Idempotency key (client-generated UUID) prevents double-send on retry. Record txn INITIATED before any debit — never lose a transfer attempt. Saga pattern for cross-service: debit → credit → confirm. Reverse (chargeback) always possible.</text>
+
+<rect x="30" y="2824" width="740" height="48" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2844" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Req 4: Transaction history + statement</text>
+<text x="400" y="2862" text-anchor="middle" font-size="11" fill="#534ab7">Recent 30 days: Redis ZSET keyed by walletId (score=timestamp) — sub-ms reads. Older: Cassandra partitioned by walletId, clustered by timestamp. Cursor-based pagination. Filter by type, status, amount, date range.</text>
+
+<rect x="30" y="2884" width="740" height="48" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2904" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Req 5: Multi-currency + conversion</text>
+<text x="400" y="2922" text-anchor="middle" font-size="11" fill="#993c1d">All amounts stored in smallest denomination (paise/cents) — zero float error. FX rates cached 60s in Redis. Cross-currency fee 0.5–1.5%. Rate locked at transfer initiation time. Strategy pattern: swap live→fixed for testing.</text>
+
+<rect x="30" y="2944" width="740" height="48" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2964" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Req 6: Security</text>
+<text x="400" y="2982" text-anchor="middle" font-size="11" fill="#0f6e56">TLS 1.3 everywhere. PCI-DSS card tokenisation. AES-256 bank account encryption. OAuth2+JWT auth. MFA on large transfers. WAF blocks OWASP Top 10. Fraud: velocity + amount rules pre-txn, ML model post-txn. Wallet freeze on HIGH risk.</text>
+
+<rect x="30" y="3004" width="740" height="48" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="3024" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Req 7: Concurrent transactions + data consistency</text>
+<text x="400" y="3042" text-anchor="middle" font-size="11" fill="#185fa5">Four layers: Redis SET NX (distributed lock, cross-pod) + PostgreSQL SELECT FOR UPDATE (row lock) + ReentrantLock(fair=true) (in-process) + Idempotency key (dedup). Any single layer alone prevents double-spend. All four together are bulletproof.</text>
+
+<rect x="30" y="3064" width="740" height="48" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="3084" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Req 8: Scalable for large users + transactions</text>
+<text x="400" y="3102" text-anchor="middle" font-size="11" fill="#854f0b">Stateless API pods — horizontal scale via auto-scaling groups. Cassandra for transaction history (linear write scale). Kafka for async decoupling. Redis cluster for distributed caching. DB read replicas for statement queries. Sharding by walletId for extreme scale.</text>
+
+<!-- FINAL -->
+<rect x="30" y="3124" width="740" height="60" rx="8" fill="#2c2c2a"/>
+<text x="400" y="3146" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">The hardest problem in fintech: Alice sends ₹5000 to Bob and Carol simultaneously — balance must never go negative.</text>
+<text x="400" y="3166" text-anchor="middle" font-size="11" fill="#aaa">Redis SET NX + PostgreSQL SELECT FOR UPDATE + ReentrantLock(fair) + Idempotency key = zero double-spend, zero lost transfers, zero duplicate debits.</text>
+
+<!-- PATTERN TABLE -->
+<rect x="30" y="3196" width="740" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="3216" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Singleton=WalletService+CurrencyService+FraudDetectionService · State=TxnStatus(INITIATED→PROCESSING→COMPLETED/FAILED/REVERSED)</text>
+<text x="400" y="3234" text-anchor="middle" font-size="11" fill="#5f5e5a">Strategy=TransferStrategy(Instant/Scheduled) + CurrencyConversion(Live/Cached/Fixed) · Observer=TxnEventObserver(Notify/Audit/Analytics)</text>
+<text x="400" y="3252" text-anchor="middle" font-size="10" fill="#888">Factory=PaymentMethodFactory(card/bank/UPI) · Builder=Wallet.Builder+Transaction.Builder · Command=TransferCommand(execute+reverse) · Iterator=TransactionStatement(chainable)</text>
+
+</svg>
+</body></html>

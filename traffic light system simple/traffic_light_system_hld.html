@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 820px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 760 2560" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="760" height="48" fill="#2c2c2a"/>
+<text x="380" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">TRAFFIC LIGHT MANAGEMENT SYSTEM — HLD</text>
+<text x="380" y="38" text-anchor="middle" font-size="11" fill="#aaa">State machine · Fixed cycle · Emergency override · Fault handling · Coordination</text>
+
+<!-- ====== SECTION 1: STATE MACHINE ====== -->
+<text x="380" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— core state machine (one traffic light) —</text>
+
+<rect x="60" y="80" width="640" height="104" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">TrafficLight State Machine</text>
+
+<!-- States -->
+<rect x="90"  y="116" width="110" height="40" rx="20" fill="#d85a30"/>
+<text x="145" y="141" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">RED</text>
+
+<rect x="275" y="116" width="110" height="40" rx="20" fill="#1a8f5c"/>
+<text x="330" y="141" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">GREEN</text>
+
+<rect x="460" y="116" width="110" height="40" rx="20" fill="#c4820a"/>
+<text x="515" y="141" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">YELLOW</text>
+
+<!-- Transition arrows -->
+<line x1="200" y1="136" x2="273" y2="136" stroke="#fff" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="236" y="128" text-anchor="middle" font-size="10" fill="#0f6e56">goGreen()</text>
+
+<line x1="385" y1="136" x2="458" y2="136" stroke="#fff" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="422" y="128" text-anchor="middle" font-size="10" fill="#0f6e56">goYellow()</text>
+
+<!-- Yellow back to Red arc -->
+<path d="M 570 136 Q 380 200 145 156" fill="none" stroke="#888" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="4 2"/>
+<text x="380" y="198" text-anchor="middle" font-size="10" fill="#888">goRed() — cycle restarts</text>
+
+<!-- Fault -->
+<rect x="600" y="136" width="120" height="28" rx="14" fill="#888"/>
+<text x="660" y="154" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">FLASHING RED ⚠</text>
+<line x1="515" y1="116" x2="615" y2="136" stroke="#d85a30" stroke-width="1.5" stroke-dasharray="3 2" marker-end="url(#arrow-r)"/>
+<text x="575" y="107" font-size="9" fill="#d85a30">fault()</text>
+
+<!-- ====== SECTION 2: INTERSECTION CYCLE ====== -->
+<line x1="30" y1="252" x2="730" y2="252" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="244" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 4-way intersection fixed cycle (one full cycle) —</text>
+
+<rect x="30" y="260" width="700" height="152" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="282" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">One Full Signal Cycle (default: green=30s  yellow=3s  all-red=2s)</text>
+
+<!-- Phase A -->
+<rect x="50"  y="296" width="152" height="96" rx="6" fill="#fff" stroke="#185fa5"/>
+<text x="126" y="316" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">Phase A</text>
+<text x="126" y="332" text-anchor="middle" font-size="11" fill="#1a8f5c">NORTH 🟢  SOUTH 🟢</text>
+<text x="126" y="348" text-anchor="middle" font-size="11" fill="#d85a30">EAST  🔴  WEST  🔴</text>
+<text x="126" y="368" text-anchor="middle" font-size="10" fill="#888">30s green → 3s yellow</text>
+<text x="126" y="384" text-anchor="middle" font-size="10" fill="#888">→ 2s all-red</text>
+
+<!-- All Red between -->
+<rect x="226" y="344" width="68" height="48" rx="6" fill="#f9f9f7" stroke="#ccc"/>
+<text x="260" y="364" text-anchor="middle" font-size="10" fill="#888">All</text>
+<text x="260" y="378" text-anchor="middle" font-size="10" fill="#888">RED</text>
+<text x="260" y="392" text-anchor="middle" font-size="10" fill="#d85a30">2s</text>
+
+<!-- Phase B -->
+<rect x="308" y="296" width="152" height="96" rx="6" fill="#fff" stroke="#185fa5"/>
+<text x="384" y="316" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">Phase B</text>
+<text x="384" y="332" text-anchor="middle" font-size="11" fill="#d85a30">NORTH 🔴  SOUTH 🔴</text>
+<text x="384" y="348" text-anchor="middle" font-size="11" fill="#1a8f5c">EAST  🟢  WEST  🟢</text>
+<text x="384" y="368" text-anchor="middle" font-size="10" fill="#888">30s green → 3s yellow</text>
+<text x="384" y="384" text-anchor="middle" font-size="10" fill="#888">→ 2s all-red</text>
+
+<!-- All Red between -->
+<rect x="484" y="344" width="68" height="48" rx="6" fill="#f9f9f7" stroke="#ccc"/>
+<text x="518" y="364" text-anchor="middle" font-size="10" fill="#888">All</text>
+<text x="518" y="378" text-anchor="middle" font-size="10" fill="#888">RED</text>
+<text x="518" y="392" text-anchor="middle" font-size="10" fill="#d85a30">2s</text>
+
+<!-- Cycle again -->
+<rect x="566" y="320" width="144" height="52" rx="6" fill="#f1efe8" stroke="#888780"/>
+<text x="638" y="342" text-anchor="middle" font-size="11" fill="#5f5e5a">→ repeat</text>
+<text x="638" y="358" text-anchor="middle" font-size="11" fill="#5f5e5a">from Phase A</text>
+
+<!-- ====== SECTION 3: EMERGENCY FLOW ====== -->
+<line x1="30" y1="476" x2="730" y2="476" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="468" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— emergency override flow —</text>
+
+<!-- steps -->
+<rect x="30" y="484" width="700" height="140" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="380" y="506" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">EmergencyCommand — execute() + rollback()</text>
+
+<rect x="50"  y="520" width="148" height="80" rx="6" fill="#fff" stroke="#d85a30"/>
+<text x="124" y="542" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">1. Snapshot</text>
+<text x="124" y="558" text-anchor="middle" font-size="11" fill="#5f5e5a">Save current</text>
+<text x="124" y="574" text-anchor="middle" font-size="11" fill="#5f5e5a">color of each</text>
+<text x="124" y="590" text-anchor="middle" font-size="11" fill="#5f5e5a">light</text>
+
+<line x1="198" y1="560" x2="218" y2="560" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="218" y="520" width="148" height="80" rx="6" fill="#fff" stroke="#d85a30"/>
+<text x="292" y="542" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">2. Pause Cycle</text>
+<text x="292" y="558" text-anchor="middle" font-size="11" fill="#5f5e5a">Cancel pending</text>
+<text x="292" y="574" text-anchor="middle" font-size="11" fill="#5f5e5a">phase transitions</text>
+<text x="292" y="590" text-anchor="middle" font-size="11" fill="#5f5e5a">scheduler task</text>
+
+<line x1="366" y1="560" x2="386" y2="560" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="386" y="520" width="148" height="80" rx="6" fill="#fff" stroke="#d85a30"/>
+<text x="460" y="542" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">3. Override</text>
+<text x="460" y="558" text-anchor="middle" font-size="11" fill="#1a8f5c">Emergency dir</text>
+<text x="460" y="574" text-anchor="middle" font-size="11" fill="#1a8f5c">→ GREEN</text>
+<text x="460" y="590" text-anchor="middle" font-size="11" fill="#d85a30">All others → RED</text>
+
+<line x1="534" y1="560" x2="554" y2="560" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="554" y="520" width="148" height="80" rx="6" fill="#fff" stroke="#d85a30"/>
+<text x="628" y="542" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">4. rollback()</text>
+<text x="628" y="558" text-anchor="middle" font-size="11" fill="#5f5e5a">Force all RED</text>
+<text x="628" y="574" text-anchor="middle" font-size="11" fill="#5f5e5a">Resume cycle</text>
+<text x="628" y="590" text-anchor="middle" font-size="11" fill="#5f5e5a">after 2s delay</text>
+
+<!-- ====== SECTION 4: FAULT HANDLING ====== -->
+<line x1="30" y1="688" x2="730" y2="688" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="680" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— fault handling chain (Chain of Responsibility) —</text>
+
+<rect x="30" y="696" width="700" height="140" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="718" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">FaultHandler Chain: BulbFault → CommFault → PowerFault</text>
+
+<rect x="50"  y="732" width="188" height="80" rx="6" fill="#fff" stroke="#ba7517"/>
+<text x="144" y="754" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">MINOR — Bulb Fault</text>
+<text x="144" y="772" text-anchor="middle" font-size="11" fill="#5f5e5a">Mark one light</text>
+<text x="144" y="788" text-anchor="middle" font-size="11" fill="#5f5e5a">FLASHING_RED</text>
+<text x="144" y="804" text-anchor="middle" font-size="11" fill="#5f5e5a">Others continue</text>
+
+<line x1="238" y1="772" x2="258" y2="772" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="258" y="732" width="188" height="80" rx="6" fill="#fff" stroke="#ba7517"/>
+<text x="352" y="754" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">MAJOR — Comm Fault</text>
+<text x="352" y="772" text-anchor="middle" font-size="11" fill="#5f5e5a">Standalone mode</text>
+<text x="352" y="788" text-anchor="middle" font-size="11" fill="#5f5e5a">Fixed timing only</text>
+<text x="352" y="804" text-anchor="middle" font-size="11" fill="#5f5e5a">No TCC sync</text>
+
+<line x1="446" y1="772" x2="466" y2="772" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="466" y="732" width="244" height="80" rx="6" fill="#fff" stroke="#ba7517"/>
+<text x="588" y="754" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">CRITICAL — Power Fault</text>
+<text x="588" y="772" text-anchor="middle" font-size="11" fill="#d85a30">ALL lights</text>
+<text x="588" y="788" text-anchor="middle" font-size="11" fill="#d85a30">FLASHING_RED</text>
+<text x="588" y="804" text-anchor="middle" font-size="11" fill="#5f5e5a">Treat as 4-way stop</text>
+
+<!-- ====== SECTION 5: SYSTEM ARCHITECTURE ====== -->
+<line x1="30" y1="900" x2="730" y2="900" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="892" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— system architecture (component diagram) —</text>
+
+<!-- TCC at top -->
+<rect x="220" y="908" width="320" height="64" rx="8" fill="#2c2c2a"/>
+<text x="380" y="934" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Traffic Control Center (TCC)</text>
+<text x="380" y="952" text-anchor="middle" font-size="11" fill="#aaa">Singleton — registers intersections, issues global commands</text>
+
+<!-- 3 intersections -->
+<line x1="220" y1="972" x2="130" y2="1032" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="972" x2="380" y2="1032" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="540" y1="972" x2="630" y2="1032" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="30"  y="1032" width="196" height="72" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="128" y="1054" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Intersection A</text>
+<text x="128" y="1072" text-anchor="middle" font-size="11" fill="#0f6e56">MG-ROAD (4-way)</text>
+<text x="128" y="1088" text-anchor="middle" font-size="11" fill="#0f6e56">4 lights + scheduler</text>
+
+<rect x="282" y="1032" width="196" height="72" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="1054" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Intersection B</text>
+<text x="380" y="1072" text-anchor="middle" font-size="11" fill="#0f6e56">BRIGADE (T-junction)</text>
+<text x="380" y="1088" text-anchor="middle" font-size="11" fill="#0f6e56">3 lights + scheduler</text>
+
+<rect x="534" y="1032" width="196" height="72" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="632" y="1054" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Intersection C</text>
+<text x="632" y="1072" text-anchor="middle" font-size="11" fill="#0f6e56">KORAMANGALA (4-way)</text>
+<text x="632" y="1088" text-anchor="middle" font-size="11" fill="#0f6e56">4 lights + scheduler</text>
+
+<!-- Each intersection → lights -->
+<line x1="128" y1="1104" x2="128" y2="1136" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="1104" x2="380" y2="1136" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="632" y1="1104" x2="632" y2="1136" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="50"  y="1136" width="152" height="52" rx="6" fill="#faeeda" stroke="#ba7517"/>
+<text x="126" y="1158" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">TrafficLight × 4</text>
+<text x="126" y="1174" text-anchor="middle" font-size="10" fill="#854f0b">N / S / E / W each own</text>
+
+<rect x="304" y="1136" width="152" height="52" rx="6" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="1158" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">TrafficLight × 3</text>
+<text x="380" y="1174" text-anchor="middle" font-size="10" fill="#854f0b">N / E / W each own</text>
+
+<rect x="556" y="1136" width="152" height="52" rx="6" fill="#faeeda" stroke="#ba7517"/>
+<text x="632" y="1158" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">TrafficLight × 4</text>
+<text x="632" y="1174" text-anchor="middle" font-size="10" fill="#854f0b">N / S / E / W each own</text>
+
+<!-- TCC commands down -->
+<rect x="208" y="1220" width="344" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1242" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">TCC Commands</text>
+<text x="380" y="1258" text-anchor="middle" font-size="11" fill="#534ab7">setGlobalTiming() | greenWave() | clearEmergencies() | stopAll()</text>
+
+<!-- ====== SECTION 6: GREEN WAVE ====== -->
+<line x1="30" y1="1296" x2="730" y2="1296" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1288" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— green wave (emergency corridor) —</text>
+
+<rect x="30" y="1304" width="700" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1326" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Green Wave — fire engine / ambulance needs clear corridor</text>
+<text x="380" y="1346" text-anchor="middle" font-size="11" fill="#534ab7">TCC calls triggerEmergency(id, NORTH) on each intersection in sequence</text>
+<text x="380" y="1362" text-anchor="middle" font-size="11" fill="#534ab7">Each intersection: NORTH=GREEN, all others=RED for 45 seconds</text>
+<text x="380" y="1378" text-anchor="middle" font-size="11" fill="#534ab7">TCC stores all EmergencyCommand objects → calls rollback() after vehicle passes</text>
+<text x="380" y="1394" text-anchor="middle" font-size="11" fill="#534ab7">Rollback: force all RED → resume normal cycle after 2s safety delay</text>
+
+<!-- wave diagram -->
+<line x1="90"  y1="1436" x2="670" y2="1436" stroke="#ccc" stroke-width="1"/>
+<rect x="50"   y="1416" width="100" height="40" rx="6" fill="#1a8f5c"/>
+<text x="100" y="1441" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">MG-ROAD</text>
+<text x="100" y="1461" text-anchor="middle" font-size="10" fill="#1a8f5c">NORTH=🟢</text>
+
+<line x1="150" y1="1436" x2="220" y2="1436" stroke="#534ab7" stroke-width="2" marker-end="url(#arrow-g)"/>
+
+<rect x="220"  y="1416" width="100" height="40" rx="6" fill="#1a8f5c"/>
+<text x="270" y="1441" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">BRIGADE</text>
+<text x="270" y="1461" text-anchor="middle" font-size="10" fill="#1a8f5c">NORTH=🟢</text>
+
+<line x1="320" y1="1436" x2="390" y2="1436" stroke="#534ab7" stroke-width="2" marker-end="url(#arrow-g)"/>
+
+<rect x="390"  y="1416" width="120" height="40" rx="6" fill="#1a8f5c"/>
+<text x="450" y="1441" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">KORAMANGALA</text>
+<text x="450" y="1461" text-anchor="middle" font-size="10" fill="#1a8f5c">NORTH=🟢</text>
+
+<rect x="540"  y="1416" width="80" height="40" rx="6" fill="#2c2c2a"/>
+<text x="580" y="1433" text-anchor="middle" font-size="11" fill="#fff">🚒</text>
+<text x="580" y="1449" text-anchor="middle" font-size="11" fill="#aaa">moving →</text>
+
+<!-- ====== SECTION 7: TIMING STRATEGIES ====== -->
+<line x1="30" y1="1496" x2="730" y2="1496" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1488" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— timing strategies (Strategy pattern) —</text>
+
+<rect x="30"  y="1504" width="222" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="141" y="1526" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Fixed (Normal)</text>
+<text x="141" y="1546" text-anchor="middle" font-size="11" fill="#3b6d11">green=30s yellow=3s</text>
+<text x="141" y="1562" text-anchor="middle" font-size="11" fill="#3b6d11">all-red=2s</text>
+<text x="141" y="1578" text-anchor="middle" font-size="11" fill="#3b6d11">Total cycle: ~70s</text>
+<text x="141" y="1594" text-anchor="middle" font-size="10" fill="#3b6d11">Use: default / night</text>
+
+<rect x="269" y="1504" width="222" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="1526" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Peak Hour</text>
+<text x="380" y="1546" text-anchor="middle" font-size="11" fill="#3b6d11">green=45s yellow=3s</text>
+<text x="380" y="1562" text-anchor="middle" font-size="11" fill="#3b6d11">all-red=2s</text>
+<text x="380" y="1578" text-anchor="middle" font-size="11" fill="#3b6d11">Total cycle: ~100s</text>
+<text x="380" y="1594" text-anchor="middle" font-size="10" fill="#3b6d11">Use: 8-10am, 5-8pm</text>
+
+<rect x="508" y="1504" width="222" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="619" y="1526" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Night</text>
+<text x="619" y="1546" text-anchor="middle" font-size="11" fill="#3b6d11">green=20s yellow=3s</text>
+<text x="619" y="1562" text-anchor="middle" font-size="11" fill="#3b6d11">all-red=2s</text>
+<text x="619" y="1578" text-anchor="middle" font-size="11" fill="#3b6d11">Total cycle: ~50s</text>
+<text x="619" y="1594" text-anchor="middle" font-size="10" fill="#3b6d11">Use: 10pm-6am</text>
+
+<!-- ====== SECTION 8: DATA STORES ====== -->
+<line x1="30" y1="1672" x2="730" y2="1672" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1664" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— data stores (kept minimal) —</text>
+
+<rect x="30"  y="1680" width="222" height="128" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="141" y="1702" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">PostgreSQL</text>
+<text x="141" y="1720" text-anchor="middle" font-size="10" fill="#3b6d11">Intersections config</text>
+<text x="141" y="1736" text-anchor="middle" font-size="10" fill="#3b6d11">Timing plans</text>
+<text x="141" y="1752" text-anchor="middle" font-size="10" fill="#3b6d11">Fault history</text>
+<text x="141" y="1768" text-anchor="middle" font-size="10" fill="#3b6d11">Emergency log</text>
+<text x="141" y="1784" text-anchor="middle" font-size="10" fill="#3b6d11">Maintenance records</text>
+<text x="141" y="1800" text-anchor="middle" font-size="10" fill="#3b6d11">Cycle count / uptime</text>
+
+<rect x="269" y="1680" width="222" height="128" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="1702" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Redis</text>
+<text x="380" y="1720" text-anchor="middle" font-size="10" fill="#534ab7">Current state per light</text>
+<text x="380" y="1736" text-anchor="middle" font-size="10" fill="#534ab7">(direction → color)</text>
+<text x="380" y="1752" text-anchor="middle" font-size="10" fill="#534ab7">Active emergency flag</text>
+<text x="380" y="1768" text-anchor="middle" font-size="10" fill="#534ab7">Current timing config</text>
+<text x="380" y="1784" text-anchor="middle" font-size="10" fill="#534ab7">TCC heartbeat</text>
+<text x="380" y="1800" text-anchor="middle" font-size="10" fill="#534ab7">Live dashboard feed</text>
+
+<rect x="508" y="1680" width="222" height="128" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="619" y="1702" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Kafka (optional)</text>
+<text x="619" y="1720" text-anchor="middle" font-size="10" fill="#854f0b">phase-change events</text>
+<text x="619" y="1736" text-anchor="middle" font-size="10" fill="#854f0b">fault events</text>
+<text x="619" y="1752" text-anchor="middle" font-size="10" fill="#854f0b">emergency events</text>
+<text x="619" y="1768" text-anchor="middle" font-size="10" fill="#854f0b">→ Dashboard service</text>
+<text x="619" y="1784" text-anchor="middle" font-size="10" fill="#854f0b">→ Analytics service</text>
+<text x="619" y="1800" text-anchor="middle" font-size="10" fill="#854f0b">→ Alert service</text>
+
+<!-- ====== SECTION 9: KEY DESIGN RULES ====== -->
+<line x1="30" y1="1876" x2="730" y2="1876" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1868" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 4 key design rules (say these in every interview) —</text>
+
+<rect x="30" y="1884" width="700" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="1904" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">1. Always start in RED — the safe state</text>
+<text x="380" y="1922" text-anchor="middle" font-size="11" fill="#0f6e56">Every light initialises to RED on power-up, restart, or fault recovery. Never GREEN. A light that fails must default to FLASHING_RED (4-way stop), never go dark.</text>
+
+<rect x="30" y="1948" width="700" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1968" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">2. All-red clearance between phases (prevents crossing collisions)</text>
+<text x="380" y="1986" text-anchor="middle" font-size="11" fill="#185fa5">Between every phase transition there is a 2-second all-red window. NS yellow → 2s all-red → EW green. This ensures vehicles from the previous green phase have cleared the intersection.</text>
+
+<rect x="30" y="2012" width="700" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="380" y="2032" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">3. Emergency command stores previous state for rollback</text>
+<text x="380" y="2050" text-anchor="middle" font-size="11" fill="#854f0b">Before overriding, snapshot current colors into a Map. After emergency clears, rollback() restores the snapshot and resumes the cycle. Without this, the intersection stays frozen in emergency state.</text>
+
+<rect x="30" y="2076" width="700" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="2096" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">4. One scheduler thread per intersection (no shared lock needed)</text>
+<text x="380" y="2114" text-anchor="middle" font-size="11" fill="#534ab7">Each intersection has a single-thread ScheduledExecutorService. No two transitions run concurrently on the same intersection — no race conditions, no synchronized blocks needed on the cycle itself.</text>
+
+<!-- LLD vs HLD -->
+<line x1="30" y1="2192" x2="730" y2="2192" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2184" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— LLD vs HLD comparison —</text>
+
+<rect x="30"  y="2200" width="340" height="164" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="200" y="2222" text-anchor="middle" font-size="12" font-weight="700" fill="#2c2c2a">LLD (In-Process)</text>
+<text x="200" y="2242" text-anchor="middle" font-size="11" fill="#5f5e5a">State: boolean/enum fields on TrafficLight</text>
+<text x="200" y="2258" text-anchor="middle" font-size="11" fill="#5f5e5a">Cycle: ScheduledExecutorService</text>
+<text x="200" y="2274" text-anchor="middle" font-size="11" fill="#5f5e5a">Emergency: in-process Command object</text>
+<text x="200" y="2290" text-anchor="middle" font-size="11" fill="#5f5e5a">Fault: CoR method chain in-process</text>
+<text x="200" y="2306" text-anchor="middle" font-size="11" fill="#5f5e5a">Observers: synchronous method calls</text>
+<text x="200" y="2322" text-anchor="middle" font-size="11" fill="#5f5e5a">TCC: singleton in same JVM</text>
+<text x="200" y="2342" text-anchor="middle" font-size="11" fill="#5f5e5a">Timing: simple sleep() calls</text>
+
+<rect x="390" y="2200" width="340" height="164" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="560" y="2222" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">HLD (Distributed)</text>
+<text x="560" y="2242" text-anchor="middle" font-size="11" fill="#0f6e56">State: Redis key per light (TTL = phase duration)</text>
+<text x="560" y="2258" text-anchor="middle" font-size="11" fill="#0f6e56">Cycle: controller hardware + embedded OS</text>
+<text x="560" y="2274" text-anchor="middle" font-size="11" fill="#0f6e56">Emergency: REST API call to TCC</text>
+<text x="560" y="2290" text-anchor="middle" font-size="11" fill="#0f6e56">Fault: alert pushed via Kafka to TCC</text>
+<text x="560" y="2306" text-anchor="middle" font-size="11" fill="#0f6e56">Observers: Kafka async to dashboard</text>
+<text x="560" y="2322" text-anchor="middle" font-size="11" fill="#0f6e56">TCC: central server, intersections as clients</text>
+<text x="560" y="2342" text-anchor="middle" font-size="11" fill="#0f6e56">Timing: hardware timer + NTP-synced clock</text>
+
+<!-- FINAL -->
+<rect x="30" y="2384" width="700" height="52" rx="8" fill="#2c2c2a"/>
+<text x="380" y="2406" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">The entire system reduces to one rule: one direction gets GREEN at a time, all others are RED.</text>
+<text x="380" y="2424" text-anchor="middle" font-size="11" fill="#aaa">Every pattern — State, Command, CoR, Strategy, Observer — exists to manage transitions to and from that one green safely.</text>
+
+<!-- PATTERN TABLE -->
+<line x1="30" y1="2456" x2="730" y2="2456" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="2448" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— patterns at a glance —</text>
+
+<rect x="30" y="2464" width="700" height="88" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="2484" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Singleton=TCC  ·  State=TrafficLight(RED→GREEN→YELLOW→RED)  ·  Strategy=TimingStrategy</text>
+<text x="380" y="2502" text-anchor="middle" font-size="11" fill="#5f5e5a">Command=EmergencyCommand(execute+rollback)  ·  CoR=FaultHandler(Bulb→Comm→Power)</text>
+<text x="380" y="2520" text-anchor="middle" font-size="11" fill="#5f5e5a">Observer=LightEventObserver(Dashboard+Logger)  ·  Factory=IntersectionFactory  ·  Builder=Intersection.Builder</text>
+<text x="380" y="2538" text-anchor="middle" font-size="11" fill="#888">8 patterns · clean · interview-ready</text>
+
+</svg>
+</body></html>

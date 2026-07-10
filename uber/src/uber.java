@@ -1,8 +1,13 @@
-
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
 
-// --- Enums and Helpers ---
+// --- 1. ENUMS AND HELPERS ---
+
+/**
+ * Representing the various states of a ride.
+ * [Design Pattern: State Pattern (Conceptual)]
+ */
 enum RideStatus {
     IDLE, REQUESTED, ACCEPTED, IN_PROGRESS, COMPLETED, CANCELLED
 }
@@ -15,31 +20,39 @@ class Location {
     }
 }
 
-// --- Ride Class ---
+// --- 2. CORE ENTITIES ---
+
 class Ride {
     private final String id;
     private RideStatus status;
+    // ReentrantLock provides more flexibility than 'synchronized'
+    private final ReentrantLock rideLock = new ReentrantLock();
 
     public Ride(String rideId) {
         this.id = rideId;
         this.status = RideStatus.REQUESTED;
     }
 
-    // Synchronized method to ensure only one thread can change the state at a time
-    public synchronized boolean acceptRide(String driverId) {
-        if (this.status == RideStatus.REQUESTED) {
-            this.status = RideStatus.ACCEPTED;
-            System.out.println("[Ride] " + id + " accepted by Driver " + driverId);
-            return true;
+    public boolean acceptRide(String driverId) {
+        rideLock.lock(); // Explicitly acquiring the lock
+        try {
+            // Check-then-act logic must be inside the lock to be atomic
+            if (this.status == RideStatus.REQUESTED) {
+                this.status = RideStatus.ACCEPTED;
+                System.out.println("[Ride] " + id + " accepted by Driver " + driverId);
+                return true;
+            }
+            return false;
+        } finally {
+            rideLock.unlock(); // Always release in finally block to prevent deadlocks
         }
-        return false;
     }
 }
 
-// --- Driver Class ---
 class Driver {
     private final String id;
     private boolean available = true;
+    private final ReentrantLock driverLock = new ReentrantLock();
 
     public Driver(String dId) {
         this.id = dId;
@@ -47,37 +60,61 @@ class Driver {
 
     public String getId() { return id; }
 
-    // Synchronized block to atomically check and set availability
-    public synchronized boolean tryBook() {
-        if (available) {
-            available = false;
-            return true;
+    /**
+     * Atomically checks if the driver is available and books them.
+     */
+    public boolean tryBook() {
+        driverLock.lock();
+        try {
+            if (available) {
+                available = false;
+                return true;
+            }
+            return false;
+        } finally {
+            driverLock.unlock();
         }
-        return false;
     }
 
-    public synchronized void release() {
-        available = true;
+    public void release() {
+        driverLock.lock();
+        try {
+            available = true;
+        } finally {
+            driverLock.unlock();
+        }
     }
 }
 
-// --- RideManager (Singleton) ---
-class RideManager {
-    // Volatile ensures visibility across threads for the Singleton instance
-    private static volatile RideManager instance;
+// --- 3. THE MANAGER ---
 
+/**
+ * [Design Pattern: Singleton]
+ * Ensures only one RideManager coordinates matches across the system.
+ */
+class RideManager {
+    // Volatile prevents instruction reordering issues in multi-threaded environments
+    private static volatile RideManager instance;
+    private static final ReentrantLock registrationLock = new ReentrantLock();
+
+    // Thread-safe collections for managing resources
     private final Map<String, Driver> drivers = new ConcurrentHashMap<>();
     private final Map<String, Ride> activeRides = new ConcurrentHashMap<>();
 
     private RideManager() {}
 
-    // Double-checked locking for thread-safe Singleton
+    /**
+     * Double-checked locking with ReentrantLock for thread-safe Singleton instantiation.
+     */
     public static RideManager getInstance() {
         if (instance == null) {
-            synchronized (RideManager.class) {
+            registrationLock.lock();
+            try {
                 if (instance == null) {
                     instance = new RideManager();
                 }
+            } finally {
+                registrationLock.unlock();
             }
         }
         return instance;
@@ -87,18 +124,28 @@ class RideManager {
         drivers.put(driver.getId(), driver);
     }
 
+    /**
+     * [Design Pattern: Strategy Pattern (Simplified)]
+     * The matching logic can be extracted into a separate Strategy interface 
+     * (e.g., LeastTimeMatchingStrategy) to make it extensible.
+     */
     public Ride requestRide(String riderId, Location src, Location dest) {
-        System.out.println("[Request] Rider " + riderId + " is looking for a ride...");
+        System.out.println("[Request] Rider " + riderId + " searching for drivers...");
 
-        // Strategy: Iterate through drivers and try to book the first available one
+        // Iterating over the ConcurrentHashMap is thread-safe
         for (Driver driver : drivers.values()) {
             if (driver.tryBook()) {
                 String rideId = "RIDE_" + UUID.randomUUID().toString().substring(0, 5);
                 Ride newRide = new Ride(rideId);
-                activeRides.put(rideId, newRide);
 
-                System.out.println("[Match] Successfully matched Rider " + riderId + " with Driver " + driver.getId());
-                return newRide;
+                if (newRide.acceptRide(driver.getId())) {
+                    activeRides.put(rideId, newRide);
+                    System.out.println("[Match] Rider " + riderId + " matched with Driver " + driver.getId());
+                    return newRide;
+                } else {
+                    // If ride acceptance fails for some reason, free the driver back up
+                    driver.release();
+                }
             }
         }
 

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 820px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 760 1720" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ====== SECTION 1: REQUEST FLOW ====== -->
+<text x="380" y="22" text-anchor="middle" font-size="12" font-weight="600" fill="#888">— inbound request flow —</text>
+
+<!-- CLIENTS -->
+<rect x="20"  y="32" width="148" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="94"  y="54" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Mobile App</text>
+<text x="94"  y="70" text-anchor="middle" font-size="10" fill="#5f5e5a">API key: client_A</text>
+<text x="94"  y="86" text-anchor="middle" font-size="10" fill="#5f5e5a">100 req/sec tier</text>
+
+<rect x="186" y="32" width="148" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="260" y="54" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Web Client</text>
+<text x="260" y="70" text-anchor="middle" font-size="10" fill="#5f5e5a">API key: client_B</text>
+<text x="260" y="86" text-anchor="middle" font-size="10" fill="#5f5e5a">50 req/sec tier</text>
+
+<rect x="352" y="32" width="148" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="426" y="54" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Third-Party API</text>
+<text x="426" y="70" text-anchor="middle" font-size="10" fill="#5f5e5a">API key: client_C</text>
+<text x="426" y="86" text-anchor="middle" font-size="10" fill="#5f5e5a">10 req/sec tier</text>
+
+<rect x="518" y="32" width="222" height="64" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="629" y="54" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Abusive Client</text>
+<text x="629" y="70" text-anchor="middle" font-size="10" fill="#993c1d">DDoS / scraper</text>
+<text x="629" y="86" text-anchor="middle" font-size="10" fill="#993c1d">No API key</text>
+
+<line x1="94"  y1="96" x2="270" y2="152" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="260" y1="96" x2="315" y2="152" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="426" y1="96" x2="400" y2="152" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="629" y1="96" x2="490" y2="152" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- LOAD BALANCER -->
+<rect x="230" y="152" width="300" height="52" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="380" y="174" text-anchor="middle" font-size="13" font-weight="600" fill="#2c2c2a">Load Balancer</text>
+<text x="380" y="190" text-anchor="middle" font-size="11" fill="#5f5e5a">Routes to Rate Limiter nodes</text>
+
+<line x1="380" y1="204" x2="380" y2="240" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- RATE LIMITER LAYER -->
+<rect x="190" y="240" width="380" height="88" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="262" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Rate Limiter Layer (Middleware)</text>
+<text x="380" y="280" text-anchor="middle" font-size="11" fill="#534ab7">Extract: clientId from API key header</text>
+<text x="380" y="296" text-anchor="middle" font-size="11" fill="#534ab7">Lookup: which algorithm for this client tier?</text>
+<text x="380" y="312" text-anchor="middle" font-size="11" fill="#534ab7">Check Redis: current count / token state</text>
+<text x="380" y="328" text-anchor="middle" font-size="11" fill="#534ab7">Decision: ALLOW or REJECT in &lt; 1ms</text>
+
+<!-- REJECT PATH -->
+<line x1="190" y1="284" x2="90" y2="360" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<text x="78" y="340" font-size="10" text-anchor="end" fill="#d85a30">limit exceeded</text>
+
+<rect x="20" y="360" width="160" height="76" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="100" y="382" text-anchor="middle" font-size="12" font-weight="600" fill="#712b13">HTTP 429</text>
+<text x="100" y="400" text-anchor="middle" font-size="11" fill="#993c1d">Too Many Requests</text>
+<text x="100" y="416" text-anchor="middle" font-size="10" fill="#993c1d">Retry-After header</text>
+<text x="100" y="430" text-anchor="middle" font-size="10" fill="#993c1d">X-RateLimit headers</text>
+
+<!-- ALLOW PATH -->
+<line x1="380" y1="328" x2="380" y2="388" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- REDIS CHECK (core) -->
+<rect x="190" y="388" width="380" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="380" y="410" text-anchor="middle" font-size="13" font-weight="600" fill="#27500a">Redis — Rate Limit State Store</text>
+<text x="380" y="428" text-anchor="middle" font-size="11" fill="#3b6d11">Token Bucket: HSET client:tokens, client:lastRefill</text>
+<text x="380" y="444" text-anchor="middle" font-size="11" fill="#3b6d11">Fixed Window: INCR client:window:{timestamp}</text>
+<text x="380" y="460" text-anchor="middle" font-size="11" fill="#3b6d11">Sliding Log: ZADD client:log {timestamp} + ZCOUNT</text>
+
+<line x1="380" y1="464" x2="380" y2="512" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- DOWNSTREAM SERVICES -->
+<rect x="200" y="512" width="360" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="380" y="534" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">Request passes to downstream services</text>
+<text x="380" y="550" text-anchor="middle" font-size="11" fill="#0f6e56">API servers, microservices, databases</text>
+
+<!-- ====== SECTION 2: REDIS ATOMIC OPS ====== -->
+<line x1="40" y1="612" x2="720" y2="612" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="604" text-anchor="middle" font-size="11" fill="#888">— Redis atomic operations per algorithm —</text>
+
+<rect x="20"  y="620" width="220" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="130" y="642" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Token Bucket</text>
+<text x="130" y="660" text-anchor="middle" font-size="10" fill="#3b6d11">HGET tokens, lastRefill</text>
+<text x="130" y="676" text-anchor="middle" font-size="10" fill="#3b6d11">Compute refill in Lua script</text>
+<text x="130" y="692" text-anchor="middle" font-size="10" fill="#3b6d11">HSET new token count</text>
+<text x="130" y="708" text-anchor="middle" font-size="10" fill="#3b6d11">All atomic via EVAL</text>
+
+<rect x="260" y="620" width="220" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="370" y="642" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Fixed Window</text>
+<text x="370" y="660" text-anchor="middle" font-size="10" fill="#3b6d11">Key: client:{minute}</text>
+<text x="370" y="676" text-anchor="middle" font-size="10" fill="#3b6d11">INCR → if &gt; limit: reject</text>
+<text x="370" y="692" text-anchor="middle" font-size="10" fill="#3b6d11">EXPIRE key 60s on first</text>
+<text x="370" y="708" text-anchor="middle" font-size="10" fill="#3b6d11">Auto-cleanup via TTL</text>
+
+<rect x="500" y="620" width="240" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="620" y="642" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Sliding Window Log</text>
+<text x="620" y="660" text-anchor="middle" font-size="10" fill="#3b6d11">ZADD client:log {now} {now}</text>
+<text x="620" y="676" text-anchor="middle" font-size="10" fill="#3b6d11">ZREMRANGEBYSCORE 0 {now-window}</text>
+<text x="620" y="692" text-anchor="middle" font-size="10" fill="#3b6d11">ZCARD → if &gt; limit: reject</text>
+<text x="620" y="708" text-anchor="middle" font-size="10" fill="#3b6d11">EXPIRE key on each write</text>
+
+<!-- ====== SECTION 3: ARCHITECTURE ====== -->
+<line x1="40" y1="772" x2="720" y2="772" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="764" text-anchor="middle" font-size="11" fill="#888">— distributed rate limiter architecture —</text>
+
+<!-- RATE LIMITER NODES -->
+<rect x="190" y="780" width="380" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="380" y="802" text-anchor="middle" font-size="13" font-weight="600" fill="#3c3489">Rate Limiter Nodes (Stateless)</text>
+<text x="380" y="820" text-anchor="middle" font-size="11" fill="#534ab7">Multiple nodes — horizontally scalable</text>
+<text x="380" y="836" text-anchor="middle" font-size="11" fill="#534ab7">All state lives in Redis — nodes are stateless</text>
+
+<line x1="300" y1="844" x2="160" y2="892" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="844" x2="600" y2="892" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="40"  y="892" width="230" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="155" y="914" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis Cluster (Primary)</text>
+<text x="155" y="932" text-anchor="middle" font-size="11" fill="#3b6d11">All rate limit counters</text>
+<text x="155" y="948" text-anchor="middle" font-size="11" fill="#3b6d11">Lua scripts for atomicity</text>
+<text x="155" y="964" text-anchor="middle" font-size="11" fill="#3b6d11">Sub-millisecond reads</text>
+
+<rect x="490" y="892" width="230" height="76" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="605" y="914" text-anchor="middle" font-size="12" font-weight="600" fill="#27500a">Redis Replica</text>
+<text x="605" y="932" text-anchor="middle" font-size="11" fill="#3b6d11">Read replica for analytics</text>
+<text x="605" y="948" text-anchor="middle" font-size="11" fill="#3b6d11">Failover if primary down</text>
+<text x="605" y="964" text-anchor="middle" font-size="11" fill="#3b6d11">Sentinel for HA</text>
+
+<!-- ====== SECTION 4: CONFIG + ADMIN ====== -->
+<line x1="40" y1="1024" x2="720" y2="1024" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1016" text-anchor="middle" font-size="11" fill="#888">— config management + admin flow —</text>
+
+<rect x="190" y="1032" width="380" height="76" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="380" y="1054" text-anchor="middle" font-size="13" font-weight="600" fill="#0c447c">Rate Limit Config Service</text>
+<text x="380" y="1072" text-anchor="middle" font-size="11" fill="#185fa5">Stores per-client config: algorithm + limits</text>
+<text x="380" y="1088" text-anchor="middle" font-size="11" fill="#185fa5">Backed by PostgreSQL (source of truth)</text>
+<text x="380" y="1104" text-anchor="middle" font-size="11" fill="#185fa5">Config pushed to Redis on change</text>
+
+<line x1="300" y1="1108" x2="160" y2="1152" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="460" y1="1108" x2="600" y2="1152" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="40"  y="1152" width="220" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="150" y="1174" text-anchor="middle" font-size="12" font-weight="600" fill="#0c447c">Admin Dashboard</text>
+<text x="150" y="1192" text-anchor="middle" font-size="11" fill="#185fa5">View live throttle rates</text>
+<text x="150" y="1208" text-anchor="middle" font-size="11" fill="#185fa5">Override limits per client</text>
+
+<rect x="500" y="1152" width="220" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="610" y="1174" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Kafka — Throttle Events</text>
+<text x="610" y="1192" text-anchor="middle" font-size="11" fill="#854f0b">Log every 429 response</text>
+<text x="610" y="1208" text-anchor="middle" font-size="11" fill="#854f0b">Feed anomaly detection</text>
+
+<!-- ====== SECTION 5: ALGORITHM SELECTOR ====== -->
+<line x1="40" y1="1272" x2="720" y2="1272" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1264" text-anchor="middle" font-size="11" fill="#888">— algorithm selection per use case —</text>
+
+<rect x="20"  y="1280" width="218" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="129" y="1302" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Token Bucket</text>
+<text x="129" y="1320" text-anchor="middle" font-size="10" fill="#534ab7">Bursts allowed</text>
+<text x="129" y="1336" text-anchor="middle" font-size="10" fill="#534ab7">Best: public APIs</text>
+<text x="129" y="1352" text-anchor="middle" font-size="10" fill="#534ab7">Razorpay, Stripe</text>
+<text x="129" y="1368" text-anchor="middle" font-size="10" fill="#534ab7">Low memory</text>
+
+<rect x="256" y="1280" width="218" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="365" y="1302" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Leaky Bucket</text>
+<text x="365" y="1320" text-anchor="middle" font-size="10" fill="#534ab7">Smooth traffic</text>
+<text x="365" y="1336" text-anchor="middle" font-size="10" fill="#534ab7">Best: order pipelines</text>
+<text x="365" y="1352" text-anchor="middle" font-size="10" fill="#534ab7">Swiggy, Zomato</text>
+<text x="365" y="1368" text-anchor="middle" font-size="10" fill="#534ab7">No burst allowed</text>
+
+<rect x="492" y="1280" width="248" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="616" y="1302" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Sliding Window Log</text>
+<text x="616" y="1320" text-anchor="middle" font-size="10" fill="#534ab7">Exact accuracy</text>
+<text x="616" y="1336" text-anchor="middle" font-size="10" fill="#534ab7">Best: financial / login</text>
+<text x="616" y="1352" text-anchor="middle" font-size="10" fill="#534ab7">OTP, payments</text>
+<text x="616" y="1368" text-anchor="middle" font-size="10" fill="#534ab7">Higher memory cost</text>
+
+<!-- ====== DATA STORES ====== -->
+<line x1="40" y1="1440" x2="720" y2="1440" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="380" y="1432" text-anchor="middle" font-size="11" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1448" width="172" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="106" y="1470" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="106" y="1488" text-anchor="middle" font-size="10" fill="#3b6d11">All rate counters</text>
+<text x="106" y="1504" text-anchor="middle" font-size="10" fill="#3b6d11">Token buckets</text>
+<text x="106" y="1520" text-anchor="middle" font-size="10" fill="#3b6d11">Sliding logs (ZSET)</text>
+<text x="106" y="1536" text-anchor="middle" font-size="10" fill="#3b6d11">TTL auto-cleanup</text>
+
+<rect x="210" y="1448" width="172" height="100" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="296" y="1470" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">PostgreSQL</text>
+<text x="296" y="1488" text-anchor="middle" font-size="10" fill="#185fa5">Client configs</text>
+<text x="296" y="1504" text-anchor="middle" font-size="10" fill="#185fa5">Tier definitions</text>
+<text x="296" y="1520" text-anchor="middle" font-size="10" fill="#185fa5">API key registry</text>
+<text x="296" y="1536" text-anchor="middle" font-size="10" fill="#185fa5">Audit logs</text>
+
+<rect x="400" y="1448" width="172" height="100" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="486" y="1470" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Kafka</text>
+<text x="486" y="1488" text-anchor="middle" font-size="10" fill="#854f0b">429 event stream</text>
+<text x="486" y="1504" text-anchor="middle" font-size="10" fill="#854f0b">Anomaly detection</text>
+<text x="486" y="1520" text-anchor="middle" font-size="10" fill="#854f0b">DDoS alerting</text>
+<text x="486" y="1536" text-anchor="middle" font-size="10" fill="#854f0b">Analytics pipeline</text>
+
+<rect x="590" y="1448" width="150" height="100" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="665" y="1470" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Cassandra</text>
+<text x="665" y="1488" text-anchor="middle" font-size="10" fill="#5f5e5a">Rate limit history</text>
+<text x="665" y="1504" text-anchor="middle" font-size="10" fill="#5f5e5a">Per-client usage</text>
+<text x="665" y="1520" text-anchor="middle" font-size="10" fill="#5f5e5a">Time-series logs</text>
+<text x="665" y="1536" text-anchor="middle" font-size="10" fill="#5f5e5a">Billing data</text>
+
+</svg>
+</body></html>

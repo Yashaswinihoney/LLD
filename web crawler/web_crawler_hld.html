@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 2920" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#2c2c2a"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">WEB CRAWLER — HLD APPLICATION FLOW</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">URL Frontier · DNS · CDN · Load Balancer · Fetch · Parse · Store · Index</text>
+
+<!-- ====== SECTION 1: FULL SYSTEM ARCHITECTURE ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— full system architecture —</text>
+
+<!-- ORCHESTRATOR / SCHEDULER -->
+<rect x="200" y="80" width="400" height="64" rx="8" fill="#2c2c2a"/>
+<text x="400" y="104" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Crawler Orchestrator</text>
+<text x="400" y="122" text-anchor="middle" font-size="11" fill="#aaa">Seeds URLs · assigns to workers · monitors progress</text>
+<text x="400" y="138" text-anchor="middle" font-size="11" fill="#aaa">Manages depth limit · politeness · re-crawl schedule</text>
+
+<line x1="400" y1="144" x2="400" y2="180" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- URL FRONTIER -->
+<rect x="160" y="180" width="480" height="76" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="204" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">URL Frontier (Priority Queue)</text>
+<text x="400" y="222" text-anchor="middle" font-size="11" fill="#534ab7">Back queues: one per domain (politeness isolation)</text>
+<text x="400" y="238" text-anchor="middle" font-size="11" fill="#534ab7">Front queues: ranked by priority score</text>
+<text x="400" y="252" text-anchor="middle" font-size="11" fill="#534ab7">URL dedup: Bloom filter (seen-set, low memory)</text>
+
+<!-- 3 workers pull from frontier -->
+<line x1="280" y1="256" x2="150" y2="304" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="256" x2="400" y2="304" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="520" y1="256" x2="650" y2="304" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="30"  y="304" width="224" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="142" y="326" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">Crawler Worker 1</text>
+<text x="142" y="342" text-anchor="middle" font-size="11" fill="#0f6e56">Fetch → Parse → Schedule</text>
+
+<rect x="288" y="304" width="224" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="326" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">Crawler Worker 2</text>
+<text x="400" y="342" text-anchor="middle" font-size="11" fill="#0f6e56">Fetch → Parse → Schedule</text>
+
+<rect x="546" y="304" width="224" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="658" y="326" text-anchor="middle" font-size="11" font-weight="600" fill="#085041">Crawler Worker N</text>
+<text x="658" y="342" text-anchor="middle" font-size="11" fill="#0f6e56">Fetch → Parse → Schedule</text>
+
+<!-- arrows from workers to DNS -->
+<line x1="142" y1="356" x2="280" y2="412" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="356" x2="400" y2="412" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="658" y1="356" x2="520" y2="412" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 2: DNS RESOLUTION ====== -->
+<line x1="30" y1="400" x2="770" y2="400" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="393" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— Step 1: DNS Resolution —</text>
+
+<rect x="160" y="412" width="480" height="88" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="434" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">DNS Resolver (Cached)</text>
+<text x="400" y="452" text-anchor="middle" font-size="11" fill="#854f0b">Worker checks local DNS cache first (TTL-based)</text>
+<text x="400" y="468" text-anchor="middle" font-size="11" fill="#854f0b">Cache miss → Recursive DNS lookup via 8.8.8.8 / ISP resolver</text>
+<text x="400" y="484" text-anchor="middle" font-size="11" fill="#854f0b">Result: domain → IP address</text>
+<text x="400" y="500" text-anchor="middle" font-size="11" fill="#854f0b">Crawler maintains in-process DNS cache (avoid repeated lookups)</text>
+
+<!-- DNS cache hit / miss -->
+<line x1="160" y1="460" x2="80" y2="520" stroke="#0f6e56" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-g)"/>
+<rect x="16" y="520" width="148" height="40" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="90" y="538" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Cache HIT</text>
+<text x="90" y="554" text-anchor="middle" font-size="10" fill="#3b6d11">IP returned in &lt;1ms</text>
+
+<line x1="400" y1="500" x2="400" y2="548" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 3: CDN CHECK ====== -->
+<line x1="30" y1="536" x2="770" y2="536" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="530" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— Step 2: CDN Edge Check —</text>
+
+<rect x="160" y="548" width="480" height="88" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="570" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">CDN Edge Node (Cloudflare / Akamai)</text>
+<text x="400" y="588" text-anchor="middle" font-size="11" fill="#185fa5">Many target sites serve content via CDN</text>
+<text x="400" y="604" text-anchor="middle" font-size="11" fill="#185fa5">CDN edge is the actual responding server (not origin)</text>
+<text x="400" y="620" text-anchor="middle" font-size="11" fill="#185fa5">CDN may throttle aggressive crawlers (rate limit by IP)</text>
+<text x="400" y="636" text-anchor="middle" font-size="11" fill="#185fa5">Crawler respects Retry-After header from CDN 429 responses</text>
+
+<!-- CDN hit path -->
+<line x1="640" y1="588" x2="700" y2="644" stroke="#0f6e56" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-g)"/>
+<rect x="626" y="644" width="158" height="40" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="705" y="662" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">CDN Cache HIT</text>
+<text x="705" y="678" text-anchor="middle" font-size="10" fill="#3b6d11">Content served from edge</text>
+
+<line x1="400" y1="636" x2="400" y2="692" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 4: LOAD BALANCER ====== -->
+<line x1="30" y1="680" x2="770" y2="680" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="673" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— Step 3: Load Balancer at Target Site —</text>
+
+<rect x="160" y="692" width="480" height="76" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="714" text-anchor="middle" font-size="13" font-weight="700" fill="#2c2c2a">Load Balancer (Target Site's LB)</text>
+<text x="400" y="732" text-anchor="middle" font-size="11" fill="#5f5e5a">Request arrives at target site's LB (nginx / AWS ALB)</text>
+<text x="400" y="748" text-anchor="middle" font-size="11" fill="#5f5e5a">LB routes to one of N web servers using round-robin / least-conn</text>
+<text x="400" y="764" text-anchor="middle" font-size="11" fill="#5f5e5a">LB may rate-limit by User-Agent (detect crawler) or IP block</text>
+
+<line x1="400" y1="768" x2="400" y2="808" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 5: FETCH + PARSE ====== -->
+<line x1="30" y1="796" x2="770" y2="796" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="789" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— Step 4: Fetch HTML Content —</text>
+
+<rect x="160" y="808" width="480" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="830" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">HTTP Fetcher</text>
+<text x="400" y="848" text-anchor="middle" font-size="11" fill="#0f6e56">HTTP GET with timeout (3s connect, 10s read)</text>
+<text x="400" y="864" text-anchor="middle" font-size="11" fill="#0f6e56">Connection pool per domain (max 2 concurrent)</text>
+<text x="400" y="880" text-anchor="middle" font-size="11" fill="#0f6e56">Respect crawl-delay from robots.txt per domain</text>
+<text x="400" y="896" text-anchor="middle" font-size="11" fill="#0f6e56">Handle redirects (301/302): follow + record redirect chain</text>
+<text x="400" y="908" text-anchor="middle" font-size="11" fill="#0f6e56">429 Too Many Requests → back off + re-queue with lower priority</text>
+
+<!-- non-200 responses -->
+<line x1="160" y1="864" x2="80" y2="928" stroke="#d85a30" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arrow-r)"/>
+<rect x="16" y="928" width="148" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="90" y="950" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">4xx / 5xx / Timeout</text>
+<text x="90" y="966" text-anchor="middle" font-size="10" fill="#993c1d">Mark FAILED</text>
+<text x="90" y="978" text-anchor="middle" font-size="10" fill="#993c1d">Retry 3× with backoff</text>
+
+<line x1="400" y1="908" x2="400" y2="956" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 6: PARSE + EXTRACT ====== -->
+<line x1="30" y1="944" x2="770" y2="944" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="937" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— Step 5: Parse HTML → Extract Links —</text>
+
+<rect x="160" y="956" width="480" height="88" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="978" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">HTML Parser + Link Extractor</text>
+<text x="400" y="996" text-anchor="middle" font-size="11" fill="#854f0b">Parse HTML (JSoup) → extract all href attributes</text>
+<text x="400" y="1012" text-anchor="middle" font-size="11" fill="#854f0b">Resolve relative URLs to absolute (using base URL)</text>
+<text x="400" y="1028" text-anchor="middle" font-size="11" fill="#854f0b">Filter: skip mailto:, javascript:, #fragments, non-http</text>
+<text x="400" y="1044" text-anchor="middle" font-size="11" fill="#854f0b">Normalise URLs → remove fragments, sort query params</text>
+
+<line x1="400" y1="1044" x2="400" y2="1092" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 7: DUPLICATE DETECTION ====== -->
+<line x1="30" y1="1080" x2="770" y2="1080" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1073" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— Step 6: Duplicate Detection (URL + Content) —</text>
+
+<rect x="30"  y="1092" width="352" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="206" y="1114" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">URL Deduplication</text>
+<text x="206" y="1134" text-anchor="middle" font-size="11" fill="#534ab7">Bloom filter: probabilistic, memory-efficient</text>
+<text x="206" y="1150" text-anchor="middle" font-size="11" fill="#534ab7">~10 bytes per URL vs ~64 bytes for HashSet</text>
+<text x="206" y="1166" text-anchor="middle" font-size="11" fill="#534ab7">1% false positive → occasionally re-crawl seen URL</text>
+<text x="206" y="1182" text-anchor="middle" font-size="11" fill="#534ab7">Acceptable trade-off at billion-URL scale</text>
+
+<rect x="418" y="1092" width="352" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="594" y="1114" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Content Deduplication</text>
+<text x="594" y="1134" text-anchor="middle" font-size="11" fill="#534ab7">MD5 / SimHash of page content</text>
+<text x="594" y="1150" text-anchor="middle" font-size="11" fill="#534ab7">Exact dup: same MD5 → skip storage</text>
+<text x="594" y="1166" text-anchor="middle" font-size="11" fill="#534ab7">Near-dup: SimHash distance &lt; threshold</text>
+<text x="594" y="1182" text-anchor="middle" font-size="11" fill="#534ab7">Stored in Redis fingerprint cache</text>
+
+<line x1="400" y1="1192" x2="400" y2="1236" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 8: STORAGE + INDEXING ====== -->
+<line x1="30" y1="1224" x2="770" y2="1224" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1217" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— Step 7: Storage + Indexing (fan-out via Kafka) —</text>
+
+<rect x="160" y="1236" width="480" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1254" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Kafka — crawl-results topic</text>
+<text x="400" y="1270" text-anchor="middle" font-size="11" fill="#534ab7">Worker publishes {url, html, links, metadata} → async fan-out</text>
+
+<line x1="200" y1="1280" x2="100" y2="1332" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="320" y1="1280" x2="260" y2="1332" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="440" y1="1280" x2="440" y2="1332" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="560" y1="1280" x2="620" y2="1332" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="1332" width="160" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="100" y="1354" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Raw Store</text>
+<text x="100" y="1372" text-anchor="middle" font-size="11" fill="#3b6d11">S3 / GCS</text>
+<text x="100" y="1388" text-anchor="middle" font-size="11" fill="#3b6d11">full HTML + metadata</text>
+
+<rect x="200" y="1332" width="160" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="280" y="1354" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">URL Frontier</text>
+<text x="280" y="1372" text-anchor="middle" font-size="11" fill="#3b6d11">New links added</text>
+<text x="280" y="1388" text-anchor="middle" font-size="11" fill="#3b6d11">back to queue</text>
+
+<rect x="380" y="1332" width="160" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="460" y="1354" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Search Indexer</text>
+<text x="460" y="1372" text-anchor="middle" font-size="11" fill="#3b6d11">Elasticsearch</text>
+<text x="460" y="1388" text-anchor="middle" font-size="11" fill="#3b6d11">title, text, links</text>
+
+<rect x="560" y="1332" width="200" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="660" y="1354" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Link Graph DB</text>
+<text x="660" y="1372" text-anchor="middle" font-size="11" fill="#3b6d11">Neo4j / Cassandra</text>
+<text x="660" y="1388" text-anchor="middle" font-size="11" fill="#3b6d11">PageRank computation</text>
+
+<!-- ====== SECTION 9: POLITENESS + ROBOTS ====== -->
+<line x1="30" y1="1460" x2="770" y2="1460" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1452" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— politeness + robots.txt compliance —</text>
+
+<rect x="30"  y="1468" width="352" height="124" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="206" y="1490" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Robots.txt Rules</text>
+<text x="206" y="1510" text-anchor="middle" font-size="11" fill="#993c1d">Fetch /robots.txt once per domain (cache 24hr)</text>
+<text x="206" y="1526" text-anchor="middle" font-size="11" fill="#993c1d">Honour Disallow: paths (blocked immediately)</text>
+<text x="206" y="1542" text-anchor="middle" font-size="11" fill="#993c1d">Honour Crawl-delay: N seconds between requests</text>
+<text x="206" y="1558" text-anchor="middle" font-size="11" fill="#993c1d">Respect User-agent specific rules</text>
+<text x="206" y="1574" text-anchor="middle" font-size="11" fill="#993c1d">Non-compliance = IP ban by target site</text>
+
+<rect x="418" y="1468" width="352" height="124" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="594" y="1490" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Politeness Manager</text>
+<text x="594" y="1510" text-anchor="middle" font-size="11" fill="#854f0b">One domain back-queue per domain</text>
+<text x="594" y="1526" text-anchor="middle" font-size="11" fill="#854f0b">Enforces crawl-delay between requests</text>
+<text x="594" y="1542" text-anchor="middle" font-size="11" fill="#854f0b">Per-domain lock (max 1 concurrent fetch)</text>
+<text x="594" y="1558" text-anchor="middle" font-size="11" fill="#854f0b">429 / 503 → exponential backoff + requeue</text>
+<text x="594" y="1574" text-anchor="middle" font-size="11" fill="#854f0b">IP rotation for large-scale crawls</text>
+
+<!-- ====== SECTION 10: DATA STORES ====== -->
+<line x1="30" y1="1660" x2="770" y2="1660" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1652" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1668" width="175" height="148" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="107" y="1690" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="107" y="1708" text-anchor="middle" font-size="10" fill="#3b6d11">URL bloom filter</text>
+<text x="107" y="1724" text-anchor="middle" font-size="10" fill="#3b6d11">Content fingerprints</text>
+<text x="107" y="1740" text-anchor="middle" font-size="10" fill="#3b6d11">robots.txt cache</text>
+<text x="107" y="1756" text-anchor="middle" font-size="10" fill="#3b6d11">DNS cache</text>
+<text x="107" y="1772" text-anchor="middle" font-size="10" fill="#3b6d11">Domain crawl timestamps</text>
+<text x="107" y="1788" text-anchor="middle" font-size="10" fill="#3b6d11">Politeness counters</text>
+
+<rect x="211" y="1668" width="175" height="148" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="298" y="1690" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">Cassandra</text>
+<text x="298" y="1708" text-anchor="middle" font-size="10" fill="#185fa5">URL status table</text>
+<text x="298" y="1724" text-anchor="middle" font-size="10" fill="#185fa5">crawl metadata</text>
+<text x="298" y="1740" text-anchor="middle" font-size="10" fill="#185fa5">re-crawl schedule</text>
+<text x="298" y="1756" text-anchor="middle" font-size="10" fill="#185fa5">domain stats</text>
+<text x="298" y="1772" text-anchor="middle" font-size="10" fill="#185fa5">error history</text>
+<text x="298" y="1788" text-anchor="middle" font-size="10" fill="#185fa5">High write throughput</text>
+
+<rect x="402" y="1668" width="175" height="148" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="489" y="1690" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">S3 / GCS</text>
+<text x="489" y="1708" text-anchor="middle" font-size="10" fill="#854f0b">Raw HTML content</text>
+<text x="489" y="1724" text-anchor="middle" font-size="10" fill="#854f0b">WARC format archives</text>
+<text x="489" y="1740" text-anchor="middle" font-size="10" fill="#854f0b">Compressed per domain</text>
+<text x="489" y="1756" text-anchor="middle" font-size="10" fill="#854f0b">Versioned (re-crawl)</text>
+<text x="489" y="1772" text-anchor="middle" font-size="10" fill="#854f0b">99.999999999% durable</text>
+<text x="489" y="1788" text-anchor="middle" font-size="10" fill="#854f0b">Lifecycle → Glacier</text>
+
+<rect x="593" y="1668" width="187" height="148" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="686" y="1690" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="686" y="1708" text-anchor="middle" font-size="10" fill="#534ab7">crawl-results topic</text>
+<text x="686" y="1724" text-anchor="middle" font-size="10" fill="#534ab7">new-urls topic</text>
+<text x="686" y="1740" text-anchor="middle" font-size="10" fill="#534ab7">error-events topic</text>
+<text x="686" y="1756" text-anchor="middle" font-size="10" fill="#534ab7">replay on failure</text>
+<text x="686" y="1772" text-anchor="middle" font-size="10" fill="#534ab7">partitioned by domain</text>
+<text x="686" y="1788" text-anchor="middle" font-size="10" fill="#534ab7">Async fan-out</text>
+
+<!-- ====== SECTION 11: URL PRIORITY (FIFO vs RANK) ====== -->
+<line x1="30" y1="1880" x2="770" y2="1880" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1872" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— url priority strategies —</text>
+
+<rect x="30"  y="1888" width="228" height="112" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="144" y="1910" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">FIFO</text>
+<text x="144" y="1930" text-anchor="middle" font-size="11" fill="#0f6e56">First-discovered first-crawled</text>
+<text x="144" y="1946" text-anchor="middle" font-size="11" fill="#0f6e56">Breadth-first traversal</text>
+<text x="144" y="1962" text-anchor="middle" font-size="11" fill="#0f6e56">Simple, predictable</text>
+<text x="144" y="1978" text-anchor="middle" font-size="11" fill="#0f6e56">Use: small crawls, testing</text>
+
+<rect x="286" y="1888" width="228" height="112" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="1910" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Domain Rank</text>
+<text x="400" y="1930" text-anchor="middle" font-size="11" fill="#0f6e56">High-authority domains first</text>
+<text x="400" y="1946" text-anchor="middle" font-size="11" fill="#0f6e56">PageRank score as weight</text>
+<text x="400" y="1962" text-anchor="middle" font-size="11" fill="#0f6e56">Depth penalty applied</text>
+<text x="400" y="1978" text-anchor="middle" font-size="11" fill="#0f6e56">Use: search engine crawl</text>
+
+<rect x="542" y="1888" width="228" height="112" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="656" y="1910" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Freshness</text>
+<text x="656" y="1930" text-anchor="middle" font-size="11" fill="#0f6e56">Re-crawl recently updated</text>
+<text x="656" y="1946" text-anchor="middle" font-size="11" fill="#0f6e56">Use Last-Modified header</text>
+<text x="656" y="1962" text-anchor="middle" font-size="11" fill="#0f6e56">Higher freq for news sites</text>
+<text x="656" y="1978" text-anchor="middle" font-size="11" fill="#0f6e56">Use: re-crawl scheduler</text>
+
+<!-- ====== SECTION 12: 5 KEY DECISIONS ====== -->
+<line x1="30" y1="2064" x2="770" y2="2064" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2056" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 5 hardest design decisions —</text>
+
+<rect x="30" y="2072" width="740" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2092" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">1. Bloom filter for URL dedup — not HashSet</text>
+<text x="400" y="2110" text-anchor="middle" font-size="11" fill="#0f6e56">At 1 billion URLs: HashSet needs ~64GB RAM. Bloom filter needs ~1.2GB for 1% false-positive rate. Occasional re-crawl of a seen URL is a perfectly acceptable trade-off. In-memory Bloom filter in Redis, shared across all crawler workers.</text>
+
+<rect x="30" y="2136" width="740" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2156" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">2. Per-domain back queues — politeness without blocking all workers</text>
+<text x="400" y="2174" text-anchor="middle" font-size="11" fill="#185fa5">Without domain queues: all workers pile up on the same domain (hammering google.com). With domain queues: each domain has its own FIFO queue. Workers pick from different domains in rotation. One domain is never crawled by 2 workers simultaneously.</text>
+
+<rect x="30" y="2200" width="740" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="2220" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">3. DNS caching prevents bottleneck at scale</text>
+<text x="400" y="2238" text-anchor="middle" font-size="11" fill="#854f0b">Without DNS cache: 10 million pages/hour = 10M DNS lookups/hour. DNS resolver becomes a bottleneck. Solution: maintain in-process DNS cache with TTL (typically 300s). At 3 workers per machine × 100 machines = 300 workers sharing one DNS cache.</text>
+
+<rect x="30" y="2264" width="740" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2284" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">4. CDN detection — crawler fetches from edge, not origin</text>
+<text x="400" y="2302" text-anchor="middle" font-size="11" fill="#534ab7">When target site uses CDN (Cloudflare/Akamai), DNS resolves to edge IP. Crawler actually talks to the CDN edge node, which may serve cached content. CDN may return 429 if crawl rate is too high — crawler must respect Retry-After and back off per domain.</text>
+
+<rect x="30" y="2328" width="740" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2348" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">5. Kafka partitioned by domain — all pages from one domain in one partition</text>
+<text x="400" y="2366" text-anchor="middle" font-size="11" fill="#993c1d">Partitioning crawl-results by domain ensures the indexer processes all pages of a domain in order (important for link graph consistency). New-urls topic partitioned by domain so politeness logic is isolated per partition consumer.</text>
+
+<!-- LLD vs HLD -->
+<line x1="30" y1="2444" x2="770" y2="2444" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2436" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— LLD vs HLD comparison —</text>
+
+<rect x="30"  y="2452" width="352" height="188" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="206" y="2474" text-anchor="middle" font-size="12" font-weight="700" fill="#2c2c2a">LLD (In-Process)</text>
+<text x="206" y="2494" text-anchor="middle" font-size="11" fill="#5f5e5a">URL dedup: ConcurrentHashMap.newKeySet()</text>
+<text x="206" y="2510" text-anchor="middle" font-size="11" fill="#5f5e5a">Frontier: PriorityBlockingQueue</text>
+<text x="206" y="2526" text-anchor="middle" font-size="11" fill="#5f5e5a">Workers: ExecutorService threads</text>
+<text x="206" y="2542" text-anchor="middle" font-size="11" fill="#5f5e5a">Storage: in-memory list (IndexerObserver)</text>
+<text x="206" y="2558" text-anchor="middle" font-size="11" fill="#5f5e5a">DNS: System default resolver</text>
+<text x="206" y="2574" text-anchor="middle" font-size="11" fill="#5f5e5a">CDN: transparent (no special handling)</text>
+<text x="206" y="2590" text-anchor="middle" font-size="11" fill="#5f5e5a">Fingerprint: MD5 HashMap</text>
+<text x="206" y="2610" text-anchor="middle" font-size="11" fill="#5f5e5a">Observers: synchronous calls</text>
+<text x="206" y="2630" text-anchor="middle" font-size="11" fill="#5f5e5a">Scale: single machine, ~10K pages</text>
+
+<rect x="418" y="2452" width="352" height="188" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="594" y="2474" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">HLD (Distributed)</text>
+<text x="594" y="2494" text-anchor="middle" font-size="11" fill="#0f6e56">URL dedup: Redis Bloom filter (shared)</text>
+<text x="594" y="2510" text-anchor="middle" font-size="11" fill="#0f6e56">Frontier: Kafka + Redis sorted sets</text>
+<text x="594" y="2526" text-anchor="middle" font-size="11" fill="#0f6e56">Workers: 1000s of machines in datacenter</text>
+<text x="594" y="2542" text-anchor="middle" font-size="11" fill="#0f6e56">Storage: S3 (HTML) + Elasticsearch (index)</text>
+<text x="594" y="2558" text-anchor="middle" font-size="11" fill="#0f6e56">DNS: in-process TTL cache per worker</text>
+<text x="594" y="2574" text-anchor="middle" font-size="11" fill="#0f6e56">CDN: detect + respect 429 + back off</text>
+<text x="594" y="2590" text-anchor="middle" font-size="11" fill="#0f6e56">Fingerprint: SimHash in Redis</text>
+<text x="594" y="2610" text-anchor="middle" font-size="11" fill="#0f6e56">Observers: Kafka async fan-out</text>
+<text x="594" y="2630" text-anchor="middle" font-size="11" fill="#0f6e56">Scale: 1B+ pages/day (Google Googlebot)</text>
+
+<!-- FINAL -->
+<rect x="30" y="2660" width="740" height="60" rx="8" fill="#2c2c2a"/>
+<text x="400" y="2682" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Googlebot crawls ~15 billion pages per day. The bottleneck is never bandwidth — it's politeness and DNS.</text>
+<text x="400" y="2702" text-anchor="middle" font-size="11" fill="#aaa">Every design decision in a crawler traces back to one constraint: don't be a bad citizen to the sites you crawl.</text>
+
+<!-- PATTERN TABLE -->
+<rect x="30" y="2736" width="740" height="76" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="2758" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Singleton=Orchestrator+Frontier · Strategy=URLPriority(FIFO/Rank/Fresh) · Observer=Indexer+Stats</text>
+<text x="400" y="2776" text-anchor="middle" font-size="11" fill="#5f5e5a">Builder=CrawlJob+CrawledPage · Factory=CrawlerWorkerFactory · State=CrawlStatus</text>
+<text x="400" y="2794" text-anchor="middle" font-size="11" fill="#5f5e5a">Iterator=LinkExtractorIterator · Command=CrawlCommand(fetch+parse+schedule, retryable)</text>
+<text x="400" y="2812" text-anchor="middle" font-size="10" fill="#888">8 patterns · DNS cache · CDN handling · Bloom filter dedup · per-domain politeness queues</text>
+
+</svg>
+</body></html>

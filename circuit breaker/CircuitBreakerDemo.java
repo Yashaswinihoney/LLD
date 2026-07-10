@@ -45,18 +45,25 @@ enum DetectionMode  { COUNT_BASED, RATE_BASED }
 class CircuitBreakerConfig {
     // How many consecutive failures before opening (COUNT_BASED)
     final int    failureCountThreshold;
+
     // What % failure rate triggers open (RATE_BASED, 0-100)
     final int    failureRateThreshold;
+
     // Sliding window size for rate-based detection
     final int    slidingWindowSize;
+
     // How long to stay OPEN before moving to HALF_OPEN (ms)
     final long   openTimeoutMs;
+
     // How many probe calls in HALF_OPEN before deciding
     final int    halfOpenProbeCount;
+
     // Call timeout — treat as failure if exceeds this (ms)
     final long   callTimeoutMs;
+
     // Detection mode
     final DetectionMode mode;
+
     // Service name — for logging / metrics
     final String  serviceName;
 
@@ -222,8 +229,10 @@ class CircuitBreakerEvent {
 // ==========================================
 interface FailureDetectionStrategy {
     String  getName();
+
     // Should the circuit open based on current metrics?
     boolean shouldOpen(CallMetrics metrics, CircuitBreakerConfig config);
+
     // Should the circuit close based on probe results in HALF_OPEN?
     boolean shouldClose(CallMetrics probeMetrics, CircuitBreakerConfig config);
 }

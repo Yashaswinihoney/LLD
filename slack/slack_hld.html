@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 2880" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#2c2c2a"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">SLACK — HLD APPLICATION FLOW</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#aaa">WebSocket · Real-time messaging · Presence · Channels · Search · Notifications</text>
+
+<!-- ====== SECTION 1: CLIENT LAYER ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— client layer —</text>
+
+<rect x="30"  y="80" width="210" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="135" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Desktop App</text>
+<text x="135" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">Electron (Mac/Win/Linux)</text>
+<text x="135" y="134" text-anchor="middle" font-size="11" fill="#5f5e5a">WebSocket + REST</text>
+
+<rect x="295" y="80" width="210" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Mobile App</text>
+<text x="400" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">iOS / Android</text>
+<text x="400" y="134" text-anchor="middle" font-size="11" fill="#5f5e5a">WebSocket + REST + Push</text>
+
+<rect x="560" y="80" width="210" height="64" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="665" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Web Browser</text>
+<text x="665" y="118" text-anchor="middle" font-size="11" fill="#5f5e5a">React SPA</text>
+<text x="665" y="134" text-anchor="middle" font-size="11" fill="#5f5e5a">WebSocket + REST</text>
+
+<line x1="135" y1="144" x2="280" y2="192" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="144" x2="400" y2="192" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="665" y1="144" x2="520" y2="192" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 2: DNS + CDN ====== -->
+<line x1="30" y1="180" x2="770" y2="180" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="174" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— DNS + CDN (global traffic routing) —</text>
+
+<rect x="160" y="192" width="480" height="88" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="214" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">DNS + CDN (Cloudflare / Fastly)</text>
+<text x="400" y="232" text-anchor="middle" font-size="11" fill="#854f0b">GeoDNS: slack.com → nearest PoP (Mumbai / Singapore / Frankfurt)</text>
+<text x="400" y="248" text-anchor="middle" font-size="11" fill="#854f0b">CDN serves: static assets (JS, CSS, images), emoji packs, file downloads</text>
+<text x="400" y="264" text-anchor="middle" font-size="11" fill="#854f0b">CDN does NOT serve: WebSocket connections or real-time messages</text>
+<text x="400" y="280" text-anchor="middle" font-size="11" fill="#854f0b">TLS termination at CDN edge → connection forwarded to Load Balancer</text>
+
+<!-- two paths from CDN -->
+<line x1="280" y1="280" x2="180" y2="332" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="520" y1="280" x2="620" y2="332" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="332" width="296" height="44" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="168" y="350" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">REST API requests → Load Balancer</text>
+<text x="168" y="366" text-anchor="middle" font-size="11" fill="#185fa5">login, channel list, history, search</text>
+
+<rect x="484" y="332" width="296" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="632" y="350" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">WebSocket upgrade → WS Load Balancer</text>
+<text x="632" y="366" text-anchor="middle" font-size="11" fill="#534ab7">persistent connection for real-time events</text>
+
+<!-- ====== SECTION 3: LOAD BALANCERS ====== -->
+<line x1="30" y1="432" x2="770" y2="432" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="424" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— load balancers (two separate layers) —</text>
+
+<line x1="168" y1="376" x2="168" y2="440" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="632" y1="376" x2="632" y2="440" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="20"  y="440" width="296" height="64" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="168" y="462" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">REST Load Balancer (L7)</text>
+<text x="168" y="480" text-anchor="middle" font-size="11" fill="#185fa5">Round-robin to API server pods</text>
+<text x="168" y="496" text-anchor="middle" font-size="11" fill="#185fa5">Health checks every 5s</text>
+
+<rect x="484" y="440" width="296" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="632" y="462" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">WebSocket Load Balancer (L4)</text>
+<text x="632" y="480" text-anchor="middle" font-size="11" fill="#534ab7">IP-hash / sticky session per user</text>
+<text x="632" y="496" text-anchor="middle" font-size="11" fill="#534ab7">Long-lived TCP connection pinned to one WS server</text>
+
+<!-- ====== SECTION 4: SEND MESSAGE FLOW (MAIN) ====== -->
+<line x1="30" y1="564" x2="770" y2="564" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="556" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— send message flow (Alice sends to #engineering) —</text>
+
+<!-- Alice client -->
+<rect x="20" y="572" width="200" height="48" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="120" y="592" text-anchor="middle" font-size="12" font-weight="600" fill="#2c2c2a">Alice's Client</text>
+<text x="120" y="608" text-anchor="middle" font-size="11" fill="#5f5e5a">sends msg over WebSocket</text>
+
+<line x1="220" y1="596" x2="250" y2="596" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- WS server -->
+<rect x="250" y="572" width="180" height="48" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="340" y="592" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">WS Server</text>
+<text x="340" y="608" text-anchor="middle" font-size="11" fill="#534ab7">Alice's persistent conn</text>
+
+<line x1="430" y1="596" x2="460" y2="596" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Message Service -->
+<rect x="460" y="572" width="160" height="48" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="540" y="592" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Message Service</text>
+<text x="540" y="608" text-anchor="middle" font-size="11" fill="#0f6e56">validate + persist</text>
+
+<line x1="620" y1="596" x2="650" y2="596" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Kafka -->
+<rect x="650" y="572" width="120" height="48" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="710" y="592" text-anchor="middle" font-size="12" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="710" y="608" text-anchor="middle" font-size="11" fill="#534ab7">channel-msgs</text>
+
+<!-- ack back to Alice -->
+<line x1="460" y1="620" x2="220" y2="652" stroke="#0f6e56" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow-g)"/>
+<text x="320" y="648" font-size="10" fill="#0f6e56">ack: messageId + timestamp</text>
+
+<!-- Kafka fan-out -->
+<line x1="710" y1="620" x2="710" y2="668" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="160" y="668" width="640" height="44" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="480" y="686" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Kafka fan-out → Presence Service · Notification Service · Search Indexer · Analytics</text>
+<text x="480" y="702" text-anchor="middle" font-size="11" fill="#5f5e5a">All async — message already ack'd to Alice before these run</text>
+
+<!-- ====== SECTION 5: DELIVERY TO RECIPIENTS ====== -->
+<line x1="30" y1="772" x2="770" y2="772" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="764" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— real-time delivery to channel members —</text>
+
+<rect x="160" y="780" width="480" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="802" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Fan-out Service (Kafka Consumer)</text>
+<text x="400" y="820" text-anchor="middle" font-size="11" fill="#0f6e56">1. Fetch member list for #engineering from Redis cache</text>
+<text x="400" y="836" text-anchor="middle" font-size="11" fill="#0f6e56">2. For each member: look up which WS server holds their connection</text>
+<text x="400" y="852" text-anchor="middle" font-size="11" fill="#0f6e56">3. Forward message to that WS server via internal pub/sub (Redis pub/sub)</text>
+<text x="400" y="868" text-anchor="middle" font-size="11" fill="#0f6e56">4. WS server pushes message to client over persistent WebSocket</text>
+<text x="400" y="880" text-anchor="middle" font-size="11" fill="#0f6e56">5. If member is offline: increment unread count in Redis</text>
+
+<!-- online vs offline paths -->
+<line x1="300" y1="880" x2="160" y2="932" stroke="#0f6e56" stroke-width="1" marker-end="url(#arrow-g)"/>
+<line x1="500" y1="880" x2="640" y2="932" stroke="#d85a30" stroke-width="1" marker-end="url(#arrow-r)"/>
+
+<rect x="20"  y="932" width="270" height="52" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="155" y="952" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Online member (Bob)</text>
+<text x="155" y="968" text-anchor="middle" font-size="11" fill="#3b6d11">WS push → appears instantly in UI</text>
+<text x="155" y="984" text-anchor="middle" font-size="11" fill="#3b6d11">No DB read needed</text>
+
+<rect x="510" y="932" width="270" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="645" y="952" text-anchor="middle" font-size="11" font-weight="600" fill="#712b13">Offline member (Dave)</text>
+<text x="645" y="968" text-anchor="middle" font-size="11" fill="#993c1d">Unread count++ in Redis</text>
+<text x="645" y="984" text-anchor="middle" font-size="11" fill="#993c1d">Push notification via FCM/APNs</text>
+
+<!-- ====== SECTION 6: WEBSOCKET STICKY SESSION ====== -->
+<line x1="30" y1="1044" x2="770" y2="1044" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1036" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— WebSocket sticky session + connection registry —</text>
+
+<rect x="160" y="1052" width="480" height="112" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1074" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">WebSocket Connection Registry (Redis)</text>
+<text x="400" y="1092" text-anchor="middle" font-size="11" fill="#534ab7">Key: userId → wsServerId (e.g., "alice-123" → "ws-server-4")</text>
+<text x="400" y="1108" text-anchor="middle" font-size="11" fill="#534ab7">TTL: 60s — refreshed by heartbeat ping every 30s</text>
+<text x="400" y="1124" text-anchor="middle" font-size="11" fill="#534ab7">Fan-out service reads this to know which WS server to push to</text>
+<text x="400" y="1140" text-anchor="middle" font-size="11" fill="#534ab7">Multiple devices: userId → [ws-server-2, ws-server-7] (list)</text>
+<text x="400" y="1156" text-anchor="middle" font-size="11" fill="#534ab7">Expired key = user offline → route to push notification instead</text>
+<text x="400" y="1164" text-anchor="middle" font-size="11" fill="#534ab7">WS LB uses IP hash → same user always lands on same WS server</text>
+
+<!-- ====== SECTION 7: PRESENCE SERVICE ====== -->
+<line x1="30" y1="1232" x2="770" y2="1232" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1224" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— presence detection (ONLINE / AWAY / OFFLINE) —</text>
+
+<rect x="30"  y="1240" width="350" height="120" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="205" y="1262" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Heartbeat Mechanism</text>
+<text x="205" y="1282" text-anchor="middle" font-size="11" fill="#0f6e56">Client sends WS ping every 30s</text>
+<text x="205" y="1298" text-anchor="middle" font-size="11" fill="#0f6e56">Server refreshes Redis key TTL=60s</text>
+<text x="205" y="1314" text-anchor="middle" font-size="11" fill="#0f6e56">Key expires → user marked OFFLINE</text>
+<text x="205" y="1330" text-anchor="middle" font-size="11" fill="#0f6e56">No polling needed — TTL is the signal</text>
+<text x="205" y="1346" text-anchor="middle" font-size="11" fill="#0f6e56">Presence published to Kafka → fan-out</text>
+<text x="205" y="1360" text-anchor="middle" font-size="11" fill="#0f6e56">to channel members via WS</text>
+
+<rect x="420" y="1240" width="350" height="120" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="595" y="1262" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">State Transitions</text>
+<text x="595" y="1282" text-anchor="middle" font-size="11" fill="#0f6e56">ONLINE: heartbeat received &lt; 30s ago</text>
+<text x="595" y="1298" text-anchor="middle" font-size="11" fill="#0f6e56">AWAY:   no activity for &gt; 5 minutes</text>
+<text x="595" y="1314" text-anchor="middle" font-size="11" fill="#0f6e56">OFFLINE: Redis key expired (&gt; 60s)</text>
+<text x="595" y="1330" text-anchor="middle" font-size="11" fill="#0f6e56">DND:   user-set, ignore heartbeat scan</text>
+<text x="595" y="1346" text-anchor="middle" font-size="11" fill="#0f6e56">Manual: user can set custom status</text>
+<text x="595" y="1360" text-anchor="middle" font-size="11" fill="#0f6e56">e.g. 🎧 "In a meeting"</text>
+
+<!-- ====== SECTION 8: MESSAGE HISTORY (READ PATH) ====== -->
+<line x1="30" y1="1432" x2="770" y2="1432" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1424" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— message history read path (loading a channel) —</text>
+
+<rect x="160" y="1440" width="480" height="100" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="1462" text-anchor="middle" font-size="13" font-weight="700" fill="#0c447c">Channel History Load</text>
+<text x="400" y="1480" text-anchor="middle" font-size="11" fill="#185fa5">User opens #engineering → REST GET /channels/{id}/history?limit=50</text>
+<text x="400" y="1496" text-anchor="middle" font-size="11" fill="#185fa5">Layer 1: Redis cache (last 50 msgs per channel, TTL 5min) → &lt;2ms</text>
+<text x="400" y="1512" text-anchor="middle" font-size="11" fill="#185fa5">Cache miss → Cassandra (partitioned by channelId, sorted by timestamp)</text>
+<text x="400" y="1528" text-anchor="middle" font-size="11" fill="#185fa5">Cursor-based pagination: beforeTimestamp param → no OFFSET scans</text>
+<text x="400" y="1540" text-anchor="middle" font-size="11" fill="#185fa5">Unread count fetched from Redis simultaneously (parallel call)</text>
+
+<!-- ====== SECTION 9: SEARCH ====== -->
+<line x1="30" y1="1608" x2="770" y2="1608" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1600" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— search flow —</text>
+
+<rect x="160" y="1616" width="480" height="88" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="1638" text-anchor="middle" font-size="13" font-weight="700" fill="#633806">Search Service (Elasticsearch)</text>
+<text x="400" y="1656" text-anchor="middle" font-size="11" fill="#854f0b">Index: {workspaceId, channelId, userId, content, timestamp}</text>
+<text x="400" y="1672" text-anchor="middle" font-size="11" fill="#854f0b">Privacy filter: only channels user is a member of returned</text>
+<text x="400" y="1688" text-anchor="middle" font-size="11" fill="#854f0b">Kafka consumer indexes new messages async (&lt;2s lag)</text>
+<text x="400" y="1704" text-anchor="middle" font-size="11" fill="#854f0b">Supports: full-text, from:alice, in:#engineering, has:link, before:date</text>
+
+<!-- ====== SECTION 10: NOTIFICATION FLOW ====== -->
+<line x1="30" y1="1764" x2="770" y2="1764" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1756" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— notification flow (offline users + mentions) —</text>
+
+<rect x="160" y="1772" width="480" height="100" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1794" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Notification Service (Kafka Consumer)</text>
+<text x="400" y="1812" text-anchor="middle" font-size="11" fill="#534ab7">Consumes: message-events, mention-events from Kafka</text>
+<text x="400" y="1828" text-anchor="middle" font-size="11" fill="#534ab7">Check user's notification preference: ALL / MENTIONS_ONLY / NOTHING</text>
+<text x="400" y="1844" text-anchor="middle" font-size="11" fill="#534ab7">Check presence: ONLINE → skip push | OFFLINE/AWAY → send push</text>
+<text x="400" y="1860" text-anchor="middle" font-size="11" fill="#534ab7">DND: suppress all notifications (honour DND hours per timezone)</text>
+<text x="400" y="1872" text-anchor="middle" font-size="11" fill="#534ab7">Delivery: FCM (Android) / APNs (iOS) / Email digest (daily/weekly)</text>
+
+<!-- ====== SECTION 11: DATA STORES ====== -->
+<line x1="30" y1="1944" x2="770" y2="1944" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1936" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="1952" width="175" height="164" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="107" y="1974" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="107" y="1992" text-anchor="middle" font-size="10" fill="#3b6d11">userId → wsServerId</text>
+<text x="107" y="2008" text-anchor="middle" font-size="10" fill="#3b6d11">(presence, TTL=60s)</text>
+<text x="107" y="2024" text-anchor="middle" font-size="10" fill="#3b6d11">Last 50 msgs per channel</text>
+<text x="107" y="2040" text-anchor="middle" font-size="10" fill="#3b6d11">Unread counts per user</text>
+<text x="107" y="2056" text-anchor="middle" font-size="10" fill="#3b6d11">Channel member lists</text>
+<text x="107" y="2072" text-anchor="middle" font-size="10" fill="#3b6d11">Pub/sub for WS routing</text>
+<text x="107" y="2088" text-anchor="middle" font-size="10" fill="#3b6d11">Workspace metadata</text>
+<text x="107" y="2104" text-anchor="middle" font-size="10" fill="#3b6d11">Rate limit counters</text>
+
+<rect x="211" y="1952" width="175" height="164" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="298" y="1974" text-anchor="middle" font-size="11" font-weight="600" fill="#0c447c">Cassandra</text>
+<text x="298" y="1992" text-anchor="middle" font-size="10" fill="#185fa5">Messages</text>
+<text x="298" y="2008" text-anchor="middle" font-size="10" fill="#185fa5">Partitioned by channelId</text>
+<text x="298" y="2024" text-anchor="middle" font-size="10" fill="#185fa5">Clustered by timestamp</text>
+<text x="298" y="2040" text-anchor="middle" font-size="10" fill="#185fa5">O(1) append writes</text>
+<text x="298" y="2056" text-anchor="middle" font-size="10" fill="#185fa5">Fast range reads</text>
+<text x="298" y="2072" text-anchor="middle" font-size="10" fill="#185fa5">Thread messages</text>
+<text x="298" y="2088" text-anchor="middle" font-size="10" fill="#185fa5">Reactions log</text>
+<text x="298" y="2104" text-anchor="middle" font-size="10" fill="#185fa5">Edit history</text>
+
+<rect x="402" y="1952" width="175" height="164" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="489" y="1974" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Kafka</text>
+<text x="489" y="1992" text-anchor="middle" font-size="10" fill="#534ab7">channel-messages</text>
+<text x="489" y="2008" text-anchor="middle" font-size="10" fill="#534ab7">mention-events</text>
+<text x="489" y="2024" text-anchor="middle" font-size="10" fill="#534ab7">presence-events</text>
+<text x="489" y="2040" text-anchor="middle" font-size="10" fill="#534ab7">notification-events</text>
+<text x="489" y="2056" text-anchor="middle" font-size="10" fill="#534ab7">search-index-events</text>
+<text x="489" y="2072" text-anchor="middle" font-size="10" fill="#534ab7">analytics-events</text>
+<text x="489" y="2088" text-anchor="middle" font-size="10" fill="#534ab7">Partitioned by channelId</text>
+<text x="489" y="2104" text-anchor="middle" font-size="10" fill="#534ab7">Replayable on crash</text>
+
+<rect x="593" y="1952" width="187" height="164" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="686" y="1974" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">PostgreSQL</text>
+<text x="686" y="1992" text-anchor="middle" font-size="10" fill="#854f0b">Users + auth</text>
+<text x="686" y="2008" text-anchor="middle" font-size="10" fill="#854f0b">Workspaces</text>
+<text x="686" y="2024" text-anchor="middle" font-size="10" fill="#854f0b">Channels metadata</text>
+<text x="686" y="2040" text-anchor="middle" font-size="10" fill="#854f0b">Channel memberships</text>
+<text x="686" y="2056" text-anchor="middle" font-size="10" fill="#854f0b">Notification prefs</text>
+<text x="686" y="2072" text-anchor="middle" font-size="10" fill="#854f0b">Billing / plans</text>
+<text x="686" y="2088" text-anchor="middle" font-size="10" fill="#854f0b">App integrations</text>
+<text x="686" y="2104" text-anchor="middle" font-size="10" fill="#854f0b">Pinned messages</text>
+
+<!-- ====== SECTION 12: KEY DESIGN DECISIONS ====== -->
+<line x1="30" y1="2180" x2="770" y2="2180" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2172" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 5 hardest design decisions —</text>
+
+<rect x="30" y="2188" width="740" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2208" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">1. WebSocket sticky sessions — why and how</text>
+<text x="400" y="2226" text-anchor="middle" font-size="11" fill="#0f6e56">Each user's WS connection is pinned to one WS server (IP hash at LB). Fan-out service reads userId→wsServerId from Redis to know where to push. Without stickiness, any server receiving a message wouldn't know which server holds the recipient's connection.</text>
+
+<rect x="30" y="2252" width="740" height="52" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="2272" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">2. Cassandra for messages — partitioned by channelId</text>
+<text x="400" y="2290" text-anchor="middle" font-size="11" fill="#185fa5">Messages in a channel are always queried together (range scan by time). Cassandra's partition key = channelId, clustering key = timestamp gives O(1) writes and fast range reads. PostgreSQL can't handle Slack's write volume (millions of msgs/sec globally).</text>
+
+<rect x="30" y="2316" width="740" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="2336" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">3. Presence via Redis TTL — no polling needed</text>
+<text x="400" y="2354" text-anchor="middle" font-size="11" fill="#854f0b">Client sends heartbeat ping every 30s. Server refreshes Redis key TTL to 60s. If key expires naturally → user is offline. No cron job needed — Redis TTL IS the presence mechanism. Cost: one Redis write per user per 30s (trivial at scale).</text>
+
+<rect x="30" y="2380" width="740" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2400" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">4. Fan-out at message send — push vs pull</text>
+<text x="400" y="2418" text-anchor="middle" font-size="11" fill="#534ab7">Slack uses push fan-out: on send, message is pushed to ALL online members. For large channels (10,000+ members), this is expensive. Solution: fan-out only to online members (presence check first). Offline members pull on reconnect via history API.</text>
+
+<rect x="30" y="2444" width="740" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2464" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">5. Unread counts in Redis — not computed from DB</text>
+<text x="400" y="2482" text-anchor="middle" font-size="11" fill="#993c1d">Computing unread = "messages after last read timestamp" requires a DB query on every channel open. Instead: Redis counter per (userId, channelId), incremented on new message, reset to 0 on markRead. Sub-millisecond reads, no DB hit for badge counts.</text>
+
+<!-- LLD vs HLD -->
+<line x1="30" y1="2560" x2="770" y2="2560" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2552" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— LLD vs HLD —</text>
+
+<rect x="30"  y="2568" width="352" height="180" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="206" y="2590" text-anchor="middle" font-size="12" font-weight="700" fill="#2c2c2a">LLD (In-Process)</text>
+<text x="206" y="2610" text-anchor="middle" font-size="11" fill="#5f5e5a">WS delivery: CopyOnWriteArrayList per channel</text>
+<text x="206" y="2626" text-anchor="middle" font-size="11" fill="#5f5e5a">Presence: PresenceService heartbeat map</text>
+<text x="206" y="2642" text-anchor="middle" font-size="11" fill="#5f5e5a">Messages: CopyOnWriteArrayList in Channel</text>
+<text x="206" y="2658" text-anchor="middle" font-size="11" fill="#5f5e5a">Unread: ConcurrentHashMap per channel</text>
+<text x="206" y="2674" text-anchor="middle" font-size="11" fill="#5f5e5a">Search: inverted index in HashMap</text>
+<text x="206" y="2690" text-anchor="middle" font-size="11" fill="#5f5e5a">Fan-out: observer synchronous calls</text>
+<text x="206" y="2706" text-anchor="middle" font-size="11" fill="#5f5e5a">Notification: strategy method call</text>
+<text x="206" y="2726" text-anchor="middle" font-size="11" fill="#5f5e5a">Scale: single JVM, demo</text>
+
+<rect x="418" y="2568" width="352" height="180" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="594" y="2590" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">HLD (Distributed)</text>
+<text x="594" y="2610" text-anchor="middle" font-size="11" fill="#0f6e56">WS delivery: Redis pub/sub → WS servers</text>
+<text x="594" y="2626" text-anchor="middle" font-size="11" fill="#0f6e56">Presence: Redis TTL key per userId</text>
+<text x="594" y="2642" text-anchor="middle" font-size="11" fill="#0f6e56">Messages: Cassandra (channelId partition)</text>
+<text x="594" y="2658" text-anchor="middle" font-size="11" fill="#0f6e56">Unread: Redis counter per (user, channel)</text>
+<text x="594" y="2674" text-anchor="middle" font-size="11" fill="#0f6e56">Search: Elasticsearch + Kafka indexer</text>
+<text x="594" y="2690" text-anchor="middle" font-size="11" fill="#0f6e56">Fan-out: Kafka → Fan-out Service</text>
+<text x="594" y="2706" text-anchor="middle" font-size="11" fill="#0f6e56">Notification: FCM / APNs / Email</text>
+<text x="594" y="2726" text-anchor="middle" font-size="11" fill="#0f6e56">Scale: millions of concurrent WS connections</text>
+
+<!-- FINAL -->
+<rect x="30" y="2768" width="740" height="60" rx="8" fill="#2c2c2a"/>
+<text x="400" y="2790" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Slack handles 10M+ concurrent WebSocket connections. The key insight: messages are pushed, history is pulled.</text>
+<text x="400" y="2810" text-anchor="middle" font-size="11" fill="#aaa">CDN serves static assets. WS LB routes to sticky server. Kafka decouples send from fan-out. Redis is the glue for everything real-time.</text>
+
+</svg>
+</body></html>
