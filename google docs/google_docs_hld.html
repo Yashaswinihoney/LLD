@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 4440" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#1a73e8"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">GOOGLE DOCS — HLD APPLICATION FLOW</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#e8f0fe">Collaborative Editing · OT Algorithm · Real-Time Sync · Presence · Auto-Save · Offline · Comments</text>
+
+<!-- ====== SECTION 1: CLIENT LAYER ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— who connects and what each does —</text>
+
+<rect x="20"  y="80" width="230" height="68" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="135" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#1557b0">Primary Editor (Alice)</text>
+<text x="135" y="118" text-anchor="middle" font-size="10" fill="#1a73e8">Chrome browser — Google's own</text>
+<text x="135" y="134" text-anchor="middle" font-size="10" fill="#1a73e8">Trix / ProseMirror editor engine</text>
+<text x="135" y="148" text-anchor="middle" font-size="10" fill="#1a73e8">WebSocket for real-time ops</text>
+
+<rect x="285" y="80" width="230" height="68" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="400" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#1557b0">Collaborator (Bob)</text>
+<text x="400" y="118" text-anchor="middle" font-size="10" fill="#1a73e8">Same doc, different browser tab</text>
+<text x="400" y="134" text-anchor="middle" font-size="10" fill="#1a73e8">Receives Alice's ops in real-time</text>
+<text x="400" y="148" text-anchor="middle" font-size="10" fill="#1a73e8">Sees Alice's cursor live</text>
+
+<rect x="550" y="80" width="230" height="68" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="665" y="102" text-anchor="middle" font-size="12" font-weight="600" fill="#1557b0">Reader / Commenter</text>
+<text x="665" y="118" text-anchor="middle" font-size="10" fill="#1a73e8">View-only or comment-only access</text>
+<text x="665" y="134" text-anchor="middle" font-size="10" fill="#1a73e8">SSE or WS (receive only)</text>
+<text x="665" y="148" text-anchor="middle" font-size="10" fill="#1a73e8">Adds comment threads</text>
+
+<line x1="135" y1="148" x2="260" y2="196" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="148" x2="400" y2="196" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="665" y1="148" x2="540" y2="196" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 2: CDN + LB + GATEWAY ====== -->
+<line x1="30" y1="184" x2="770" y2="184" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="178" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— CDN + load balancer + API gateway —</text>
+
+<rect x="80" y="196" width="640" height="56" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="218" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">CDN + Load Balancer (Google's global edge network)</text>
+<text x="400" y="236" text-anchor="middle" font-size="11" fill="#854f0b">CDN: JS editor bundle, fonts, icons (TTL 1hr). Never caches document content. LB: REST round-robin; WS IP-hash sticky.</text>
+
+<line x1="400" y1="252" x2="400" y2="284" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="120" y="284" width="560" height="60" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="306" text-anchor="middle" font-size="13" font-weight="700" fill="#2c2c2a">API Gateway</text>
+<text x="400" y="324" text-anchor="middle" font-size="11" fill="#5f5e5a">Google OAuth 2.0 / service accounts · ACL check (can this user read / edit this doc?) · rate limit</text>
+<text x="400" y="338" text-anchor="middle" font-size="11" fill="#5f5e5a">Routes: /api/doc → Doc Service | /collab/ws → Collab Service | /comments → Comment Service</text>
+
+<line x1="220" y1="344" x2="140" y2="392" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="360" y1="344" x2="330" y2="392" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="500" y1="344" x2="530" y2="392" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="660" y1="344" x2="720" y2="392" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 3: CORE SERVICES ====== -->
+<line x1="30" y1="380" x2="770" y2="380" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="374" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— core microservices —</text>
+
+<rect x="20"  y="392" width="190" height="100" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="115" y="414" text-anchor="middle" font-size="11" font-weight="600" fill="#1557b0">Document Service</text>
+<text x="115" y="432" text-anchor="middle" font-size="10" fill="#1a73e8">Create / open / delete docs</text>
+<text x="115" y="448" text-anchor="middle" font-size="10" fill="#1a73e8">Metadata (title, owner)</text>
+<text x="115" y="464" text-anchor="middle" font-size="10" fill="#1a73e8">Latest snapshot load</text>
+<text x="115" y="480" text-anchor="middle" font-size="10" fill="#1a73e8">Access control list</text>
+
+<rect x="222" y="392" width="190" height="100" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="317" y="414" text-anchor="middle" font-size="11" font-weight="600" fill="#1557b0">Collaboration Service</text>
+<text x="317" y="432" text-anchor="middle" font-size="10" fill="#1a73e8">Receives ops from clients</text>
+<text x="317" y="448" text-anchor="middle" font-size="10" fill="#1a73e8">OT transformation engine</text>
+<text x="317" y="464" text-anchor="middle" font-size="10" fill="#1a73e8">Assigns revision numbers</text>
+<text x="317" y="480" text-anchor="middle" font-size="10" fill="#1a73e8">Broadcasts to all WS peers</text>
+
+<rect x="424" y="392" width="190" height="100" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="519" y="414" text-anchor="middle" font-size="11" font-weight="600" fill="#1557b0">Presence Service</text>
+<text x="519" y="432" text-anchor="middle" font-size="10" fill="#1a73e8">Active users per doc</text>
+<text x="519" y="448" text-anchor="middle" font-size="10" fill="#1a73e8">Cursor + selection positions</text>
+<text x="519" y="464" text-anchor="middle" font-size="10" fill="#1a73e8">User avatars + colour tags</text>
+<text x="519" y="480" text-anchor="middle" font-size="10" fill="#1a73e8">Heartbeat TTL 5s</text>
+
+<rect x="626" y="392" width="154" height="100" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="703" y="414" text-anchor="middle" font-size="11" font-weight="600" fill="#1557b0">History + Export</text>
+<text x="703" y="432" text-anchor="middle" font-size="10" fill="#1a73e8">Version timeline</text>
+<text x="703" y="448" text-anchor="middle" font-size="10" fill="#1a73e8">Named restore points</text>
+<text x="703" y="464" text-anchor="middle" font-size="10" fill="#1a73e8">DOCX / PDF export</text>
+<text x="703" y="480" text-anchor="middle" font-size="10" fill="#1a73e8">Snapshot archival</text>
+
+<!-- ====== SECTION 4: OPEN DOCUMENT FLOW ====== -->
+<line x1="30" y1="560" x2="770" y2="560" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="553" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— opening a document: what happens when you click the link —</text>
+
+<rect x="40" y="568" width="720" height="184" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="400" y="590" text-anchor="middle" font-size="13" font-weight="700" fill="#1557b0">Document Open — 8 Steps</text>
+
+<rect x="60" y="600" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="71" y="615" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">1</text>
+<text x="93" y="615" font-size="10" fill="#1557b0"> GET /api/docs/{docId} → ACL check: does this user have read access? If NO → 403 "Request Access" screen.</text>
+
+<rect x="60" y="626" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="71" y="641" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">2</text>
+<text x="93" y="641" font-size="10" fill="#1557b0"> Load latest snapshot: Document Service fetches most recent saved snapshot blob from GCS (Google Cloud Storage).</text>
+
+<rect x="60" y="652" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="71" y="667" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3</text>
+<text x="93" y="667" font-size="10" fill="#1557b0"> Load pending ops: any operations logged since last snapshot are fetched from the op-log store and replayed to reconstruct current doc state.</text>
+
+<rect x="60" y="678" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="71" y="693" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">4</text>
+<text x="93" y="693" font-size="10" fill="#1557b0"> Return { docContent, currentRevision: N } to client. Client renders the document in the editor (ProseMirror).</text>
+
+<rect x="60" y="704" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="71" y="719" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">5</text>
+<text x="93" y="719" font-size="10" fill="#1557b0"> Client opens WebSocket: wss://collab.docs.google.com/doc/{docId}?rev=N. Joins the real-time session for this document.</text>
+
+<rect x="60" y="730" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="71" y="745" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">6</text>
+<text x="93" y="745" font-size="10" fill="#1557b0"> Collab Service: adds client to session room. Sends any ops that arrived since rev=N (catch-up for the gap between load and WS connect).</text>
+
+<rect x="60" y="756" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="71" y="771" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">7</text>
+<text x="93" y="771" font-size="10" fill="#1557b0"> Presence Service notified: { docId, userId, status: "active" }. Other editors in the doc now see this user's avatar appear.</text>
+
+<rect x="60" y="782" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="71" y="797" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">8</text>
+<text x="93" y="797" font-size="10" fill="#1557b0"> Client begins sending cursor position updates every 500ms (while moving) and operations on every edit. Document is now live.</text>
+
+<line x1="400" y1="752" x2="400" y2="800" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 5: THE OT ALGORITHM ====== -->
+<line x1="30" y1="816" x2="770" y2="816" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="809" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— Operational Transformation (OT): the algorithm that makes collaborative editing possible —</text>
+
+<rect x="30" y="824" width="740" height="72" rx="8" fill="#2c2c2a"/>
+<text x="400" y="846" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">What is OT? The core problem it solves.</text>
+<text x="400" y="866" text-anchor="middle" font-size="11" fill="#aaa">Alice and Bob are both editing the same document at the same time. They each send an operation to the server.</text>
+<text x="400" y="882" text-anchor="middle" font-size="11" fill="#aaa">Without OT: applying both operations in arrival order corrupts the document. With OT: operations are transformed against each other so both Alice and Bob converge to the same final document.</text>
+
+<line x1="400" y1="896" x2="400" y2="928" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- OT Concrete Example -->
+<rect x="30" y="928" width="740" height="72" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="950" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Concrete Example — Starting document: "Hello" (revision 5)</text>
+<text x="400" y="970" text-anchor="middle" font-size="11" fill="#854f0b">Alice: INSERT " World" at position 5 → "Hello World" — sends op_A = { type:INSERT, pos:5, text:" World", rev:5 }</text>
+<text x="400" y="986" text-anchor="middle" font-size="11" fill="#854f0b">Bob:   DELETE char at position 0 ("H") → "ello"  — sends op_B = { type:DELETE, pos:0, len:1, rev:5 }</text>
+
+<line x1="400" y1="1000" x2="400" y2="1032" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- OT Steps -->
+<rect x="30" y="1032" width="740" height="172" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="400" y="1054" text-anchor="middle" font-size="13" font-weight="700" fill="#1557b0">OT Server — Transform and Apply</text>
+
+<rect x="50" y="1064" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="61" y="1079" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">1</text>
+<text x="83" y="1079" font-size="10" fill="#1557b0"> Server receives op_A first. At rev=5, applies it: "Hello" → "Hello World". Doc is now at rev=6. op_A accepted as-is.</text>
+
+<rect x="50" y="1090" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="61" y="1105" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">2</text>
+<text x="83" y="1105" font-size="10" fill="#1557b0"> Server receives op_B (still at rev=5). Doc is already at rev=6. op_B is STALE — needs transformation against op_A.</text>
+
+<rect x="50" y="1116" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="61" y="1131" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3</text>
+<text x="83" y="1131" font-size="10" fill="#1557b0"> TRANSFORM: op_B.pos (0) is before op_A.pos (5). INSERT at 5 does not affect a DELETE at 0. op_B' = op_B unchanged.</text>
+
+<rect x="50" y="1142" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="61" y="1157" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">4</text>
+<text x="83" y="1157" font-size="10" fill="#1557b0"> Apply transformed op_B' to rev=6 doc: "Hello World" → "ello World". Doc is now at rev=7.</text>
+
+<rect x="50" y="1168" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="61" y="1183" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">5</text>
+<text x="83" y="1183" font-size="10" fill="#1557b0"> Broadcast to Alice: apply op_B (or its transformed equivalent) to her local state. She was at "Hello World" → becomes "ello World".</text>
+
+<rect x="50" y="1194" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="61" y="1209" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">6</text>
+<text x="83" y="1209" font-size="10" fill="#1557b0"> Broadcast to Bob: apply op_A (or its transformed form) to his local state. He was at "ello" → becomes "ello World".</text>
+
+<text x="400" y="1224" text-anchor="middle" font-size="10" font-weight="600" fill="#1557b0">Result: Alice and Bob both see "ello World". Server at rev=7. All three are consistent. ✓</text>
+
+<line x1="400" y1="1204" x2="400" y2="1248" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- OT Transform rules -->
+<rect x="30" y="1248" width="740" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="1270" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">OT Transform Rules (the four cases every implementation must handle)</text>
+<text x="400" y="1290" text-anchor="middle" font-size="11" fill="#3b6d11">INSERT vs INSERT: if op_B.pos &lt;= op_A.pos → op_A.pos += op_B.len (INSERT shifts later INSERT right)</text>
+<text x="400" y="1306" text-anchor="middle" font-size="11" fill="#3b6d11">INSERT vs DELETE: if op_A.pos &lt;= op_B.pos → op_B.pos += op_A.len; if op_A deletes text that includes op_B.pos → clamp op_B.pos</text>
+<text x="400" y="1322" text-anchor="middle" font-size="11" fill="#3b6d11">DELETE vs DELETE: if both delete the same range → second DELETE becomes a no-op (range already gone)</text>
+<text x="400" y="1338" text-anchor="middle" font-size="11" fill="#3b6d11">DELETE vs INSERT: if DELETE removes chars before INSERT pos → INSERT.pos -= DELETE.len (shift left)</text>
+
+<line x1="400" y1="1348" x2="400" y2="1388" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 6: EDIT FLOW END-TO-END ====== -->
+<line x1="30" y1="1376" x2="770" y2="1376" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1369" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— every keystroke: the full round-trip from Alice's keyboard to Bob's screen —</text>
+
+<rect x="30" y="1388" width="740" height="52" rx="6" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1408" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">WS SEND  { op: { type, pos, content }, clientRevision, docId, clientId }</text>
+<text x="400" y="1424" text-anchor="middle" font-size="11" fill="#534ab7">Alice types a character → editor creates an op → buffered 50ms → sent over open WebSocket to Collab Service</text>
+
+<line x1="400" y1="1440" x2="400" y2="1476" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="80" y="1476" width="640" height="200" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="1498" text-anchor="middle" font-size="13" font-weight="700" fill="#085041">Collab Service — Per-Op Processing</text>
+
+<rect x="100" y="1508" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="1523" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">1</text>
+<text x="133" y="1523" font-size="10" fill="#085041"> Validate: is clientRevision ≤ serverRevision? If client is ahead → reject (client clock error). If too far behind → force reload.</text>
+
+<rect x="100" y="1534" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="1549" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">2</text>
+<text x="133" y="1549" font-size="10" fill="#085041"> Transform: if clientRevision &lt; serverRevision, transform op against all ops between clientRev and serverRev (op log replay).</text>
+
+<rect x="100" y="1560" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="1575" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3</text>
+<text x="133" y="1575" font-size="10" fill="#085041"> Apply: transformed op applied to in-memory document state. Server revision incremented: serverRev++.</text>
+
+<rect x="100" y="1586" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="1601" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">4</text>
+<text x="133" y="1601" font-size="10" fill="#085041"> Persist: append op to op-log in Bigtable/Spanner (rowKey = docId, col = revisionNum, val = { op, userId, ts }).</text>
+
+<rect x="100" y="1612" width="22" height="22" rx="11" fill="#1a8f5c"/>
+<text x="111" y="1627" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">5</text>
+<text x="133" y="1627" font-size="10" fill="#085041"> ACK to Alice: { ack: clientMsgId, serverRevision: N+1 }. Alice's local state is now confirmed at server rev.</text>
+
+<rect x="100" y="1638" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="1653" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">6</text>
+<text x="133" y="1653" font-size="10" fill="#085041"> Broadcast: publish { op (transformed for each peer), serverRevision } to all OTHER active clients via Redis pub/sub channel doc:{docId}.</text>
+
+<rect x="100" y="1664" width="22" height="22" rx="11" fill="#0f6e56"/>
+<text x="111" y="1679" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">7</text>
+<text x="133" y="1679" font-size="10" fill="#085041"> Bob's WS server receives from Redis → pushes to Bob's open socket. Bob's editor applies the op to his local doc.</text>
+
+<text x="400" y="1696" text-anchor="middle" font-size="10" font-weight="600" fill="#085041">Total round-trip: Alice keystroke → Bob sees it: ~100–300ms. ACK to Alice: ~50ms.</text>
+
+<line x1="400" y1="1676" x2="400" y2="1724" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 7: CLIENT-SIDE OPTIMISM + COMPOSITING ====== -->
+<line x1="30" y1="1712" x2="770" y2="1712" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1706" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— client-side: optimistic apply + rebasing (why typing feels instant) —</text>
+
+<rect x="30" y="1724" width="740" height="116" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1746" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Optimistic Local Apply — No Waiting for Server ACK</text>
+<text x="400" y="1766" text-anchor="middle" font-size="11" fill="#534ab7">Alice types "X" → her editor applies it immediately to the local document (optimistic). She does NOT wait for server ACK.</text>
+<text x="400" y="1782" text-anchor="middle" font-size="11" fill="#534ab7">Alice maintains: (a) committed state = last server-ACKed doc, (b) pending ops = ops sent but not yet ACKed.</text>
+<text x="400" y="1798" text-anchor="middle" font-size="11" fill="#534ab7">When a remote op arrives from Bob, Alice must REBASE it: transform it against all of Alice's pending ops first.</text>
+<text x="400" y="1814" text-anchor="middle" font-size="11" fill="#534ab7">This is the client-side OT — every client runs the same transform logic as the server, just on different inputs.</text>
+<text x="400" y="1830" text-anchor="middle" font-size="10" font-weight="600" fill="#3c3489">Result: typing feels instant (no round-trip delay visible). Remote ops slot in exactly where they should. Zero jank.</text>
+
+<line x1="400" y1="1840" x2="400" y2="1880" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 8: PRESENCE + CURSORS ====== -->
+<line x1="30" y1="1868" x2="770" y2="1868" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1862" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— presence: showing who else is in the doc and where their cursor is —</text>
+
+<rect x="30"  y="1880" width="358" height="132" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="209" y="1902" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Cursor Position Updates</text>
+<text x="209" y="1922" text-anchor="middle" font-size="11" fill="#854f0b">Client sends cursor event every 500ms while moving:</text>
+<text x="209" y="1938" text-anchor="middle" font-size="11" fill="#854f0b">{ type:"cursor", docOffset:342, selStart:340, selEnd:342 }</text>
+<text x="209" y="1954" text-anchor="middle" font-size="11" fill="#854f0b">Presence Service stores: HSET cursor:{docId} {userId} {pos}</text>
+<text x="209" y="1970" text-anchor="middle" font-size="11" fill="#854f0b">TTL 5s — stops showing cursor if user goes idle.</text>
+<text x="209" y="1986" text-anchor="middle" font-size="11" fill="#854f0b">Cursor position is a doc offset, not a screen pixel — offset is transformed along with ops.</text>
+
+<rect x="412" y="1880" width="358" height="132" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="591" y="1902" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Active Editors List</text>
+<text x="591" y="1922" text-anchor="middle" font-size="11" fill="#854f0b">SADD active:{docId} {userId} on WS connect. TTL heartbeat every 30s.</text>
+<text x="591" y="1938" text-anchor="middle" font-size="11" fill="#854f0b">On disconnect: SREM active:{docId} {userId}. Avatar disappears from collaborator bar.</text>
+<text x="591" y="1954" text-anchor="middle" font-size="11" fill="#854f0b">Each user gets a consistent colour per doc session (assigned by Presence Svc).</text>
+<text x="591" y="1970" text-anchor="middle" font-size="11" fill="#854f0b">Colour tags their: cursor caret, text selection highlight, comment thread avatar.</text>
+<text x="591" y="1986" text-anchor="middle" font-size="11" fill="#854f0b">Cursor labels: first name shown next to caret — hides if two cursors overlap.</text>
+
+<line x1="400" y1="2012" x2="400" y2="2052" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 9: AUTO-SAVE + SNAPSHOT ====== -->
+<line x1="30" y1="2040" x2="770" y2="2040" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2034" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— auto-save + snapshot: never lose a word —</text>
+
+<rect x="30" y="2052" width="740" height="128" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2074" text-anchor="middle" font-size="13" font-weight="700" fill="#712b13">Why not save on every keystroke?</text>
+<text x="400" y="2094" text-anchor="middle" font-size="11" fill="#993c1d">A fast typist produces 10+ ops/sec. Saving a full document snapshot on every op = enormous write amplification. A 100KB doc × 10 saves/sec × 10 users = 10 MB/sec to storage per active doc.</text>
+
+<text x="400" y="2118" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Solution: append-only op log + periodic snapshot</text>
+<text x="400" y="2138" text-anchor="middle" font-size="11" fill="#993c1d">Every accepted op is appended to a Bigtable op-log row: O(1) append, cheap. Full snapshot created every N ops (e.g. 1000) OR every T minutes (e.g. 5min), whichever comes first.</text>
+<text x="400" y="2154" text-anchor="middle" font-size="11" fill="#993c1d">On open: load latest snapshot (GCS blob) + replay ops since snapshot. For very active docs, snapshot more frequently to keep replay fast.</text>
+<text x="400" y="2172" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">Old op-logs before a snapshot are archived to cold storage — kept for version history, never deleted for 30 days.</text>
+
+<line x1="400" y1="2180" x2="400" y2="2220" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 10: COMMENTS + SUGGESTIONS ====== -->
+<line x1="30" y1="2208" x2="770" y2="2208" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2202" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— comments + suggestions: collaboration beyond editing —</text>
+
+<rect x="20"  y="2220" width="366" height="132" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="203" y="2242" text-anchor="middle" font-size="12" font-weight="700" fill="#1557b0">Comment Threads</text>
+<text x="203" y="2262" text-anchor="middle" font-size="11" fill="#1a73e8">User selects text → clicks comment icon → comment anchored to { startOffset, endOffset }.</text>
+<text x="203" y="2278" text-anchor="middle" font-size="11" fill="#1a73e8">Comment stored in PostgreSQL: (docId, anchorStart, anchorEnd, thread, resolved).</text>
+<text x="203" y="2294" text-anchor="middle" font-size="11" fill="#1a73e8">Problem: anchor offsets shift as text is edited. Solution: anchors are re-mapped on every op using the same OT transform logic.</text>
+<text x="203" y="2310" text-anchor="middle" font-size="11" fill="#1a73e8">If an op deletes the anchored text → comment moves to nearest surviving character or is marked orphaned.</text>
+<text x="203" y="2334" text-anchor="middle" font-size="10" font-weight="600" fill="#1557b0">Mentions (@Alice): notification via email + in-app. Resolved threads collapsed but not deleted.</text>
+
+<rect x="414" y="2220" width="366" height="132" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="597" y="2242" text-anchor="middle" font-size="12" font-weight="700" fill="#1557b0">Suggesting Mode (Track Changes)</text>
+<text x="597" y="2262" text-anchor="middle" font-size="11" fill="#1a73e8">A "suggestion" is an op wrapped with { isSuggestion: true, suggestorId }.</text>
+<text x="597" y="2278" text-anchor="middle" font-size="11" fill="#1a73e8">Inserted text shown in green (pending). Deleted text shown struck-through in red.</text>
+<text x="597" y="2294" text-anchor="middle" font-size="11" fill="#1a73e8">Owner/editor: ACCEPT → suggestion converted to a real op and applied. REJECT → suggestion op discarded.</text>
+<text x="597" y="2310" text-anchor="middle" font-size="11" fill="#1a73e8">Suggestions from multiple users can stack — each has independent accept/reject.</text>
+<text x="597" y="2334" text-anchor="middle" font-size="10" font-weight="600" fill="#1557b0">Stored separately from the committed op log — only promoted to op-log on ACCEPT.</text>
+
+<line x1="400" y1="2352" x2="400" y2="2392" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 11: OFFLINE MODE ====== -->
+<line x1="30" y1="2380" x2="770" y2="2380" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2374" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— offline mode: editing on an aeroplane (Google Docs works offline) —</text>
+
+<rect x="40" y="2392" width="720" height="132" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2414" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Offline Editing — Service Worker + IndexedDB</text>
+<text x="400" y="2434" text-anchor="middle" font-size="11" fill="#534ab7">When offline mode is enabled (Chrome extension or setting): a Service Worker intercepts all Doc API calls.</text>
+<text x="400" y="2450" text-anchor="middle" font-size="11" fill="#534ab7">Latest document snapshot + recent op-log is cached in IndexedDB (client-side persistent storage, survives tab close).</text>
+<text x="400" y="2466" text-anchor="middle" font-size="11" fill="#534ab7">User edits offline → ops accumulate in a local pending queue (IndexedDB). WS is not available — no server contact.</text>
+<text x="400" y="2482" text-anchor="middle" font-size="11" fill="#534ab7">On reconnect: client sends entire pending queue to server. Server transforms each offline op against any server ops that happened while offline (potentially hundreds of transforms).</text>
+<text x="400" y="2498" text-anchor="middle" font-size="11" fill="#534ab7">Conflict resolution: if Alice offline-deleted text that Bob online-modified, OT handles it — deletion wins if no overlap, else Alice's range is adjusted.</text>
+<text x="400" y="2514" text-anchor="middle" font-size="10" font-weight="600" fill="#3c3489">Offline edits never lost. The OT algorithm is the same on reconnect as it is live — just with a bigger revision gap to bridge.</text>
+
+<line x1="400" y1="2524" x2="400" y2="2564" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 12: VERSION HISTORY ====== -->
+<line x1="30" y1="2552" x2="770" y2="2552" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2546" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— version history: undo, restore, and who changed what —</text>
+
+<rect x="40" y="2564" width="720" height="116" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="2586" text-anchor="middle" font-size="13" font-weight="700" fill="#27500a">History Service — Three Tiers of History</text>
+<text x="400" y="2606" text-anchor="middle" font-size="11" fill="#3b6d11">Tier 1 — Undo/Redo: in-memory per-client op stack. Ctrl+Z reverses Alice's ops only (not Bob's). Infinite undo within a session.</text>
+<text x="400" y="2622" text-anchor="middle" font-size="11" fill="#3b6d11">Tier 2 — Version History panel: server-side snapshots grouped by editing session or named by user. Click to preview any past state.</text>
+<text x="400" y="2638" text-anchor="middle" font-size="11" fill="#3b6d11">Tier 3 — Restore: replaying from snapshot + op-log up to a target revision reconstructs the exact document state at that moment.</text>
+<text x="400" y="2654" text-anchor="middle" font-size="11" fill="#3b6d11">Named versions: user explicitly saves a named checkpoint. Kept indefinitely (not subject to 30-day auto-cleanup like raw op-logs).</text>
+<text x="400" y="2672" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Every op has a userId attached — so "show changes by Alice" filters the op-log to Alice's ops and highlights them in the doc.</text>
+
+<!-- ====== SECTION 13: DATA STORES ====== -->
+<line x1="30" y1="2708" x2="770" y2="2708" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2702" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="2716" width="175" height="200" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="107" y="2738" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Redis</text>
+<text x="107" y="2756" text-anchor="middle" font-size="10" fill="#3b6d11">doc:{id}:state (in-mem)</text>
+<text x="107" y="2772" text-anchor="middle" font-size="10" fill="#3b6d11">doc:{id}:revision INCR</text>
+<text x="107" y="2788" text-anchor="middle" font-size="10" fill="#3b6d11">active:{docId} SET</text>
+<text x="107" y="2804" text-anchor="middle" font-size="10" fill="#3b6d11">cursor:{docId} HASH</text>
+<text x="107" y="2820" text-anchor="middle" font-size="10" fill="#3b6d11">pub/sub: doc:{id}</text>
+<text x="107" y="2836" text-anchor="middle" font-size="10" fill="#3b6d11">user:{id}:colour HASH</text>
+<text x="107" y="2852" text-anchor="middle" font-size="10" fill="#3b6d11">session:{ws} TTL 5s</text>
+<text x="107" y="2868" text-anchor="middle" font-size="10" fill="#3b6d11">op-buffer:{id} LIST</text>
+<text x="107" y="2884" text-anchor="middle" font-size="10" fill="#3b6d11">(recent ops, fast replay)</text>
+<text x="107" y="2904" text-anchor="middle" font-size="10" fill="#3b6d11">Not source of truth</text>
+
+<rect x="211" y="2716" width="175" height="200" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="298" y="2738" text-anchor="middle" font-size="11" font-weight="600" fill="#1557b0">Bigtable / Spanner</text>
+<text x="298" y="2756" text-anchor="middle" font-size="10" fill="#1a73e8">Op-log table:</text>
+<text x="298" y="2772" text-anchor="middle" font-size="10" fill="#1a73e8">row = docId</text>
+<text x="298" y="2788" text-anchor="middle" font-size="10" fill="#1a73e8">col = revisionNum</text>
+<text x="298" y="2804" text-anchor="middle" font-size="10" fill="#1a73e8">val = {op, userId, ts}</text>
+<text x="298" y="2820" text-anchor="middle" font-size="10" fill="#1a73e8">O(1) append per op</text>
+<text x="298" y="2836" text-anchor="middle" font-size="10" fill="#1a73e8">Fast range read for</text>
+<text x="298" y="2852" text-anchor="middle" font-size="10" fill="#1a73e8">catch-up on join</text>
+<text x="298" y="2868" text-anchor="middle" font-size="10" fill="#1a73e8">Source of truth for ops</text>
+<text x="298" y="2884" text-anchor="middle" font-size="10" fill="#1a73e8">Retained 30 days raw,</text>
+<text x="298" y="2904" text-anchor="middle" font-size="10" fill="#1a73e8">named versions forever</text>
+
+<rect x="402" y="2716" width="175" height="200" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="489" y="2738" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">PostgreSQL</text>
+<text x="489" y="2756" text-anchor="middle" font-size="10" fill="#534ab7">documents (metadata)</text>
+<text x="489" y="2772" text-anchor="middle" font-size="10" fill="#534ab7">ACL (user, doc, role)</text>
+<text x="489" y="2788" text-anchor="middle" font-size="10" fill="#534ab7">comments + threads</text>
+<text x="489" y="2804" text-anchor="middle" font-size="10" fill="#534ab7">suggestions (pending)</text>
+<text x="489" y="2820" text-anchor="middle" font-size="10" fill="#534ab7">named_versions</text>
+<text x="489" y="2836" text-anchor="middle" font-size="10" fill="#534ab7">share_links</text>
+<text x="489" y="2852" text-anchor="middle" font-size="10" fill="#534ab7">user preferences</text>
+<text x="489" y="2868" text-anchor="middle" font-size="10" fill="#534ab7">Relational metadata</text>
+<text x="489" y="2884" text-anchor="middle" font-size="10" fill="#534ab7">not for ops or content</text>
+
+<rect x="593" y="2716" width="187" height="200" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="686" y="2738" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">GCS (Cloud Storage)</text>
+<text x="686" y="2756" text-anchor="middle" font-size="10" fill="#854f0b">Document snapshots</text>
+<text x="686" y="2772" text-anchor="middle" font-size="10" fill="#854f0b">(full JSON blob)</text>
+<text x="686" y="2788" text-anchor="middle" font-size="10" fill="#854f0b">path: docs/{id}/snap/{rev}</text>
+<text x="686" y="2804" text-anchor="middle" font-size="10" fill="#854f0b">Created every N ops</text>
+<text x="686" y="2820" text-anchor="middle" font-size="10" fill="#854f0b">or T minutes</text>
+<text x="686" y="2836" text-anchor="middle" font-size="10" fill="#854f0b">Uploaded/exported</text>
+<text x="686" y="2852" text-anchor="middle" font-size="10" fill="#854f0b">DOCX / PDF / EPUB</text>
+<text x="686" y="2868" text-anchor="middle" font-size="10" fill="#854f0b">Embedded images</text>
+<text x="686" y="2884" text-anchor="middle" font-size="10" fill="#854f0b">Cold archive of old</text>
+<text x="686" y="2904" text-anchor="middle" font-size="10" fill="#854f0b">op-logs (Coldline)</text>
+
+<!-- ====== SECTION 14: REQUIREMENTS MAP ====== -->
+<line x1="30" y1="2936" x2="770" y2="2936" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2930" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— core requirements → design decisions —</text>
+
+<rect x="30" y="2944" width="740" height="52" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="400" y="2964" text-anchor="middle" font-size="12" font-weight="700" fill="#1557b0">Multiple users editing the same document simultaneously without corruption</text>
+<text x="400" y="2982" text-anchor="middle" font-size="11" fill="#1a73e8">OT server is the single arbiter. It receives all ops, assigns them a total global order (revision numbers), transforms any concurrent ops against each other, and broadcasts the canonically ordered ops back to all clients.</text>
+
+<rect x="30" y="3004" width="740" height="52" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="3024" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">Typing must feel instant — no latency visible to the typist</text>
+<text x="400" y="3042" text-anchor="middle" font-size="11" fill="#0f6e56">Optimistic local apply: every op is applied to the client's local doc immediately. Server ACK happens in background. The client maintains a pending-ops buffer and rebases incoming remote ops against it — reconciliation is invisible to the user.</text>
+
+<rect x="30" y="3064" width="740" height="52" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="3084" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Never lose a character, even if the browser closes unexpectedly</text>
+<text x="400" y="3102" text-anchor="middle" font-size="11" fill="#854f0b">Every op is appended to a durable op-log before the ACK is sent back to the client. The client won't move forward until ACKed. Ops since the last snapshot are always recoverable by log replay. Offline edits survive in IndexedDB.</text>
+
+<rect x="30" y="3124" width="740" height="52" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="3144" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">See other editors' cursors live with their name labels</text>
+<text x="400" y="3162" text-anchor="middle" font-size="11" fill="#534ab7">Cursor position is a document offset, not a screen coordinate. Presence Service stores it per user per doc with a 5s TTL (heartbeat). Every incoming op transforms all active cursors through the same OT logic so they stay anchored correctly as text shifts.</text>
+
+<rect x="30" y="3184" width="740" height="52" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="3204" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Browse and restore any past version of the document</text>
+<text x="400" y="3222" text-anchor="middle" font-size="11" fill="#993c1d">The op-log is append-only and kept for 30 days (named versions indefinitely). Restoring to revision R means loading the nearest earlier snapshot and replaying ops up to R. This is the same pipeline used to open the live document.</text>
+
+<rect x="30" y="3244" width="740" height="52" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="400" y="3264" text-anchor="middle" font-size="12" font-weight="700" fill="#1557b0">Work offline and sync automatically on reconnect</text>
+<text x="400" y="3282" text-anchor="middle" font-size="11" fill="#1a73e8">Service Worker caches the latest doc snapshot + recent op-log in IndexedDB. Offline edits queue locally. On reconnect, the pending queue is sent to the OT server which transforms each op against the ops that happened server-side during the offline period.</text>
+
+<!-- FINAL INSIGHT BOX -->
+<rect x="30" y="3312" width="740" height="64" rx="8" fill="#1a73e8"/>
+<text x="400" y="3336" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">The entire system rests on one insight: treat every edit as an operation, never as a full document.</text>
+<text x="400" y="3356" text-anchor="middle" font-size="11" fill="#e8f0fe">Operations are small, composable, transformable, replayable, and appendable. Full-document saves are expensive and lossy.</text>
+<text x="400" y="3372" text-anchor="middle" font-size="11" fill="#e8f0fe">OT is what lets you treat the server as a post office rather than a lock: ops flow through, get ordered, get transformed, and everyone converges.</text>
+
+<!-- PATTERN SUMMARY -->
+<rect x="30" y="3392" width="740" height="88" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="3412" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Open doc: GCS snapshot + Bigtable op-log replay → client renders → WS connect → catch-up ops → live</text>
+<text x="400" y="3430" text-anchor="middle" font-size="11" fill="#5f5e5a">Edit: client optimistic apply → WS send op → OT server: transform + apply + persist op-log + ACK + Redis PUBLISH → peer WS push</text>
+<text x="400" y="3448" text-anchor="middle" font-size="11" fill="#5f5e5a">Save: auto — op-log append on every op + GCS snapshot every N ops. Manual named version = snapshot tagged forever.</text>
+<text x="400" y="3466" text-anchor="middle" font-size="10" fill="#888">Cursor: doc-offset not pixel, 500ms updates, TTL 5s, transformed on every op · Comments: anchored by offset, re-mapped on every op · Suggestions: ops with isSuggestion flag, promoted to op-log on ACCEPT</text>
+
+</svg>
+</body></html>

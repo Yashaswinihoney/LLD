@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { font-family: sans-serif; background: #f9f9f7; padding: 24px; }
+  svg  { max-width: 860px; display: block; margin: auto; }
+</style>
+</head><body>
+<svg viewBox="0 0 800 4560" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#d85a30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+  <marker id="arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#1a73e8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- TITLE -->
+<rect x="0" y="0" width="800" height="48" fill="#1a73e8"/>
+<text x="400" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">FILE UPLOAD — GOOGLE DRIVE / CLOUD STORAGE HLD</text>
+<text x="400" y="38" text-anchor="middle" font-size="11" fill="#e8f0fe">Chunked Upload · Resumable Sessions · Deduplication · Processing Pipeline · Conversion · Search Index</text>
+
+<!-- ====== SECTION 1: CLIENT LAYER ====== -->
+<text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— who uploads and how —</text>
+
+<rect x="20"  y="80" width="175" height="72" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="107" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#1557b0">Browser (Web)</text>
+<text x="107" y="118" text-anchor="middle" font-size="10" fill="#1a73e8">Drag-and-drop / file picker</text>
+<text x="107" y="134" text-anchor="middle" font-size="10" fill="#1a73e8">File API reads local bytes</text>
+<text x="107" y="148" text-anchor="middle" font-size="10" fill="#1a73e8">XHR / Fetch with progress</text>
+
+<rect x="209" y="80" width="175" height="72" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="296" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#1557b0">Desktop App</text>
+<text x="296" y="118" text-anchor="middle" font-size="10" fill="#1a73e8">Drive for Desktop (sync)</text>
+<text x="296" y="134" text-anchor="middle" font-size="10" fill="#1a73e8">Watches local folder</text>
+<text x="296" y="148" text-anchor="middle" font-size="10" fill="#1a73e8">Auto-uploads on change</text>
+
+<rect x="398" y="80" width="175" height="72" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="485" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#1557b0">Mobile App</text>
+<text x="485" y="118" text-anchor="middle" font-size="10" fill="#1a73e8">Camera roll backup</text>
+<text x="485" y="134" text-anchor="middle" font-size="10" fill="#1a73e8">Background upload (iOS)</text>
+<text x="485" y="148" text-anchor="middle" font-size="10" fill="#1a73e8">Works on metered data</text>
+
+<rect x="587" y="80" width="193" height="72" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="683" y="102" text-anchor="middle" font-size="11" font-weight="600" fill="#1557b0">REST API / SDK</text>
+<text x="683" y="118" text-anchor="middle" font-size="10" fill="#1a73e8">Third-party apps</text>
+<text x="683" y="134" text-anchor="middle" font-size="10" fill="#1a73e8">OAuth 2.0 service account</text>
+<text x="683" y="148" text-anchor="middle" font-size="10" fill="#1a73e8">Programmatic multipart</text>
+
+<line x1="107" y1="152" x2="220" y2="200" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="296" y1="152" x2="340" y2="200" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="485" y1="152" x2="460" y2="200" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="683" y1="152" x2="580" y2="200" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 2: THREE UPLOAD PATHS ====== -->
+<line x1="30" y1="188" x2="770" y2="188" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="182" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— three upload strategies — chosen by client based on file size —</text>
+
+<rect x="20"  y="200" width="234" height="80" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="137" y="222" text-anchor="middle" font-size="11" font-weight="700" fill="#27500a">Simple Upload</text>
+<text x="137" y="240" text-anchor="middle" font-size="10" fill="#3b6d11">File &lt; 5 MB</text>
+<text x="137" y="256" text-anchor="middle" font-size="10" fill="#3b6d11">Single HTTP POST</text>
+<text x="137" y="272" text-anchor="middle" font-size="10" fill="#3b6d11">multipart/form-data body</text>
+
+<rect x="283" y="200" width="234" height="80" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="222" text-anchor="middle" font-size="11" font-weight="700" fill="#633806">Multipart Upload</text>
+<text x="400" y="240" text-anchor="middle" font-size="10" fill="#854f0b">5 MB – 100 MB</text>
+<text x="400" y="256" text-anchor="middle" font-size="10" fill="#854f0b">Metadata + bytes in one POST</text>
+<text x="400" y="272" text-anchor="middle" font-size="10" fill="#854f0b">Still single request, size-limited</text>
+
+<rect x="546" y="200" width="234" height="80" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="663" y="222" text-anchor="middle" font-size="11" font-weight="700" fill="#712b13">Resumable Upload</text>
+<text x="663" y="240" text-anchor="middle" font-size="10" fill="#993c1d">100 MB+ (or ANY size for reliability)</text>
+<text x="663" y="256" text-anchor="middle" font-size="10" fill="#993c1d">Session URI + chunks (5–256 MB each)</text>
+<text x="663" y="272" text-anchor="middle" font-size="10" fill="#993c1d">Can resume after failure</text>
+
+<text x="137" y="296" text-anchor="middle" font-size="10" font-weight="600" fill="#3b6d11">→ same pipeline after ingest</text>
+<text x="400" y="296" text-anchor="middle" font-size="10" font-weight="600" fill="#633806">→ same pipeline after ingest</text>
+<text x="663" y="296" text-anchor="middle" font-size="10" font-weight="600" fill="#993c1d">→ chunks assembled first</text>
+
+<line x1="137" y1="300" x2="200" y2="348" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="400" y1="300" x2="400" y2="348" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="663" y1="300" x2="600" y2="348" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 3: EDGE + GATEWAY ====== -->
+<line x1="30" y1="336" x2="770" y2="336" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="330" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— edge upload endpoint + gateway —</text>
+
+<rect x="80" y="348" width="640" height="72" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="370" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">Edge Upload Endpoint (Google's PoP / AWS Transfer Acceleration)</text>
+<text x="400" y="388" text-anchor="middle" font-size="11" fill="#854f0b">Upload bytes land at the NEAREST geographic point of presence — not the origin datacenter.</text>
+<text x="400" y="404" text-anchor="middle" font-size="11" fill="#854f0b">User in Mumbai uploads to a Mumbai PoP → bytes travel over Google's private backbone to US-CENTRAL → dramatically faster than open internet.</text>
+
+<line x1="400" y1="420" x2="400" y2="452" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="120" y="452" width="560" height="60" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="474" text-anchor="middle" font-size="12" font-weight="700" fill="#2c2c2a">API Gateway</text>
+<text x="400" y="492" text-anchor="middle" font-size="11" fill="#5f5e5a">OAuth 2.0 token validation · quota check (storage quota, per-minute upload limit) · request size guard</text>
+
+<line x1="280" y1="512" x2="200" y2="560" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="520" y1="512" x2="600" y2="560" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 4: DEDUPLICATION CHECK (happens before any byte is stored) ====== -->
+<line x1="30" y1="548" x2="770" y2="548" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="542" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— step 0: deduplication check — the most important optimisation before a single byte is stored —</text>
+
+<rect x="30" y="560" width="740" height="136" rx="8" fill="#2c2c2a"/>
+<text x="400" y="582" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Content-Addressable Storage + Deduplication</text>
+<text x="400" y="602" text-anchor="middle" font-size="11" fill="#aaa">Before any upload begins, the client computes a SHA-256 hash of the ENTIRE file and sends it in the initiate request.</text>
+<text x="400" y="618" text-anchor="middle" font-size="11" fill="#aaa">Server checks: SELECT fileId FROM content_store WHERE sha256 = '{hash}'. TWO outcomes:</text>
+
+<rect x="60"  y="628" width="300" height="56" rx="6" fill="#1a8f5c"/>
+<text x="210" y="650" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Hash EXISTS in content store</text>
+<text x="210" y="668" text-anchor="middle" font-size="11" fill="#fff">Zero-byte upload → create metadata pointer</text>
+<text x="210" y="680" text-anchor="middle" font-size="10" fill="#fff">Return 200 in &lt;100ms. User sees file instantly. ✓</text>
+
+<rect x="440" y="628" width="300" height="56" rx="6" fill="#993c1d"/>
+<text x="590" y="650" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Hash NOT found</text>
+<text x="590" y="668" text-anchor="middle" font-size="11" fill="#fff">Proceed with actual byte upload</text>
+<text x="590" y="680" text-anchor="middle" font-size="10" fill="#fff">New content must be transferred and stored.</text>
+
+<text x="400" y="710" text-anchor="middle" font-size="10" font-weight="600" fill="#aaa">Why this matters: 50%+ of files uploaded to Drive are duplicates (same PDF shared to many users). Dedup saves enormous storage and bandwidth.</text>
+
+<line x1="590" y1="696" x2="590" y2="736" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="210" y1="684" x2="210" y2="736" stroke="#1a8f5c" stroke-width="1" marker-end="url(#arrow-g)"/>
+
+<!-- ====== SECTION 5: RESUMABLE UPLOAD SESSION ====== -->
+<line x1="30" y1="724" x2="770" y2="724" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="718" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— resumable upload: step-by-step protocol (the most important path) —</text>
+
+<rect x="30" y="736" width="740" height="52" rx="6" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="756" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Step 1 — Initiate:  POST /upload/initiate  { filename, mimeType, totalSize, sha256, parentFolderId }</text>
+<text x="400" y="772" text-anchor="middle" font-size="11" fill="#534ab7">Server creates upload session. Returns uploadId + signed upload URL (valid 7 days). Redis: SET session:{uploadId} { meta } TTL 7d.</text>
+
+<line x1="400" y1="788" x2="400" y2="820" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<rect x="30" y="820" width="740" height="64" rx="6" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="400" y="842" text-anchor="middle" font-size="12" font-weight="700" fill="#0c447c">Step 2 — Upload Chunks:  PUT /upload/{uploadId}  with Content-Range header</text>
+<text x="400" y="860" text-anchor="middle" font-size="11" fill="#185fa5">Content-Range: bytes 0–5242879/26214400  (chunk 0, 5 MB of 25 MB file)</text>
+<text x="400" y="876" text-anchor="middle" font-size="11" fill="#185fa5">Server: write chunk to temp GCS bucket gs://uploads-tmp/{uploadId}/chunk-0. Redis: SADD chunks:{uploadId} 0. Return 308 Resume Incomplete.</text>
+
+<line x1="400" y1="884" x2="400" y2="916" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Chunk loop -->
+<rect x="80" y="916" width="640" height="72" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="938" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Client sends chunk 1, 2, 3 … (same pattern). Each chunk is independently resumable.</text>
+<text x="400" y="956" text-anchor="middle" font-size="11" fill="#5f5e5a">Chunk size = multiple of 256 KB (Google Drive requirement). Typically 5–8 MB per chunk — balance between request overhead and retry cost.</text>
+<text x="400" y="972" text-anchor="middle" font-size="11" fill="#5f5e5a">Server ACKs each chunk with { nextExpectedByte: N }. Client does NOT send next chunk until this ACK arrives.</text>
+
+<line x1="400" y1="988" x2="400" y2="1028" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Failure + Resume -->
+<rect x="30" y="1028" width="740" height="96" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="1050" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">Network Failure Mid-Upload — Resume Flow</text>
+<text x="400" y="1070" text-anchor="middle" font-size="11" fill="#993c1d">Client detects failure (socket closed, timeout). Waits with exponential backoff (1s → 2s → 4s → max 32s).</text>
+<text x="400" y="1086" text-anchor="middle" font-size="11" fill="#993c1d">Client queries: PUT /upload/{uploadId}  body=empty, Content-Range: bytes */{totalSize}</text>
+<text x="400" y="1102" text-anchor="middle" font-size="11" fill="#993c1d">Server responds: 308 { Range: bytes 0–10485759 } — "I have the first 10 MB, send from byte 10485760".</text>
+<text x="400" y="1116" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">Client resumes from that exact byte. No already-uploaded data is re-sent. The 7-day session TTL gives ample time to retry even intermittent connections.</text>
+
+<line x1="400" y1="1124" x2="400" y2="1164" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Final chunk + trigger -->
+<rect x="80" y="1164" width="640" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="1186" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Step 3 — Final Chunk:  Server receives last chunk (Content-Range end = totalSize - 1)</text>
+<text x="400" y="1204" text-anchor="middle" font-size="11" fill="#3b6d11">Server responds 200 OK with file metadata. Triggers Assembly Service asynchronously via Kafka.</text>
+<text x="400" y="1220" text-anchor="middle" font-size="11" fill="#3b6d11">File appears in Drive UI immediately (status=PROCESSING, spinner on thumbnail). User does NOT wait for pipeline.</text>
+
+<line x1="400" y1="1228" x2="400" y2="1268" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 6: ASSEMBLY SERVICE ====== -->
+<line x1="30" y1="1256" x2="770" y2="1256" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1250" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— assembly service: stitching chunks into one final object —</text>
+
+<rect x="60" y="1268" width="680" height="128" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="400" y="1290" text-anchor="middle" font-size="13" font-weight="700" fill="#1557b0">Assembly Service</text>
+
+<rect x="80" y="1300" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="91" y="1315" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">1</text>
+<text x="113" y="1315" font-size="10" fill="#1557b0"> Verify completeness: SMEMBERS chunks:{uploadId} → compare against expected chunk list. All chunks present?</text>
+
+<rect x="80" y="1326" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="91" y="1341" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">2</text>
+<text x="113" y="1341" font-size="10" fill="#1557b0"> Compose: GCS compose API — join chunk-0, chunk-1 … chunk-N into one object in a single API call. O(1) — no byte copying at GCS level.</text>
+
+<rect x="80" y="1352" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="91" y="1367" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3</text>
+<text x="113" y="1367" font-size="10" fill="#1557b0"> Verify integrity: compute SHA-256 of assembled object → must match hash sent in Step 1. If mismatch → reject, notify client to re-upload.</text>
+
+<rect x="80" y="1378" width="22" height="22" rx="11" fill="#1a73e8"/>
+<text x="91" y="1393" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">4</text>
+<text x="113" y="1393" font-size="10" fill="#1557b0"> Move to permanent path: gs://drive-content/{sha256[0:2]}/{sha256} — content-addressed, immutable. Delete temp chunks.</text>
+
+<text x="400" y="1382" text-anchor="middle" font-size="10" font-weight="600" fill="#1557b0">   (same sha256 path across all users = same blob = deduplication is automatic here)</text>
+
+<line x1="400" y1="1396" x2="400" y2="1436" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 7: METADATA WRITE ====== -->
+<line x1="30" y1="1424" x2="770" y2="1424" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1418" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— metadata write: the file is now visible in Drive —</text>
+
+<rect x="80" y="1436" width="640" height="100" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="1458" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Metadata Service — Write to Spanner (PostgreSQL equivalent)</text>
+<text x="400" y="1478" text-anchor="middle" font-size="11" fill="#3b6d11">INSERT INTO files: { fileId, name, mimeType, size, sha256, ownerId, parentFolderId, storageKey, status:PROCESSING, createdAt }</text>
+<text x="400" y="1494" text-anchor="middle" font-size="11" fill="#3b6d11">User's quota updated: UPDATE quota SET used = used + fileSize WHERE userId = ?</text>
+<text x="400" y="1510" text-anchor="middle" font-size="11" fill="#3b6d11">File NOW visible in Drive UI (spinner shown, not yet searchable, no thumbnail yet). All processing is async from here.</text>
+<text x="400" y="1526" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">Critical design: metadata write = user sees the file. Pipeline = enrichment. These two are completely decoupled.</text>
+
+<line x1="400" y1="1536" x2="400" y2="1576" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- Kafka publish -->
+<rect x="180" y="1576" width="440" height="44" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="1594" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">Kafka — file-uploaded event  { fileId, sha256, mimeType, storageKey, ownerId }</text>
+<text x="400" y="1612" text-anchor="middle" font-size="11" fill="#534ab7">Partitioned by fileId. All pipeline workers consume this topic independently.</text>
+
+<!-- Fan-out arrows -->
+<line x1="200" y1="1620" x2="90"  y2="1668" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="290" y1="1620" x2="240" y2="1668" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="380" y1="1620" x2="380" y2="1668" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="490" y1="1620" x2="530" y2="1668" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="590" y1="1620" x2="680" y2="1668" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 8: PROCESSING PIPELINE ====== -->
+<line x1="30" y1="1656" x2="770" y2="1656" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1650" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— async processing pipeline: 5 independent workers consume the same Kafka event —</text>
+
+<rect x="20"  y="1668" width="136" height="88" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="88"  y="1690" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">① Virus Scanner</text>
+<text x="88"  y="1708" text-anchor="middle" font-size="9" fill="#993c1d">ClamAV + cloud</text>
+<text x="88"  y="1722" text-anchor="middle" font-size="9" fill="#993c1d">ML malware engine</text>
+<text x="88"  y="1736" text-anchor="middle" font-size="9" fill="#993c1d">Streams from GCS</text>
+<text x="88"  y="1750" text-anchor="middle" font-size="9" fill="#993c1d">INFECTED → quarantine</text>
+
+<rect x="170" y="1668" width="136" height="88" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="238" y="1690" text-anchor="middle" font-size="10" font-weight="600" fill="#633806">② Thumbnail Gen</text>
+<text x="238" y="1708" text-anchor="middle" font-size="9" fill="#854f0b">Images: resize to</text>
+<text x="238" y="1722" text-anchor="middle" font-size="9" fill="#854f0b">128px/512px/1280px</text>
+<text x="238" y="1736" text-anchor="middle" font-size="9" fill="#854f0b">PDF: render page 1</text>
+<text x="238" y="1750" text-anchor="middle" font-size="9" fill="#854f0b">→ 3 CDN variants</text>
+
+<rect x="320" y="1668" width="136" height="88" rx="8" fill="#e6f1fb" stroke="#185fa5"/>
+<text x="388" y="1690" text-anchor="middle" font-size="10" font-weight="600" fill="#0c447c">③ Text Extraction</text>
+<text x="388" y="1708" text-anchor="middle" font-size="9" fill="#185fa5">DOCX → plain text</text>
+<text x="388" y="1722" text-anchor="middle" font-size="9" fill="#185fa5">PDF text layer</text>
+<text x="388" y="1736" text-anchor="middle" font-size="9" fill="#185fa5">Scanned PDF → OCR</text>
+<text x="388" y="1750" text-anchor="middle" font-size="9" fill="#185fa5">→ Elasticsearch</text>
+
+<rect x="470" y="1668" width="156" height="88" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="548" y="1690" text-anchor="middle" font-size="10" font-weight="600" fill="#3c3489">④ Format Convert</text>
+<text x="548" y="1708" text-anchor="middle" font-size="9" fill="#534ab7">.docx → Docs format</text>
+<text x="548" y="1722" text-anchor="middle" font-size="9" fill="#534ab7">.xlsx → Sheets</text>
+<text x="548" y="1736" text-anchor="middle" font-size="9" fill="#534ab7">.pptx → Slides</text>
+<text x="548" y="1750" text-anchor="middle" font-size="9" fill="#534ab7">Op-log initialised</text>
+
+<rect x="640" y="1668" width="140" height="88" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="710" y="1690" text-anchor="middle" font-size="10" font-weight="600" fill="#085041">⑤ Metadata</text>
+<text x="710" y="1706" text-anchor="middle" font-size="10" font-weight="600" fill="#085041">   Extraction</text>
+<text x="710" y="1722" text-anchor="middle" font-size="9" fill="#0f6e56">EXIF (camera, GPS)</text>
+<text x="710" y="1738" text-anchor="middle" font-size="9" fill="#0f6e56">Author, title, tags</text>
+<text x="710" y="1754" text-anchor="middle" font-size="9" fill="#0f6e56">Duration (video/audio)</text>
+
+<line x1="88"  y1="1756" x2="200" y2="1808" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="238" y1="1756" x2="290" y2="1808" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="388" y1="1756" x2="390" y2="1808" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="548" y1="1756" x2="500" y2="1808" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+<line x1="710" y1="1756" x2="610" y2="1808" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 9: PIPELINE OUTPUTS ====== -->
+<line x1="30" y1="1796" x2="770" y2="1796" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1790" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— what each pipeline worker produces and where it goes —</text>
+
+<rect x="30" y="1808" width="740" height="168" rx="8" fill="#f9f9f7" stroke="#ccc"/>
+
+<!-- Virus -->
+<rect x="50"  y="1820" width="196" height="144" rx="8" fill="#faece7" stroke="#993c1d" stroke-width="0.8"/>
+<text x="148" y="1840" text-anchor="middle" font-size="10" font-weight="600" fill="#712b13">Virus Scan Result</text>
+<text x="148" y="1858" text-anchor="middle" font-size="9" fill="#993c1d">CLEAN → file.status=READY</text>
+<text x="148" y="1874" text-anchor="middle" font-size="9" fill="#993c1d">INFECTED → file.status=QUARANTINED</text>
+<text x="148" y="1890" text-anchor="middle" font-size="9" fill="#993c1d">Notify owner of infection</text>
+<text x="148" y="1906" text-anchor="middle" font-size="9" fill="#993c1d">Object moved to quarantine</text>
+<text x="148" y="1922" text-anchor="middle" font-size="9" fill="#993c1d">bucket (not deleted — evidence)</text>
+<text x="148" y="1938" text-anchor="middle" font-size="9" fill="#993c1d">Legal hold for 90 days</text>
+<text x="148" y="1954" text-anchor="middle" font-size="9" fill="#993c1d">→ Spanner: status update</text>
+
+<!-- Thumbnail -->
+<rect x="258" y="1820" width="196" height="144" rx="8" fill="#faeeda" stroke="#ba7517" stroke-width="0.8"/>
+<text x="356" y="1840" text-anchor="middle" font-size="10" font-weight="600" fill="#633806">Thumbnails</text>
+<text x="356" y="1858" text-anchor="middle" font-size="9" fill="#854f0b">3 sizes per file stored in GCS:</text>
+<text x="356" y="1874" text-anchor="middle" font-size="9" fill="#854f0b">thumb/s/{sha256}.jpg (128px)</text>
+<text x="356" y="1890" text-anchor="middle" font-size="9" fill="#854f0b">thumb/m/{sha256}.jpg (512px)</text>
+<text x="356" y="1906" text-anchor="middle" font-size="9" fill="#854f0b">thumb/l/{sha256}.jpg (1280px)</text>
+<text x="356" y="1922" text-anchor="middle" font-size="9" fill="#854f0b">Served via CDN (TTL 7d)</text>
+<text x="356" y="1938" text-anchor="middle" font-size="9" fill="#854f0b">→ Drive grid shows preview</text>
+<text x="356" y="1954" text-anchor="middle" font-size="9" fill="#854f0b">immediately on completion</text>
+
+<!-- Text/Search -->
+<rect x="466" y="1820" width="284" height="144" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="0.8"/>
+<text x="608" y="1840" text-anchor="middle" font-size="10" font-weight="600" fill="#0c447c">Search Index + Conversion</text>
+<text x="608" y="1858" text-anchor="middle" font-size="9" fill="#185fa5">Extracted text → Elasticsearch upsert:</text>
+<text x="608" y="1874" text-anchor="middle" font-size="9" fill="#185fa5">{ fileId, ownerId, filename, body_text, metadata }</text>
+<text x="608" y="1890" text-anchor="middle" font-size="9" fill="#185fa5">File becomes searchable inside Drive</text>
+<text x="608" y="1906" text-anchor="middle" font-size="9" fill="#185fa5">Format convert (DOCX → Docs):</text>
+<text x="608" y="1922" text-anchor="middle" font-size="9" fill="#185fa5">Parsed → OT operations generated</text>
+<text x="608" y="1938" text-anchor="middle" font-size="9" fill="#185fa5">Initial op-log written to Bigtable</text>
+<text x="608" y="1954" text-anchor="middle" font-size="9" fill="#185fa5">"Open with Docs" now works ✓</text>
+
+<line x1="400" y1="1976" x2="400" y2="2016" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 10: NOTIFICATION ====== -->
+<line x1="30" y1="2004" x2="770" y2="2004" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="1998" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— notifying the client: how the Drive UI updates without polling —</text>
+
+<rect x="40" y="2016" width="720" height="116" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2038" text-anchor="middle" font-size="13" font-weight="700" fill="#3c3489">Drive UI Real-Time Update — Server-Sent Events (SSE)</text>
+<text x="400" y="2058" text-anchor="middle" font-size="11" fill="#534ab7">Client holds an open SSE connection to wss://drive.google.com/sse?userId=X. Drive always keeps this alive.</text>
+<text x="400" y="2074" text-anchor="middle" font-size="11" fill="#534ab7">As each pipeline stage completes, Notification Service pushes an SSE event: { fileId, event: "thumbnail_ready" / "scan_clean" / "indexed" }</text>
+<text x="400" y="2090" text-anchor="middle" font-size="11" fill="#534ab7">Drive UI receives event → updates that file's card: spinner → thumbnail, "Processing" badge → none, search works.</text>
+<text x="400" y="2106" text-anchor="middle" font-size="11" fill="#534ab7">Mobile: FCM push notification "Your upload is ready" when all pipeline stages complete.</text>
+<text x="400" y="2122" text-anchor="middle" font-size="10" font-weight="600" fill="#3c3489">The file appears instantly on upload completion. Enrichment (thumbnail, search, conversion) arrives progressively — no full page refresh needed.</text>
+
+<line x1="400" y1="2132" x2="400" y2="2172" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 11: SERVING THE FILE BACK ====== -->
+<line x1="30" y1="2160" x2="770" y2="2160" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2154" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— serving the file: download is the mirror of upload —</text>
+
+<rect x="30"  y="2172" width="358" height="120" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="209" y="2194" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Download Flow</text>
+<text x="209" y="2214" text-anchor="middle" font-size="11" fill="#3b6d11">GET /api/files/{fileId}/content → ACL check.</text>
+<text x="209" y="2230" text-anchor="middle" font-size="11" fill="#3b6d11">Server issues signed GCS URL (TTL 1hr) for the sha256 path → redirect 302.</text>
+<text x="209" y="2246" text-anchor="middle" font-size="11" fill="#3b6d11">Client downloads directly from CDN-cached GCS URL. Server is not in the byte-transfer path.</text>
+<text x="209" y="2262" text-anchor="middle" font-size="11" fill="#3b6d11">Range requests supported: { Range: bytes=0-4999 } for streaming video / resumable downloads.</text>
+<text x="209" y="2278" text-anchor="middle" font-size="10" font-weight="600" fill="#27500a">ACL enforced at URL signing — URL only generated for authorised users. URL expiry enforces time-bound access.</text>
+
+<rect x="412" y="2172" width="358" height="120" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="591" y="2194" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">Preview / Inline View</text>
+<text x="591" y="2214" text-anchor="middle" font-size="11" fill="#3b6d11">Thumbnails served directly from CDN: no auth check needed (public, non-guessable URL derived from sha256).</text>
+<text x="591" y="2230" text-anchor="middle" font-size="11" fill="#3b6d11">PDF preview: Drive Viewer renders server-side pages as images → streams page-by-page (never requires full download).</text>
+<text x="591" y="2246" text-anchor="middle" font-size="11" fill="#3b6d11">DOCX open in Docs: loads from Bigtable op-log (not GCS) — the converted Docs format is the live version.</text>
+<text x="591" y="2262" text-anchor="middle" font-size="11" fill="#3b6d11">Sharing link: viewer gets a time-limited signed URL via the sharing service — same download flow, different ACL path.</text>
+
+<line x1="400" y1="2292" x2="400" y2="2332" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
+
+<!-- ====== SECTION 12: DATA STORES ====== -->
+<line x1="30" y1="2320" x2="770" y2="2320" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2314" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— key data stores —</text>
+
+<rect x="20"  y="2332" width="185" height="220" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="112" y="2354" text-anchor="middle" font-size="11" font-weight="600" fill="#1557b0">GCS (Object Storage)</text>
+<text x="112" y="2372" text-anchor="middle" font-size="10" fill="#1a73e8">uploads-tmp/{uploadId}/</text>
+<text x="112" y="2388" text-anchor="middle" font-size="10" fill="#1a73e8">  chunk-{n}  (temp)</text>
+<text x="112" y="2404" text-anchor="middle" font-size="10" fill="#1a73e8">drive-content/{sha256[0:2]}/</text>
+<text x="112" y="2420" text-anchor="middle" font-size="10" fill="#1a73e8">  {sha256}  (permanent)</text>
+<text x="112" y="2436" text-anchor="middle" font-size="10" fill="#1a73e8">thumb/{size}/{sha256}.jpg</text>
+<text x="112" y="2452" text-anchor="middle" font-size="10" fill="#1a73e8">Immutable objects</text>
+<text x="112" y="2468" text-anchor="middle" font-size="10" fill="#1a73e8">Content-addressed</text>
+<text x="112" y="2484" text-anchor="middle" font-size="10" fill="#1a73e8">Lifecycle rules: tmp</text>
+<text x="112" y="2500" text-anchor="middle" font-size="10" fill="#1a73e8">bucket auto-deletes</text>
+<text x="112" y="2516" text-anchor="middle" font-size="10" fill="#1a73e8">after 8 days</text>
+<text x="112" y="2540" text-anchor="middle" font-size="10" fill="#1a73e8">Physical dedup store</text>
+
+<rect x="219" y="2332" width="185" height="220" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="311" y="2354" text-anchor="middle" font-size="11" font-weight="600" fill="#27500a">Spanner / PostgreSQL</text>
+<text x="311" y="2372" text-anchor="middle" font-size="10" fill="#3b6d11">files (metadata)</text>
+<text x="311" y="2388" text-anchor="middle" font-size="10" fill="#3b6d11">content_store (sha256→gcs)</text>
+<text x="311" y="2404" text-anchor="middle" font-size="10" fill="#3b6d11">acl (fileId, userId, role)</text>
+<text x="311" y="2420" text-anchor="middle" font-size="10" fill="#3b6d11">folders (hierarchy)</text>
+<text x="311" y="2436" text-anchor="middle" font-size="10" fill="#3b6d11">quotas (user storage)</text>
+<text x="311" y="2452" text-anchor="middle" font-size="10" fill="#3b6d11">share_links</text>
+<text x="311" y="2468" text-anchor="middle" font-size="10" fill="#3b6d11">versions (file history)</text>
+<text x="311" y="2484" text-anchor="middle" font-size="10" fill="#3b6d11">audit_log (access trail)</text>
+<text x="311" y="2500" text-anchor="middle" font-size="10" fill="#3b6d11">Source of truth</text>
+<text x="311" y="2516" text-anchor="middle" font-size="10" fill="#3b6d11">Globally consistent</text>
+<text x="311" y="2540" text-anchor="middle" font-size="10" fill="#3b6d11">(Spanner: multi-region)</text>
+
+<rect x="418" y="2332" width="185" height="220" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="510" y="2354" text-anchor="middle" font-size="11" font-weight="600" fill="#3c3489">Redis</text>
+<text x="510" y="2372" text-anchor="middle" font-size="10" fill="#534ab7">session:{uploadId}</text>
+<text x="510" y="2388" text-anchor="middle" font-size="10" fill="#534ab7">(TTL 7 days)</text>
+<text x="510" y="2404" text-anchor="middle" font-size="10" fill="#534ab7">chunks:{uploadId} SET</text>
+<text x="510" y="2420" text-anchor="middle" font-size="10" fill="#534ab7">quota_cache:{userId}</text>
+<text x="510" y="2436" text-anchor="middle" font-size="10" fill="#534ab7">(avoid hot DB reads)</text>
+<text x="510" y="2452" text-anchor="middle" font-size="10" fill="#534ab7">rate_limit:{userId}</text>
+<text x="510" y="2468" text-anchor="middle" font-size="10" fill="#534ab7">dedup_lock:{sha256}</text>
+<text x="510" y="2484" text-anchor="middle" font-size="10" fill="#534ab7">(prevent concurrent</text>
+<text x="510" y="2500" text-anchor="middle" font-size="10" fill="#534ab7">assembly of same file)</text>
+<text x="510" y="2516" text-anchor="middle" font-size="10" fill="#534ab7">pipeline_status:{fileId}</text>
+<text x="510" y="2540" text-anchor="middle" font-size="10" fill="#534ab7">Not source of truth</text>
+
+<rect x="617" y="2332" width="163" height="220" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="698" y="2354" text-anchor="middle" font-size="11" font-weight="600" fill="#633806">Elasticsearch</text>
+<text x="698" y="2372" text-anchor="middle" font-size="10" fill="#854f0b">files_index</text>
+<text x="698" y="2388" text-anchor="middle" font-size="10" fill="#854f0b">Fields:</text>
+<text x="698" y="2404" text-anchor="middle" font-size="10" fill="#854f0b">  fileId, ownerId</text>
+<text x="698" y="2420" text-anchor="middle" font-size="10" fill="#854f0b">  filename, body_text</text>
+<text x="698" y="2436" text-anchor="middle" font-size="10" fill="#854f0b">  mimeType, tags</text>
+<text x="698" y="2452" text-anchor="middle" font-size="10" fill="#854f0b">  exif_metadata</text>
+<text x="698" y="2468" text-anchor="middle" font-size="10" fill="#854f0b">Full-text search</text>
+<text x="698" y="2484" text-anchor="middle" font-size="10" fill="#854f0b">inside Drive</text>
+<text x="698" y="2500" text-anchor="middle" font-size="10" fill="#854f0b">Synced via Kafka</text>
+<text x="698" y="2516" text-anchor="middle" font-size="10" fill="#854f0b">Search only</text>
+<text x="698" y="2532" text-anchor="middle" font-size="10" fill="#854f0b">Not source of truth</text>
+
+<!-- ====== SECTION 13: KEY DESIGN DECISIONS ====== -->
+<line x1="30" y1="2572" x2="770" y2="2572" stroke="#ccc" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="400" y="2566" text-anchor="middle" font-size="11" font-weight="600" fill="#888">— 6 design decisions every interviewer asks about —</text>
+
+<rect x="30" y="2580" width="740" height="64" rx="8" fill="#e8f0fe" stroke="#1a73e8"/>
+<text x="400" y="2600" text-anchor="middle" font-size="12" font-weight="700" fill="#1557b0">① Why chunked upload instead of one large HTTP POST?</text>
+<text x="400" y="2618" text-anchor="middle" font-size="11" fill="#1a73e8">HTTP has no built-in resume. A single 2GB POST that fails at 90% means re-uploading from 0. Chunks give you a restart point at the last ACKed chunk boundary. Chunk size = 5–8 MB balances retry cost (small chunk = more round-trips) against waste (large chunk = more re-upload on failure).</text>
+
+<rect x="30" y="2652" width="740" height="64" rx="8" fill="#eaf3de" stroke="#3b6d11"/>
+<text x="400" y="2672" text-anchor="middle" font-size="12" font-weight="700" fill="#27500a">② Why SHA-256 for deduplication and storage key?</text>
+<text x="400" y="2690" text-anchor="middle" font-size="11" fill="#3b6d11">Two identical files produce the same hash → same GCS path → one blob stored, two metadata rows pointing to it. Content-addressed storage is also immutable by definition: the sha256 of the content is the key, so the object at that key never changes. Collision probability for SHA-256 is negligible (2^-128).</text>
+
+<rect x="30" y="2724" width="740" height="64" rx="8" fill="#faeeda" stroke="#ba7517"/>
+<text x="400" y="2744" text-anchor="middle" font-size="12" font-weight="700" fill="#633806">③ Why does the user see the file before the pipeline finishes?</text>
+<text x="400" y="2762" text-anchor="middle" font-size="11" fill="#854f0b">Decoupling availability from enrichment. The metadata write (file visible) and the pipeline (thumbnail, OCR, search) are independently triggered by the same Kafka event. User experience matters: showing a spinner-file in 200ms beats hiding the file until thumbnails are ready in 5s. Progressive enrichment is less jarring than a delayed appearance.</text>
+
+<rect x="30" y="2796" width="740" height="64" rx="8" fill="#eedefe" stroke="#7f77dd"/>
+<text x="400" y="2816" text-anchor="middle" font-size="12" font-weight="700" fill="#3c3489">④ Why is the server NOT in the download byte path?</text>
+<text x="400" y="2834" text-anchor="middle" font-size="11" fill="#534ab7">A signed GCS URL lets the client download directly from Google's object storage CDN edge, bypassing application servers entirely. Application servers only authorise (generate the signed URL) — they never proxy bytes. At 10TB/day of downloads, routing through app servers would require enormous bandwidth capacity and add latency.</text>
+
+<rect x="30" y="2868" width="740" height="64" rx="8" fill="#faece7" stroke="#993c1d"/>
+<text x="400" y="2888" text-anchor="middle" font-size="12" font-weight="700" fill="#712b13">⑤ What happens if the user uploads the same file twice?</text>
+<text x="400" y="2906" text-anchor="middle" font-size="11" fill="#993c1d">Client sends SHA-256 in the initiate request. Server checks content_store. If hash exists, a new metadata row is created (new fileId, same owner, new name, same parentFolder) pointing to the existing GCS blob. Zero bytes transferred. User sees both "Copy of report.pdf" and "report.pdf" in their Drive, each with full individual ACLs and quota counted, but physically one blob.</text>
+
+<rect x="30" y="2940" width="740" height="64" rx="8" fill="#e1f5ee" stroke="#0f6e56"/>
+<text x="400" y="2960" text-anchor="middle" font-size="12" font-weight="700" fill="#085041">⑥ How does the upload survive the browser tab being closed mid-upload?</text>
+<text x="400" y="2978" text-anchor="middle" font-size="11" fill="#0f6e56">The upload session lives on the server (Redis, TTL 7 days), not in the browser. Chunks received are stored in GCS tmp bucket. On reopening Drive, the client queries GET /upload/{uploadId} — if a pending session exists, it resumes. The desktop app (Drive for Desktop) handles this automatically. Web browser: Drive shows "Upload paused" with a Resume button in the upload panel.</text>
+
+<!-- FINAL INSIGHT BOX -->
+<rect x="30" y="3020" width="740" height="64" rx="8" fill="#1a73e8"/>
+<text x="400" y="3044" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">The upload system is three independent problems stitched together by Kafka:</text>
+<text x="400" y="3064" text-anchor="middle" font-size="11" fill="#e8f0fe">Reliable byte transfer (chunked + resumable) · Storage efficiency (content-addressed dedup) · User experience (metadata-first, async enrichment)</text>
+
+<!-- ARCHITECTURE SUMMARY -->
+<rect x="30" y="3100" width="740" height="88" rx="8" fill="#f1efe8" stroke="#888780"/>
+<text x="400" y="3120" text-anchor="middle" font-size="11" font-weight="600" fill="#2c2c2a">Client: SHA-256 hash → POST initiate → uploadId. Chunks: PUT /upload/{uploadId} → 308 per chunk → final chunk → 200.</text>
+<text x="400" y="3138" text-anchor="middle" font-size="11" fill="#5f5e5a">Assembly: GCS compose chunks → integrity verify → permanent path. Metadata: Spanner INSERT → file visible in Drive. Kafka: file-uploaded event fired.</text>
+<text x="400" y="3156" text-anchor="middle" font-size="11" fill="#5f5e5a">Pipeline: virus scan + thumbnail gen + text extraction + format convert + metadata extract — all parallel Kafka consumers.</text>
+<text x="400" y="3174" text-anchor="middle" font-size="10" fill="#888">Download: API issues signed GCS URL → client downloads direct from CDN. Pipeline results notify via SSE → Drive UI updates progressively.</text>
+
+</svg>
+</body></html>
